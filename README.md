@@ -1,3 +1,21 @@
+License & Disclaimer
+====================
+This software is licensed under the GPLv3, a copy of which is included in the LICENSE.txt file.  
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+  
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    
+
 BoneMarrow
 ==========
 
@@ -9,9 +27,6 @@ Disclaimer
 
 This is pre-release software, meant to be used with pre-release hardware.  Use at your own risk.  
   
-License
-=======
-This software is licensed under the GPLv3, a copy of which is included in the LICENSE.txt file.  
   
 Windows 8.1 Development Environment Setup
 =========================================
