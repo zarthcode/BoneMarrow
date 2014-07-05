@@ -22,11 +22,6 @@ BoneMarrow
 ARM Firmware and platform drivers for ZarthCode's VR products.  
 Hosted on github at the url: https://github.com/zarthcode/BoneMarrow  
   
-Disclaimer
-==========
-
-This is pre-release software, meant to be used with pre-release hardware.  Use at your own risk.  
-  
   
 Windows 8.1 Development Environment Setup
 =========================================
