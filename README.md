@@ -19,7 +19,8 @@ BoneMarrow is licensed under the GPLv3, a copy of which is included in the LICEN
 BoneMarrow
 ==========
 
-ARM Firmware and platform drivers for ZarthCode's VR products.  
+BoneMarrow is the ARM Firmware (and platform drivers) for ZarthCode's VR products.  Namely our VR glove and it's accessories. In a nutshell, it takes a large volume of orientation data and uses it to create a skeletal model, which can be analyzed for gestures, or sent in a raw format over usb or bluetooth.  Additionally, this software can interface with externally connected accessories.
+
 Hosted on github at the url: https://github.com/zarthcode/BoneMarrow  
   
   
