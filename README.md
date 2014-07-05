@@ -32,7 +32,7 @@ Windows 8.1 Development Environment Setup
 =========================================
   
 Visual Studio 2013 Professional (Optional, http://msdn.microsoft.com)  
-VisualGDB (http://www.visualgdb.com/)  
+VisualGDB (Optional, http://www.visualgdb.com/)  
 Sysprogs GNU Toolchain (GCC 4.8.2 http://gnutoolchains.com/arm-eabi/)  
   
   
