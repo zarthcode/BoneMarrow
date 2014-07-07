@@ -375,6 +375,8 @@
 //c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/4.8.2/include-fixed
 //c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/4.8.2/../../../../arm-eabi/sys-include
 //c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/4.8.2/../../../../arm-eabi/include
+//../Drivers/STM32F4xxxx-HAL/STM32F4xx_HAL_Driver/Inc
+//../Drivers/STM32F4xxxx-HAL/CMSIS/Include
 //.
 // --- Library directories end --- //
 
