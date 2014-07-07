@@ -2,29 +2,32 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source files">
-      <UniqueIdentifier>{08d4e4b6-0ec0-48d2-8a2f-9aaa7c49a9a0}</UniqueIdentifier>
+      <UniqueIdentifier>{9b10fbe8-c4af-474e-9e7a-334b261ad98b}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Header files">
-      <UniqueIdentifier>{9392afc1-5377-42e3-8c28-bbbb69bd1722}</UniqueIdentifier>
+      <UniqueIdentifier>{b7b35ad7-6f46-4350-895b-e56f2991c7b5}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
     <Filter Include="Resource files">
-      <UniqueIdentifier>{512af5c3-6e24-4d24-acfe-30ad73752951}</UniqueIdentifier>
+      <UniqueIdentifier>{8fef2aa5-adae-4621-a8e1-0a0aca02506f}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
     <Filter Include="Make files">
-      <UniqueIdentifier>{cefb9e91-15b2-4ffa-83ab-d495136b122e}</UniqueIdentifier>
+      <UniqueIdentifier>{ea44a684-83db-4ee8-8401-d8c106d05c37}</UniqueIdentifier>
       <Extensions>*.mak</Extensions>
     </Filter>
     <Filter Include="Source files\Device-specific files">
-      <UniqueIdentifier>{ebdb8de8-8969-49cc-a2b3-283ac18f5edd}</UniqueIdentifier>
+      <UniqueIdentifier>{484c1b4c-3bcf-4932-a479-1e0c193c8c97}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header files\Device-specific files">
-      <UniqueIdentifier>{07774f67-df8d-4611-9a8c-eca676f539ee}</UniqueIdentifier>
+      <UniqueIdentifier>{f455cc5b-36ac-4b49-b839-b27a00a17618}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LEDBlink.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c">
       <Filter>Source files\Device-specific files</Filter>
     </ClCompile>
@@ -193,6 +196,11 @@
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c">
       <Filter>Source files\Device-specific files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stm32f4xx_hal_conf.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />

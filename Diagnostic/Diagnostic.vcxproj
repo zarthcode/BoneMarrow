@@ -1,25 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|ARM">
+    <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
-      <Platform>ARM</Platform>
+      <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|ARM">
+    <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
-      <Platform>ARM</Platform>
+      <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{49AA99AA-D8B4-4F9B-BF1B-79B0AD7ABB78}</ProjectGuid>
+    <ProjectGuid>{6DA6B9F1-D3C8-4EA3-A3F2-CBCDCCB32CE9}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
@@ -27,15 +27,15 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <NMakeIncludeSearchPath>$(ProjectDir)\.;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\RTOS;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\arm-eabi\thumb\fpu\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;$(ProjectDir)\../Drivers/STM32F4xxxx-HAL/STM32F4xx_HAL_Driver/Inc;$(ProjectDir)\../Drivers/STM32F4xxxx-HAL/CMSIS/Include;$(ProjectDir)\.;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeIncludeSearchPath>$(ProjectDir)\.;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\arm-eabi\thumb\fpu\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;$(ProjectDir)\..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include;$(ProjectDir)\..\Drivers\STM32F4xxxx-HAL\CMSIS\Include;$(ProjectDir)\..\Drivers\STM32F4xxxx-HAL\CMSIS\RTOS;$(ProjectDir)\..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc;$(ProjectDir)\.;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes>$(ProjectDir)\gcc_Debug.h;$(VISUALGDB_DIR)\gcc_compat.h;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\stm32_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
@@ -46,7 +46,7 @@
     <LibraryPath />
     <NMakePreprocessorDefinitions>__VisualGDB_CFG_Debug;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeIncludeSearchPath>$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\RTOS;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\arm-eabi\thumb\fpu\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes>$(ProjectDir)\gcc_Release.h;$(VISUALGDB_DIR)\gcc_compat.h;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\stm32_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakePreprocessorDefinitions>__VisualGDB_CFG_Release;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
@@ -117,6 +117,10 @@
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fsmc.c" />
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_sdmmc.c" />
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_usb.c" />
+    <ClCompile Include="LEDBlink.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stm32f4xx_hal_conf.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="debug.mak" />

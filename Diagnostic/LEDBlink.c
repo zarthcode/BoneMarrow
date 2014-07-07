@@ -16,7 +16,7 @@ int main(void)
 	__GPIOG_CLK_ENABLE();
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-	GPIO_InitStructure.Pin = GPIO_PIN_13|GPIO_PIN_14;
+	GPIO_InitStructure.Pin = GPIO_PIN_13;
 
 	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
@@ -26,10 +26,8 @@ int main(void)
 	for (;;)
 	{
 		HAL_GPIO_WritePin(GPIOG, GPIO_PIN_13, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOG, GPIO_PIN_14, GPIO_PIN_RESET);
-		HAL_Delay(500);
+		HAL_Delay(250);
 		HAL_GPIO_WritePin(GPIOG, GPIO_PIN_13, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOG, GPIO_PIN_14, GPIO_PIN_SET);
-		HAL_Delay(500);
+		HAL_Delay(250);
 	}
 }

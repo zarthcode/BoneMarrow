@@ -72,7 +72,6 @@
 #define __ULLFRACT_MIN__ 0.0ULLR
 #define __SCHAR_MAX__ 127
 #define __WCHAR_MIN__ 0U
-#define STM32F427xx 1
 #define __DBL_DIG__ 15
 #define __GCC_ATOMIC_POINTER_LOCK_FREE 2
 #define __LLACCUM_MIN__ (-0X1P31LLK-0X1P31LLK)
@@ -158,6 +157,7 @@
 #define __USFRACT_MAX__ 0XFFP-8UHR
 #define __UFRACT_IBIT__ 0
 #define __ARM_FEATURE_QBIT 1
+#define STM32F429ZI 1
 #define __INT_FAST64_TYPE__ long long int
 #define __DBL_MIN__ double(2.2250738585072014e-308L)
 #define __FLT_MIN_10_EXP__ (-37)
@@ -189,6 +189,7 @@
 #define __USFRACT_MIN__ 0.0UHR
 #define __ULLACCUM_IBIT__ 32
 #define __UQQ_IBIT__ 0
+#define STM32F429xx 1
 #define __DEC64_EPSILON__ 1E-15DD
 #define __ORDER_PDP_ENDIAN__ 3412
 #define __DEC128_MIN_EXP__ (-6142)
@@ -290,7 +291,6 @@
 #define __LDBL_MAX_10_EXP__ 308
 #define __ATOMIC_RELAXED 0
 #define __DBL_EPSILON__ double(2.2204460492503131e-16L)
-#define STM32F427IG 1
 #define __ARM_ARCH_7EM__ 1
 #define __ARM_FEATURE_SIMD32 1
 #define __INT_LEAST32_TYPE__ long int

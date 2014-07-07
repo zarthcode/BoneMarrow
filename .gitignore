@@ -1,2 +1,5 @@
 *.sdf
 *.suo
+*.old
+*.opensdf
+*.log
