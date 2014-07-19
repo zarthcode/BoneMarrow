@@ -11,6 +11,29 @@ void SysTick_Handler(void)
 
 int main(void)
 {
+	// LED connections
+	// TIM3_1 - D1R
+	// TIM3_2 - D1G	
+	// TIM3_3 - D1B
+	// TIM3_4 - D6 (BLUE LED)
+
+	// TIM8_1 - D2R
+	// TIM8_2 - D2G
+	// TIM8_3 - D2B
+
+	// TIM4_1 - D3R
+	// TIM4_2 - D3G
+	// TIM4_3 - D3B
+
+	// TIM1_1 - D4R
+	// TIM1_2 - D4G
+	// TIM1_3 - D4B
+	// TIM1_4 - D8 (RED LED)
+
+	// TIM5_1 - D5R
+	// TIM5_2 - D5G
+	// TIM5_3 - D5B
+
 	HAL_Init();
 
 	__GPIOG_CLK_ENABLE();
