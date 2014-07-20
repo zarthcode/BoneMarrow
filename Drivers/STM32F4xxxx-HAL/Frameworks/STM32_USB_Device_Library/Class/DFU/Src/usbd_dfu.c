@@ -2,24 +2,36 @@
   ******************************************************************************
   * @file    usbd_dfu.c
   * @author  MCD Application Team
-  * @version V2.0.0
-  * @date    18-February-2014
-  * @brief   This file provides the HID core functions.
+  * @version V2.2.0
+  * @date    13-June-2014
+  * @brief   This file provides the DFU core functions.
   *
   * @verbatim
   *      
   *          ===================================================================      
-  *                                DFU Class  Description
-  *          ===================================================================
+  *                                DFU Class Driver Description
+  *          =================================================================== 
+  *           This driver manages the DFU class V1.1 following the "Device Class Specification for 
+  *           Device Firmware Upgrade Version 1.1 Aug 5, 2004".
+  *           This driver implements the following aspects of the specification:
+  *             - Device descriptor management
+  *             - Configuration descriptor management
+  *             - Enumeration as DFU device (in DFU mode only)
+  *             - Requests management (supporting ST DFU sub-protocol)
+  *             - Memory operations management (Download/Upload/Erase/Detach/GetState/GetStatus)
+  *             - DFU state machine implementation.
   *          
-  *
-  *
-  *
-  *           
-  *      
-  * @note     In HS mode and when the DMA is used, all variables and data structures
-  *           dealing with the DMA during the transaction process should be 32-bit aligned.
-  *           
+  *           @note
+  *            ST DFU sub-protocol is compliant with DFU protocol and use sub-requests to manage
+  *            memory addressing, commands processing, specific memories operations (ie. Erase) ...
+  *            As required by the DFU specification, only endpoint 0 is used in this application.
+  *            Other endpoints and functions may be added to the application (ie. DFU ...)
+  * 
+  *           These aspects may be enriched or modified for a specific user application.
+  *          
+  *           This driver doesn't implement the following aspects of the specification 
+  *           (but it is possible to manage these features with some modifications on this driver):
+  *             - Manifestation Tolerant mode
   *      
   *  @endverbatim
   *
@@ -49,7 +61,7 @@
 #include "usbd_ctlreq.h"
 
 
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
+/** @addtogroup STM32_USB_DEVICE_LIBRARY
   * @{
   */
 

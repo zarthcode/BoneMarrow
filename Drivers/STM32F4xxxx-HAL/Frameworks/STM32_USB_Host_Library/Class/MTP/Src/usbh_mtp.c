@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    usbh_mtp.c
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    18-February-2014
+  * @version V3.1.0
+  * @date    19-June-2014
   * @brief   This file is the MTP Layer Handlers for USB Host MTP class.
   *
   * @verbatim
@@ -11,12 +11,11 @@
   *          ===================================================================      
   *                                MTP Class  Description
   *          =================================================================== 
-  *           This module manages the MSC class V1.11 following the "Device Class Definition
-  *           for Human Interface Devices (MTP) Version 1.11 Jun 27, 2001".
-  *           This driver implements the following aspects of the specification:
-  *             - The Boot Interface Subclass
-  *             - The Mouse and Keyboard protocols
-  *      
+  *           This module manages the MTP class following the 
+  *           "Media Transfer Protocol (MTP) specification Version 1.11 April 6th, 2011".
+  *           the implmentation is compatible with the PTP model as an extension  
+  *           of the existing Picture Transfer Protocol defined by the ISO 15740 specification
+  *             
   *  @endverbatim
   *
   ******************************************************************************
@@ -372,7 +371,10 @@ USBH_StatusTypeDef USBH_MTP_InterfaceDeInit (USBH_HandleTypeDef *phost)
   * @retval USBH Status
   */
 static USBH_StatusTypeDef USBH_MTP_ClassRequest (USBH_HandleTypeDef *phost)
-{   
+{  
+#if (USBH_USE_OS == 1)
+        osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif    
   return USBH_OK;;
 }
 
@@ -399,6 +401,9 @@ static USBH_StatusTypeDef USBH_MTP_Process (USBH_HandleTypeDef *phost)
     {
       USBH_UsrLog("MTP Session #0 Opened");
       MTP_Handle->state = MTP_GETDEVICEINFO; 
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     }
     break;
     
@@ -420,6 +425,9 @@ static USBH_StatusTypeDef USBH_MTP_Process (USBH_HandleTypeDef *phost)
       USBH_DbgLog("Serial number : %s", MTP_Handle->info.devinfo.SerialNumber); 
       
       MTP_Handle->state = MTP_GETSTORAGEIDS; 
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     }
     break;
     
@@ -435,7 +443,10 @@ static USBH_StatusTypeDef USBH_MTP_Process (USBH_HandleTypeDef *phost)
       }
       
       MTP_Handle->current_storage_unit = 0;
-      MTP_Handle->state = MTP_GETSTORAGEINFO; 
+      MTP_Handle->state = MTP_GETSTORAGEINFO;
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     }
     break;
     
@@ -458,13 +469,20 @@ static USBH_StatusTypeDef USBH_MTP_Process (USBH_HandleTypeDef *phost)
         
         USBH_UsrLog( "MTP Class initialized.");
         USBH_UsrLog("%s is default storage unit", MTP_Handle->info.storinfo[0].StorageDescription);
-        phost->pUser(phost, HOST_USER_CLASS_ACTIVE); 
+        phost->pUser(phost, HOST_USER_CLASS_ACTIVE);    
       }
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif        
     }
     break;
   
   case  MTP_IDLE:
     USBH_MTP_Events(phost);
+#if (USBH_USE_OS == 1)
+    osDelay(10);
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif   
   default:
     status = USBH_OK;
     break;

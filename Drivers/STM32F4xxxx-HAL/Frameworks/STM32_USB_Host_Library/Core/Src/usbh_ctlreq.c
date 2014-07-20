@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    usbh_ctlreq.c 
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    18-February-2014
+  * @version V3.1.0
+  * @date    19-June-2014
   * @brief   This file implements the control requests for device enumeration
   ******************************************************************************
   * @attention
@@ -845,10 +845,10 @@ static USBH_StatusTypeDef USBH_HandleControl (USBH_HandleTypeDef *phost)
     }
     else
     {
+      phost->pUser(phost, HOST_USER_UNRECOVERED_ERROR);
       phost->Control.errorcount = 0;
       USBH_ErrLog("Control error");
       status = USBH_FAIL;
-      
     }
     break;
     

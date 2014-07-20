@@ -2,23 +2,29 @@
   ******************************************************************************
   * @file    usbh_cdc.c
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    18-February-2014
+  * @version V3.1.0
+  * @date    19-June-2014
   * @brief   This file is the CDC Layer Handlers for USB Host CDC class.
-  *
-  * @verbatim
+  *           
+  *  @verbatim
   *      
   *          ===================================================================      
-  *                                CDC Class  Description
+  *                                CDC Class Driver Description
   *          =================================================================== 
-  *           This module manages the MSC class V1.11 following the "Device Class Definition
-  *           for Human Interface Devices (CDC) Version 1.11 Jun 27, 2001".
+  *           This driver manages the "Universal Serial Bus Class Definitions for Communications Devices
+  *           Revision 1.2 November 16, 2007" and the sub-protocol specification of "Universal Serial Bus 
+  *           Communications Class Subclass Specification for PSTN Devices Revision 1.2 February 9, 2007"
   *           This driver implements the following aspects of the specification:
-  *             - The Boot Interface Subclass
-  *             - The Mouse and Keyboard protocols
-  *      
+  *             - Device descriptor management
+  *             - Configuration descriptor management
+  *             - Enumeration as CDC device with 2 data endpoints (IN and OUT) and 1 command endpoint (IN)
+  *             - Requests management (as described in section 6.2 in specification)
+  *             - Abstract Control Model compliant
+  *             - Union Functional collection (using 1 IN endpoint for control)
+  *             - Data interface class
+  *                 
   *  @endverbatim
-  *
+  * 
   ******************************************************************************
   * @attention
   *
@@ -408,7 +414,7 @@ static USBH_StatusTypeDef USBH_CDC_SOFProcess (USBH_HandleTypeDef *phost)
 }
                                    
   
-  /**
+/**
   * @brief  USBH_CDC_Stop 
   *         Stop current CDC Transmission 
   * @param  phost: Host handle
@@ -548,6 +554,9 @@ USBH_StatusTypeDef  USBH_CDC_Transmit(USBH_HandleTypeDef *phost, uint8_t *pbuff,
     CDC_Handle->state = CDC_TRANSFER_DATA;
     CDC_Handle->data_tx_state = CDC_SEND_DATA; 
     Status = USBH_OK;
+#if (USBH_USE_OS == 1)
+      osMessagePut ( phost->os_event, USBH_CLASS_EVENT, 0);
+#endif      
   }
   return Status;    
 }
@@ -570,6 +579,9 @@ USBH_StatusTypeDef  USBH_CDC_Receive(USBH_HandleTypeDef *phost, uint8_t *pbuff, 
     CDC_Handle->state = CDC_TRANSFER_DATA;
     CDC_Handle->data_rx_state = CDC_RECEIVE_DATA;     
     Status = USBH_OK;
+#if (USBH_USE_OS == 1)
+      osMessagePut ( phost->os_event, USBH_CLASS_EVENT, 0);
+#endif        
   }
   return Status;    
 } 
@@ -634,12 +646,17 @@ static void CDC_ProcessTransmission(USBH_HandleTypeDef *phost)
       {
         CDC_Handle->data_tx_state = CDC_IDLE;    
         USBH_CDC_TransmitCallback(phost);
-
       }
+#if (USBH_USE_OS == 1)
+      osMessagePut ( phost->os_event, USBH_CLASS_EVENT, 0);
+#endif    
     }
     else if( URB_Status == USBH_URB_NOTREADY )
     {
       CDC_Handle->data_tx_state = CDC_SEND_DATA; 
+#if (USBH_USE_OS == 1)
+      osMessagePut ( phost->os_event, USBH_CLASS_EVENT, 0);
+#endif          
     }
     break;
   default:
@@ -692,6 +709,9 @@ static void CDC_ProcessReception(USBH_HandleTypeDef *phost)
         CDC_Handle->data_rx_state = CDC_IDLE;
         USBH_CDC_ReceiveCallback(phost);
       }
+#if (USBH_USE_OS == 1)
+      osMessagePut ( phost->os_event, USBH_CLASS_EVENT, 0);
+#endif          
     }
     break;
     

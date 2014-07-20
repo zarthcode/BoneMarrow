@@ -2,21 +2,39 @@
   ******************************************************************************
   * @file    usbd_audio.c
   * @author  MCD Application Team
-  * @version V2.0.0
-  * @date    18-February-2014
-  * @brief   This file provides the HID core functions.
+  * @version V2.2.0
+  * @date    13-June-2014
+  * @brief   This file provides the Audio core functions.
   *
   * @verbatim
   *      
   *          ===================================================================      
   *                                AUDIO Class  Description
   *          ===================================================================
+ *           This driver manages the Audio Class 1.0 following the "USB Device Class Definition for
+  *           Audio Devices V1.0 Mar 18, 98".
+  *           This driver implements the following aspects of the specification:
+  *             - Device descriptor management
+  *             - Configuration descriptor management
+  *             - Standard AC Interface Descriptor management
+  *             - 1 Audio Streaming Interface (with single channel, PCM, Stereo mode)
+  *             - 1 Audio Streaming Endpoint
+  *             - 1 Audio Terminal Input (1 channel)
+  *             - Audio Class-Specific AC Interfaces
+  *             - Audio Class-Specific AS Interfaces
+  *             - AudioControl Requests: only SET_CUR and GET_CUR requests are supported (for Mute)
+  *             - Audio Feature Unit (limited to Mute control)
+  *             - Audio Synchronization type: Asynchronous
+  *             - Single fixed audio sampling rate (configurable in usbd_conf.h file)
+  *          The current audio class version supports the following audio features:
+  *             - Pulse Coded Modulation (PCM) format
+  *             - sampling rate: 48KHz. 
+  *             - Bit resolution: 16
+  *             - Number of channels: 2
+  *             - No volume control
+  *             - Mute/Unmute capability
+  *             - Asynchronous Endpoints 
   *          
-  *
-  *
-  *
-  *           
-  *      
   * @note     In HS mode and when the DMA is used, all variables and data structures
   *           dealing with the DMA during the transaction process should be 32-bit aligned.
   *           
@@ -49,7 +67,7 @@
 #include "usbd_ctlreq.h"
 
 
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
+/** @addtogroup STM32_USB_DEVICE_LIBRARY
   * @{
   */
 

@@ -4,9 +4,7 @@
   <Project xsi:type="com.visualgdb.project.embedded">
     <CustomSourceDirectories>
       <Directories />
-      <PathStyle>MinGWWindowsSlash</PathStyle>
-      <LocalDirForAbsolutePaths />
-      <LocalDirForRelativePaths />
+      <PathStyle>MinGWUnixSlash</PathStyle>
     </CustomSourceDirectories>
     <MainSourceDirectory>$(ProjectDir)</MainSourceDirectory>
     <EmbeddedProfileFile>stm32.xml</EmbeddedProfileFile>

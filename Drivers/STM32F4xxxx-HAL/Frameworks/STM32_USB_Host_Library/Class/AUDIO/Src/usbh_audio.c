@@ -2,9 +2,19 @@
   ******************************************************************************
   * @file    usbh_audio.c
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    18-February-2014
+  * @version V3.1.0
+  * @date    19-June-2014
   * @brief   This file is the AC Layer Handlers for USB Host AC class. 
+  *
+  * @verbatim
+  *      
+  *          ===================================================================      
+  *                                AUDIO Class  Description
+  *          ===================================================================
+  *           This driver manages the Audio Class 1.0 following the "USB Device 
+  *           Class Definition for Audio Devices V1.0 Mar 18, 98".
+  *   
+  *  @endverbatim
   *
   ******************************************************************************
   * @attention
@@ -1603,7 +1613,13 @@ static USBH_StatusTypeDef USBH_AUDIO_Transmit (USBH_HandleTypeDef *phost)
       AUDIO_Handle->headphone.partial_ptr = AUDIO_Handle->headphone.frame_length; 
       AUDIO_Handle->headphone.global_ptr = AUDIO_Handle->headphone.frame_length; 
       AUDIO_Handle->headphone.cbuf = AUDIO_Handle->headphone.buf;
-
+    }
+    else
+    {
+#if (USBH_USE_OS == 1)
+      osDelay(1);
+      osMessagePut ( phost->os_event, USBH_CLASS_EVENT, 0);
+#endif  
     }
     break;
     
@@ -1633,6 +1649,7 @@ static USBH_StatusTypeDef USBH_AUDIO_Transmit (USBH_HandleTypeDef *phost)
       {
        AUDIO_Handle->headphone.partial_ptr = 0xFFFFFFFF;
        AUDIO_Handle->play_state = AUDIO_PLAYBACK_IDLE;
+       USBH_AUDIO_BufferEmptyCallback(phost);
       }
     }
     break;
@@ -1730,6 +1747,9 @@ USBH_StatusTypeDef USBH_AUDIO_Play (USBH_HandleTypeDef *phost, uint8_t *buf, uin
       AUDIO_Handle->control_state = AUDIO_CONTROL_INIT;
       AUDIO_Handle->processing_state = AUDIO_DATA_START_OUT;
       Status = USBH_OK;
+#if (USBH_USE_OS == 1)
+      osMessagePut ( phost->os_event, USBH_CLASS_EVENT, 0);
+#endif        
     }
   }
   return Status;  
@@ -1962,12 +1982,22 @@ static USBH_StatusTypeDef AUDIO_SetVolume (USBH_HandleTypeDef *phost, uint8_t fe
 
 /**
   * @brief  The function informs user that Settings have been changed
-  *  @param  pdev: Selected device
+  *  @param  phost: Selected device
   * @retval None
   */
 __weak void USBH_AUDIO_FrequencySet(USBH_HandleTypeDef *phost)
 {
   
+}
+                                     
+/**
+  * @brief  The function informs user that User data are processed
+  *  @param  phost: Selected device
+  * @retval None
+  */
+__weak void  USBH_AUDIO_BufferEmptyCallback(USBH_HandleTypeDef *phost)
+{
+   
 }
 /**
 * @}

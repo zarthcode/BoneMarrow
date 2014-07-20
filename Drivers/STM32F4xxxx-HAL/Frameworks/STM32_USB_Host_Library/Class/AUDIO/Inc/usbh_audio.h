@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    usbh_audio.h
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    18-February-2014
+  * @version V3.1.0
+  * @date    19-June-2014
   * @brief   This file contains all the prototypes for the usbh_audio.c
   ******************************************************************************
   * @attention
@@ -555,6 +555,9 @@ USBH_StatusTypeDef USBH_AUDIO_ChangeOutBuffer (USBH_HandleTypeDef *phost, uint8_
 int32_t            USBH_AUDIO_GetOutOffset (USBH_HandleTypeDef *phost);
 
 void        USBH_AUDIO_FrequencySet(USBH_HandleTypeDef *phost);
+
+#define     USBH_AUDIO_FrequencySetCallback   USBH_AUDIO_FrequencySet
+void        USBH_AUDIO_BufferEmptyCallback(USBH_HandleTypeDef *phost);
 /**
   * @}
   */ 

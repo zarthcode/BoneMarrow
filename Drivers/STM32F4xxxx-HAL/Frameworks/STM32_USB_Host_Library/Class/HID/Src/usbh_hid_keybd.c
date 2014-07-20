@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    usbh_hid_keybd.c 
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    18-February-2014
+  * @version V3.1.0
+  * @date    19-June-2014
   * @brief   This file is the application layer for USB Host HID Keyboard handling
   *          QWERTY and AZERTY Keyboard are supported as per the selection in 
   *          usbh_hid_keybd.h              

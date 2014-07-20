@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    usbd_hid_core.h
   * @author  MCD Application Team
-  * @version V2.0.0
-  * @date    18-February-2014
+  * @version V2.2.0
+  * @date    13-June-2014
   * @brief   header file for the usbd_hid_core.c file.
   ******************************************************************************
   * @attention
@@ -32,7 +32,7 @@
 
 #include  "usbd_ioreq.h"
 
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
+/** @addtogroup STM32_USB_DEVICE_LIBRARY
   * @{
   */
   
@@ -54,7 +54,7 @@
 
 #define HID_DESCRIPTOR_TYPE           0x21
 #define HID_REPORT_DESC               0x22
-
+#define HID_POLLING_INTERVAL          0x0A
 
 #define HID_REQ_SET_PROTOCOL          0x0B
 #define HID_REQ_GET_PROTOCOL          0x03
@@ -107,6 +107,7 @@ USBD_HID_HandleTypeDef;
   */ 
 
 extern USBD_ClassTypeDef  USBD_HID;
+#define USBD_HID_CLASS    &USBD_HID
 /**
   * @}
   */ 
@@ -118,7 +119,7 @@ uint8_t USBD_HID_SendReport (USBD_HandleTypeDef *pdev,
                                  uint8_t *report,
                                  uint16_t len);
 
-uint8_t  *USBD_HID_DeviceQualifierDescriptor (uint16_t *length);
+uint8_t USBD_HID_GetPollingInterval (USBD_HandleTypeDef *pdev);
 
 /**
   * @}

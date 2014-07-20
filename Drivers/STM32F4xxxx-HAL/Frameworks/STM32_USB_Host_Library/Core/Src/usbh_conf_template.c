@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    usb_bsp.c
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    18-February-2014
+  * @version V3.1.0
+  * @date    19-June-2014
   * @brief   This file implements the board support package for the USB host library
   ******************************************************************************
   * @attention

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    usbh_hid.c
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    18-February-2014
+  * @version V3.1.0
+  * @date    19-June-2014
   * @brief   This file is the HID Layer Handlers for USB Host HID class.
   *
   * @verbatim
@@ -11,7 +11,7 @@
   *          ===================================================================      
   *                                HID Class  Description
   *          =================================================================== 
-  *           This module manages the MSC class V1.11 following the "Device Class Definition
+  *           This module manages the HID class V1.11 following the "Device Class Definition
   *           for Human Interface Devices (HID) Version 1.11 Jun 27, 2001".
   *           This driver implements the following aspects of the specification:
   *             - The Boot Interface Subclass
@@ -671,6 +671,30 @@ HID_TypeTypeDef USBH_HID_GetDeviceType(USBH_HandleTypeDef *phost)
   return type;
 }
 
+
+/**
+  * @brief  USBH_HID_GetPollInterval
+  *         Return HID device poll time
+  * @param  phost: Host handle
+  * @retval poll time (ms)
+  */
+uint8_t USBH_HID_GetPollInterval(USBH_HandleTypeDef *phost)
+{
+  HID_HandleTypeDef *HID_Handle =  phost->pActiveClass->pData;
+    
+    if((phost->gState == HOST_CLASS_REQUEST) ||
+       (phost->gState == HOST_INPUT) ||
+         (phost->gState == HOST_SET_CONFIGURATION) ||
+           (phost->gState == HOST_CHECK_CLASS) ||           
+             ((phost->gState == HOST_CLASS)))
+  {
+    return (HID_Handle->poll);
+  }
+  else
+  {
+    return 0;
+  }
+}
 /**
   * @brief  fifo_init
   *         Initialize FIFO.

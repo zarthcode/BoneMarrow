@@ -7,14 +7,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Diagnostic", "Diagnostic\Di
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Win32 = Debug|Win32
-		Release|Win32 = Release|Win32
+		Debug|ARM = Debug|ARM
+		Release|ARM = Release|ARM
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6DA6B9F1-D3C8-4EA3-A3F2-CBCDCCB32CE9}.Debug|Win32.ActiveCfg = Debug|Win32
-		{6DA6B9F1-D3C8-4EA3-A3F2-CBCDCCB32CE9}.Debug|Win32.Build.0 = Debug|Win32
-		{6DA6B9F1-D3C8-4EA3-A3F2-CBCDCCB32CE9}.Release|Win32.ActiveCfg = Release|Win32
-		{6DA6B9F1-D3C8-4EA3-A3F2-CBCDCCB32CE9}.Release|Win32.Build.0 = Release|Win32
+		{6DA6B9F1-D3C8-4EA3-A3F2-CBCDCCB32CE9}.Debug|ARM.ActiveCfg = Debug|ARM
+		{6DA6B9F1-D3C8-4EA3-A3F2-CBCDCCB32CE9}.Debug|ARM.Build.0 = Debug|ARM
+		{6DA6B9F1-D3C8-4EA3-A3F2-CBCDCCB32CE9}.Release|ARM.ActiveCfg = Release|ARM
+		{6DA6B9F1-D3C8-4EA3-A3F2-CBCDCCB32CE9}.Release|ARM.Build.0 = Release|ARM
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

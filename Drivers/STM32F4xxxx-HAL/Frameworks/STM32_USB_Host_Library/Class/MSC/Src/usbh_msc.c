@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    usbh_msc.c
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    18-February-2014
+  * @version V3.1.0
+  * @date    19-June-2014
   * @brief   This file implements the MSC class driver functions
   *          ===================================================================      
   *                                MSC Class  Description
@@ -365,7 +365,7 @@ static USBH_StatusTypeDef USBH_MSC_Process(USBH_HandleTypeDef *phost)
           if( MSC_Handle->unit[MSC_Handle->current_lun].prev_ready_state != USBH_OK)
           {
             MSC_Handle->unit[MSC_Handle->current_lun].state_changed = 1;
-            USBH_UsrLog ("Mass Storage Device ready");
+            USBH_UsrLog ("MSC Device ready");
           }
           else
           {
@@ -381,7 +381,7 @@ static USBH_StatusTypeDef USBH_MSC_Process(USBH_HandleTypeDef *phost)
           if( MSC_Handle->unit[MSC_Handle->current_lun].prev_ready_state != USBH_FAIL)
           {
             MSC_Handle->unit[MSC_Handle->current_lun].state_changed = 1;
-            USBH_UsrLog ("Mass Storage Device NOT ready");
+            USBH_UsrLog ("MSC Device NOT ready");
           }
           else
           {
@@ -405,8 +405,8 @@ static USBH_StatusTypeDef USBH_MSC_Process(USBH_HandleTypeDef *phost)
         {
           if(MSC_Handle->unit[MSC_Handle->current_lun].state_changed == 1)
           {
-            USBH_UsrLog ("Mass Storage Device capacity : %lu MB", \
-              (int32_t)((MSC_Handle->unit[MSC_Handle->current_lun].capacity.block_nbr * MSC_Handle->unit[MSC_Handle->current_lun].capacity.block_size)/1024/1024));
+            USBH_UsrLog ("MSC Device capacity : %lu Bytes", \
+              (int32_t)(MSC_Handle->unit[MSC_Handle->current_lun].capacity.block_nbr * MSC_Handle->unit[MSC_Handle->current_lun].capacity.block_size));
             USBH_UsrLog ("Block number : %lu", (int32_t)(MSC_Handle->unit[MSC_Handle->current_lun].capacity.block_nbr));
             USBH_UsrLog ("Block Size   : %lu", (int32_t)(MSC_Handle->unit[MSC_Handle->current_lun].capacity.block_size));
           }
@@ -449,7 +449,7 @@ static USBH_StatusTypeDef USBH_MSC_Process(USBH_HandleTypeDef *phost)
         }
         if( scsi_status == USBH_FAIL)
         {
-          USBH_UsrLog ("Mass Storage Device NOT ready");
+          USBH_UsrLog ("MSC Device NOT ready");
           MSC_Handle->unit[MSC_Handle->current_lun].state = MSC_UNRECOVERED_ERROR; 
         }
         else if(scsi_status == USBH_UNRECOVERED_ERROR)
@@ -580,7 +580,7 @@ static USBH_StatusTypeDef USBH_MSC_RdWrProcess(USBH_HandleTypeDef *phost, uint8_
     }
     if( scsi_status == USBH_FAIL)
     {
-      USBH_UsrLog ("Mass Storage Device NOT ready");
+      USBH_UsrLog ("MSC Device NOT ready");
     }
     else if(scsi_status == USBH_UNRECOVERED_ERROR)
     {

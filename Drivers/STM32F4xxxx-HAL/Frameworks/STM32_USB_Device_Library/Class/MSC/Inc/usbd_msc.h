@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file    usbd_msc_core.h
+  * @file    usbd_msc.h
   * @author  MCD Application Team
-  * @version V2.0.0
-  * @date    18-February-2014
-  * @brief   header for the usbd_msc_core.c file
+  * @version V2.2.0
+  * @date    13-June-2014
+  * @brief   header for the usbd_msc.c file
   ******************************************************************************
   * @attention
   *
@@ -103,6 +103,7 @@ USBD_MSC_BOT_HandleTypeDef;
 
 /* Structure for MSC process */
 extern USBD_ClassTypeDef  USBD_MSC;
+#define USBD_MSC_CLASS    &USBD_MSC
 
 uint8_t  USBD_MSC_RegisterStorage  (USBD_HandleTypeDef   *pdev, 
                                     USBD_StorageTypeDef *fops);

@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file    usbd_dfu_core.h
+  * @file    usbd_dfu.h
   * @author  MCD Application Team
-  * @version V2.0.0
-  * @date    18-February-2014
-  * @brief   header file for the usbd_dfu_core.c file.
+  * @version V2.2.0
+  * @date    13-June-2014
+  * @brief   header file for the usbd_dfu.c file.
   ******************************************************************************
   * @attention
   *
@@ -32,7 +32,7 @@
 
 #include  "usbd_ioreq.h"
 
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
+/** @addtogroup STM32_USB_DEVICE_LIBRARY
   * @{
   */
   
@@ -206,6 +206,7 @@ USBD_DFU_MediaTypeDef;
   */ 
 
 extern USBD_ClassTypeDef  USBD_DFU;
+#define USBD_DFU_CLASS    &USBD_DFU
 /**
   * @}
   */ 

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    usbh_core.h
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    18-February-2014
+  * @version V3.1.0
+  * @date    19-June-2014
   * @brief   Header file for usbh_core.c
   ******************************************************************************
   * @attention
@@ -62,7 +62,7 @@
 #define HOST_USER_CLASS_SELECTED                3
 #define HOST_USER_CONNECTION                    4
 #define HOST_USER_DISCONNECTION                 5
-
+#define HOST_USER_UNRECOVERED_ERROR             6
 
 
 /**

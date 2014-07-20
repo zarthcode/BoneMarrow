@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    usbd_dfu_media_template.c
   * @author  MCD Application Team
-  * @version V2.0.0
-  * @date    18-February-2014
+  * @version V2.2.0
+  * @date    13-June-2014
   * @brief   Memory management layer
   ******************************************************************************
   * @attention

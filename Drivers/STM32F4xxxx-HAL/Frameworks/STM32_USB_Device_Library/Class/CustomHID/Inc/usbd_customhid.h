@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file    usbd_hid_core.h
+  * @file    usbd_customhid.h
   * @author  MCD Application Team
-  * @version V2.0.0
-  * @date    18-February-2014
-  * @brief   header file for the usbd_hid_core.c file.
+  * @version V2.2.0
+  * @date    13-June-2014
+  * @brief   header file for the usbd_customhid.c file.
   ******************************************************************************
   * @attention
   *
@@ -32,12 +32,12 @@
 
 #include  "usbd_ioreq.h"
 
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
+/** @addtogroup STM32_USB_DEVICE_LIBRARY
   * @{
   */
   
 /** @defgroup USBD_CUSTOM_HID
-  * @brief This file is the Header file for USBD_msc.c
+  * @brief This file is the Header file for USBD_custom_hid.c
   * @{
   */ 
 
@@ -51,11 +51,8 @@
 #define CUSTOM_HID_EPOUT_ADDR                0x01
 #define CUSTOM_HID_EPOUT_SIZE                0x02
 
-
-
 #define USB_CUSTOM_HID_CONFIG_DESC_SIZ       41
 #define USB_CUSTOM_HID_DESC_SIZ              9
-#define CUSTOM_HID_REPORT_DESC_SIZE          163
 
 #define CUSTOM_HID_DESCRIPTOR_TYPE           0x21
 #define CUSTOM_HID_REPORT_DESC               0x22
@@ -84,12 +81,22 @@ typedef enum
 }
 CUSTOM_HID_StateTypeDef; 
 
+typedef struct _USBD_CUSTOM_HID_Itf
+{
+  uint8_t                  *pReport;
+  int8_t (* Init)          (void);
+  int8_t (* DeInit)        (void);
+  int8_t (* OutEvent)      (uint8_t, uint8_t );   
+
+}USBD_CUSTOM_HID_ItfTypeDef;
 
 typedef struct
 {
+  uint8_t              Report_buf[USBD_CUSTOMHID_OUTREPORT_BUF_SIZE];
   uint32_t             Protocol;   
   uint32_t             IdleState;  
   uint32_t             AltSetting;
+  uint32_t             IsReportAvailable;  
   CUSTOM_HID_StateTypeDef     state;  
 }
 USBD_CUSTOM_HID_HandleTypeDef; 
@@ -112,6 +119,7 @@ USBD_CUSTOM_HID_HandleTypeDef;
   */ 
 
 extern USBD_ClassTypeDef  USBD_CUSTOM_HID;
+#define USBD_CUSTOM_HID_CLASS    &USBD_CUSTOM_HID
 /**
   * @}
   */ 
@@ -122,8 +130,12 @@ extern USBD_ClassTypeDef  USBD_CUSTOM_HID;
 uint8_t USBD_CUSTOM_HID_SendReport (USBD_HandleTypeDef *pdev, 
                                  uint8_t *report,
                                  uint16_t len);
-void USBD_HID_DataOutCallback(USBD_HandleTypeDef *pdev, uint8_t epnum);
-void USBD_HID_EP0_DataOutCallback(USBD_HandleTypeDef *pdev);
+
+
+
+uint8_t  USBD_CUSTOM_HID_RegisterInterface  (USBD_HandleTypeDef   *pdev, 
+                                             USBD_CUSTOM_HID_ItfTypeDef *fops);
+
 /**
   * @}
   */ 

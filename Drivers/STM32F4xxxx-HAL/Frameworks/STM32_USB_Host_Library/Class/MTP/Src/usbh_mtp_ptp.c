@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    usbh_mtp_ptp.c 
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    18-February-2014
+  * @version V3.1.0
+  * @date    19-June-2014
   * @brief   This file includes the PTP operations layer
   ******************************************************************************
   * @attention
@@ -907,7 +907,10 @@ USBH_StatusTypeDef USBH_PTP_OpenSession (USBH_HandleTypeDef *phost, uint32_t ses
     /* Setup State machine and start transfer */
     MTP_Handle->ptp.state = PTP_OP_REQUEST_STATE;
     MTP_Handle->ptp.req_state = PTP_REQ_WAIT;
-    status = USBH_BUSY; 
+    status = USBH_BUSY;
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     break;
     
   case PTP_REQ_WAIT:
@@ -959,7 +962,10 @@ USBH_StatusTypeDef USBH_PTP_GetDevicePropDesc (USBH_HandleTypeDef *phost,
     /* Setup State machine and start transfer */
     MTP_Handle->ptp.state = PTP_OP_REQUEST_STATE;
     MTP_Handle->ptp.req_state = PTP_REQ_WAIT;
-    status = USBH_BUSY; 
+    status = USBH_BUSY;
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     break;
     
   case PTP_REQ_WAIT:
@@ -1016,6 +1022,9 @@ USBH_StatusTypeDef USBH_PTP_GetDeviceInfo (USBH_HandleTypeDef *phost, PTP_Device
     MTP_Handle->ptp.state = PTP_OP_REQUEST_STATE;
     MTP_Handle->ptp.req_state = PTP_REQ_WAIT;
     status = USBH_BUSY; 
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif     
     break;
     
   case PTP_REQ_WAIT:
@@ -1069,7 +1078,10 @@ USBH_StatusTypeDef USBH_PTP_GetStorageIds (USBH_HandleTypeDef *phost, PTP_Storag
     /* Setup State machine and start transfer */
     MTP_Handle->ptp.state = PTP_OP_REQUEST_STATE;
     MTP_Handle->ptp.req_state = PTP_REQ_WAIT;
-    status = USBH_BUSY; 
+    status = USBH_BUSY;
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     break;
     
   case PTP_REQ_WAIT:
@@ -1124,7 +1136,10 @@ USBH_StatusTypeDef USBH_PTP_GetStorageInfo (USBH_HandleTypeDef *phost, uint32_t 
     /* Setup State machine and start transfer */
     MTP_Handle->ptp.state = PTP_OP_REQUEST_STATE;
     MTP_Handle->ptp.req_state = PTP_REQ_WAIT;
-    status = USBH_BUSY; 
+    status = USBH_BUSY;
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     break;
     
   case PTP_REQ_WAIT:
@@ -1181,7 +1196,10 @@ USBH_StatusTypeDef USBH_PTP_GetNumObjects (USBH_HandleTypeDef *phost,
     /* Setup State machine and start transfer */
     MTP_Handle->ptp.state = PTP_OP_REQUEST_STATE;
     MTP_Handle->ptp.req_state = PTP_REQ_WAIT;
-    status = USBH_BUSY; 
+    status = USBH_BUSY;
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     break;
     
   case PTP_REQ_WAIT:
@@ -1242,7 +1260,10 @@ USBH_StatusTypeDef USBH_PTP_GetObjectHandles (USBH_HandleTypeDef *phost,
     /* Setup State machine and start transfer */
     MTP_Handle->ptp.state = PTP_OP_REQUEST_STATE;
     MTP_Handle->ptp.req_state = PTP_REQ_WAIT;
-    status = USBH_BUSY; 
+    status = USBH_BUSY;
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     break;
     
   case PTP_REQ_WAIT:
@@ -1301,7 +1322,10 @@ USBH_StatusTypeDef USBH_PTP_GetObjectInfo (USBH_HandleTypeDef *phost,
     /* Setup State machine and start transfer */
     MTP_Handle->ptp.state = PTP_OP_REQUEST_STATE;
     MTP_Handle->ptp.req_state = PTP_REQ_WAIT;
-    status = USBH_BUSY; 
+    status = USBH_BUSY;
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     break;
     
   case PTP_REQ_WAIT:
@@ -1355,7 +1379,10 @@ USBH_StatusTypeDef USBH_PTP_DeleteObject (USBH_HandleTypeDef *phost,
     /* Setup State machine and start transfer */
     MTP_Handle->ptp.state = PTP_OP_REQUEST_STATE;
     MTP_Handle->ptp.req_state = PTP_REQ_WAIT;
-    status = USBH_BUSY; 
+    status = USBH_BUSY;
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     break;
     
   case PTP_REQ_WAIT:
@@ -1411,7 +1438,10 @@ USBH_StatusTypeDef USBH_PTP_GetObject (USBH_HandleTypeDef *phost,
     /* Setup State machine and start transfer */
     MTP_Handle->ptp.state = PTP_OP_REQUEST_STATE;
     MTP_Handle->ptp.req_state = PTP_REQ_WAIT;
-    status = USBH_BUSY; 
+    status = USBH_BUSY;
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     break;
     
   case PTP_REQ_WAIT:
@@ -1481,7 +1511,10 @@ USBH_StatusTypeDef USBH_PTP_GetPartialObject(USBH_HandleTypeDef *phost,
     /* Setup State machine and start transfer */
     MTP_Handle->ptp.state = PTP_OP_REQUEST_STATE;
     MTP_Handle->ptp.req_state = PTP_REQ_WAIT;
-    status = USBH_BUSY; 
+    status = USBH_BUSY;
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     break;
     
   case PTP_REQ_WAIT:
@@ -1545,7 +1578,10 @@ USBH_StatusTypeDef USBH_PTP_GetObjectPropsSupported (USBH_HandleTypeDef *phost,
     /* Setup State machine and start transfer */
     MTP_Handle->ptp.state = PTP_OP_REQUEST_STATE;
     MTP_Handle->ptp.req_state = PTP_REQ_WAIT;
-    status = USBH_BUSY; 
+    status = USBH_BUSY;
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     break;
     
   case PTP_REQ_WAIT:
@@ -1604,7 +1640,10 @@ USBH_StatusTypeDef USBH_PTP_GetObjectPropDesc (USBH_HandleTypeDef *phost,
     /* Setup State machine and start transfer */
     MTP_Handle->ptp.state = PTP_OP_REQUEST_STATE;
     MTP_Handle->ptp.req_state = PTP_REQ_WAIT;
-    status = USBH_BUSY; 
+    status = USBH_BUSY;
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     break;
     
   case PTP_REQ_WAIT:
@@ -1669,7 +1708,10 @@ USBH_StatusTypeDef USBH_PTP_GetObjectPropList (USBH_HandleTypeDef *phost,
     /* Setup State machine and start transfer */
     MTP_Handle->ptp.state = PTP_OP_REQUEST_STATE;
     MTP_Handle->ptp.req_state = PTP_REQ_WAIT;
-    status = USBH_BUSY; 
+    status = USBH_BUSY;
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     break;
     
   case PTP_REQ_WAIT:
@@ -1732,6 +1774,9 @@ USBH_StatusTypeDef USBH_PTP_SendObject (USBH_HandleTypeDef *phost,
     MTP_Handle->ptp.state = PTP_OP_REQUEST_STATE;
     MTP_Handle->ptp.req_state = PTP_REQ_WAIT;
     status = USBH_BUSY; 
+#if (USBH_USE_OS == 1)
+    osMessagePut ( phost->os_event, USBH_STATE_CHANGED_EVENT, 0);
+#endif      
     break;
     
   case PTP_REQ_WAIT:

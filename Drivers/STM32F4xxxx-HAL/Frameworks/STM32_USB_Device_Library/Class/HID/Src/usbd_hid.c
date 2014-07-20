@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    usbd_hid.c
   * @author  MCD Application Team
-  * @version V2.0.0
-  * @date    18-February-2014
+  * @version V2.2.0
+  * @date    13-June-2014
   * @brief   This file provides the HID core functions.
   *
   * @verbatim
@@ -17,7 +17,7 @@
   *             - The Boot Interface Subclass
   *             - The Mouse protocol
   *             - Usage Page : Generic Desktop
-  *             - Usage : Joystick)
+  *             - Usage : Joystick
   *             - Collection : Application 
   *      
   * @note     In HS mode and when the DMA is used, all variables and data structures
@@ -52,7 +52,7 @@
 #include "usbd_ctlreq.h"
 
 
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
+/** @addtogroup STM32_USB_DEVICE_LIBRARY
   * @{
   */
 
@@ -180,7 +180,7 @@ __ALIGN_BEGIN static uint8_t USBD_HID_CfgDesc[USB_HID_CONFIG_DESC_SIZ]  __ALIGN_
   0x03,          /*bmAttributes: Interrupt endpoint*/
   HID_EPIN_SIZE, /*wMaxPacketSize: 4 Byte max */
   0x00,
-  0x0A,          /*bInterval: Polling Interval (10 ms)*/
+  HID_POLLING_INTERVAL,          /*bInterval: Polling Interval (10 ms)*/
   /* 34 */
 } ;
 
@@ -437,6 +437,17 @@ uint8_t USBD_HID_SendReport     (USBD_HandleTypeDef  *pdev,
 }
 
 /**
+  * @brief  USBD_HID_GetPollingInterval 
+  *         return polling interval from endpoint descriptor
+  * @param  pdev: device instance
+  * @retval polling interval
+  */
+uint8_t USBD_HID_GetPollingInterval (USBD_HandleTypeDef *pdev)
+{
+   return ((uint8_t)(HID_POLLING_INTERVAL));
+}
+
+/**
   * @brief  USBD_HID_GetCfgDesc 
   *         return configuration descriptor
   * @param  speed : current device speed
@@ -447,18 +458,6 @@ static uint8_t  *USBD_HID_GetCfgDesc (uint16_t *length)
 {
   *length = sizeof (USBD_HID_CfgDesc);
   return USBD_HID_CfgDesc;
-}
-
-/**
-* @brief  DeviceQualifierDescriptor 
-*         return Device Qualifier descriptor
-* @param  length : pointer data length
-* @retval pointer to descriptor buffer
-*/
-uint8_t  *USBD_HID_DeviceQualifierDescriptor (uint16_t *length)
-{
-  *length = sizeof (USBD_HID_DeviceQualifierDesc);
-  return USBD_HID_DeviceQualifierDesc;
 }
 
 

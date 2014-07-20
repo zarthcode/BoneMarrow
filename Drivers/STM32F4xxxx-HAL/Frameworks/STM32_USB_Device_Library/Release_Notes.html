@@ -4,6 +4,12 @@
 
 
 
+
+
+
+
+
+
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <link rel="File-List" href="Release_Notes_for_STM32F2xx_StdPeriph_Driver_files/filelist.xml">
 <link rel="Edit-Time-Data" href="Release_Notes_for_STM32F2xx_StdPeriph_Driver_files/editdata.mso"><!--[if !mso]>
@@ -911,7 +917,90 @@ ul
   <table class="MsoNormalTable" style="width: 675pt;" border="0" cellpadding="0" width="900">
    <tbody><tr style="">
     <td style="padding: 0in;" valign="top">
-    <h2 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;"><a name="History"></a><span style="font-size: 12pt; color: white;">Update History</span></h2>
+    <h2 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;"><a name="History"></a><span style="font-size: 12pt; color: white;">Update History</span></h2><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V2.2.0 / 13-June-2014</span></h3>
+
+
+
+
+
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes</span></u></b><u><span style="font-size: 10pt; font-family: Verdana; color: black;"><o:p></o:p></span></u></p>
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            <ul style="margin-top: 0cm;" type="square">
+<li><span style="font-size: 10pt; font-family: Verdana;">Source code comments review and update</span></li>
+              <li><span style="font-size: 10pt; font-family: Verdana;">HID class</span></li>
+              <ul>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Remove unused API <span style="font-style: italic;">USBD_HID_DeviceQualifierDescriptor()</span></span></li>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Add a new API in the HID class to query the poll time <span style="font-style: italic;">USBD_HID_GetPollingInterval()</span></span><br>
+                  <span style="font-size: 10pt; font-family: Verdana;"></span></li>
+              </ul>
+              
+              <li><span style="font-size: 10pt; font-family: Verdana;">CDC class</span></li>
+              <ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Bug fix: missing handling ZeroLength Setup request</span></li>
+              </ul>
+              <li><span style="font-size: 10pt; font-family: Verdana;">All classes</span><br>
+                <span style="font-size: 10pt; font-family: Verdana;"></span></li>
+
+              <ul>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Add alias for the class definition, it's defined as macro with capital letter</span></li>
+              </ul>
+            </ul>
+            <div style="margin-left: 80px;"><span style="font-size: 10pt; font-family: Verdana;">ex. for the HID, the <span style="font-style: italic;">USBD_HID_CLASS</span> macro is defined this way </span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic;">#define USBD_HID_CLASS&nbsp; &amp;USBD_HID</span></span><br>&nbsp;  <span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">and the application code can use the previous definition: <span style="font-style: italic;">&amp;USBD_HID</span> ex. <span style="font-style: italic;">USBD_RegisterClass(&amp;USBD_Device, &amp;USBD_HID)</span> or the new <span style="font-style: italic;">USBD_HID_CLASS</span> ex. <span style="font-style: italic;">USBD_RegisterClass(&amp;USBD_Device, USBD_HID_CLASS)</span></span></div>
+            <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V2.1.0 / 22-April-2014</span></h3>
+
+
+
+
+
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes</span></u></b><u><span style="font-size: 10pt; font-family: Verdana; color: black;"><o:p></o:p></span></u></p>
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            <ul style="margin-top: 0cm;" type="square">
+<li><span style="font-size: 10pt; font-family: Verdana;">usbd_conf_template.c: update file with the right content (it was using MSC memory management layer)<br>
+ </span></li>
+              <li><span style="font-size: 10pt; font-family: Verdana;">usbd_conf_template.h: change include of <span style="font-style: italic;">stm32f4xx.h </span>by <span style="font-style: italic;">stm32xxx.h</span> and add comment to inform user to adapt it to the device used</span></li>
+              <li><span style="font-size: 10pt; font-family: Verdana;">Several enhancements in CustomHID class</span></li>
+              <ul>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Update the Custom HID class driver to simplify the link with user processes</span></li>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Optimize the Custom HID class driver and reduce footprint</span></li>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Add <span style="font-style: italic;">USBD_CUSTOM_HID_RegisterInterface() </span>API to link user process to custom HID class</span></li>
+                <li><span style="font-size: 10pt; font-family: Verdana;">Add Custom HID interface template file <span style="font-style: italic;">usbd_customhid_if_template.c/h</span></span></li>
+              </ul>
+              <li><span style="font-size: 10pt; font-family: Verdana;">Miscellaneous comments update<span style="font-style: italic;"><br>
+                </span></span></li>
+
+            </ul>
+
             <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V2.0.0 / 18-February-2014</span></h3>
 
 

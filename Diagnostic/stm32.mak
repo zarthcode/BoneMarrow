@@ -4,8 +4,7 @@
 #Use VisualGDB Project Properties dialog or modify Makefile or per-configuration .mak files instead.
 
 #VisualGDB provides BSP_ROOT via environment when running Make. The line below will only be active if GNU Make is started manually.
-BSP_ROOT := C:/Users/Anthony/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32
-DRIVER_ROOT := ../Drivers
+BSP_ROOT ?= C:/Users/Anthony/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32
 TOOLCHAIN_ROOT := C:/SysGCC/arm-eabi
 
 #Embedded toolchain
@@ -16,8 +15,8 @@ AR := $(TOOLCHAIN_ROOT)/bin/arm-eabi-ar.exe
 OBJCOPY := $(TOOLCHAIN_ROOT)/bin/arm-eabi-objcopy.exe
 
 #Additional flags
-PREPROCESSOR_MACROS += ARM_MATH_CM4 stm32_flash_layout STM32F429ZI STM32F429xx
-INCLUDE_DIRS += . $(DRIVER_ROOT)/STM32F4xxxx-HAL/CMSIS/Device/ST/STM32F4xx/Include $(DRIVER_ROOT)/STM32F4xxxx-HAL/CMSIS/Include $(DRIVER_ROOT)/STM32F4xxxx-HAL/CMSIS/RTOS $(DRIVER_ROOT)/STM32F4xxxx-HAL/STM32F4xx_HAL_Driver/Inc
+PREPROCESSOR_MACROS += ARM_MATH_CM4 stm32_flash_layout STM32F427IG STM32F427xx
+INCLUDE_DIRS += . $(BSP_ROOT)/STM32F4xxxx-HAL/CMSIS/Device/ST/STM32F4xx/Include $(BSP_ROOT)/STM32F4xxxx-HAL/CMSIS/Include $(BSP_ROOT)/STM32F4xxxx-HAL/CMSIS/RTOS $(BSP_ROOT)/STM32F4xxxx-HAL/STM32F4xx_HAL_Driver/Inc
 LIBRARY_DIRS += 
 LIBRARY_NAMES += 
 ADDITIONAL_LINKER_INPUTS += 
@@ -27,6 +26,6 @@ LINUX_PACKAGES +=
 CFLAGS += -mcpu=cortex-m4 -mthumb
 CXXFLAGS += -mcpu=cortex-m4 -mthumb
 ASFLAGS += -mcpu=cortex-m4 -mthumb
-LDFLAGS += -mcpu=cortex-m4 -mthumb  -T$(DRIVER_ROOT)/STM32F4xxxx-HAL/LinkerScripts/STM32F429xI_flash.lds
+LDFLAGS += -mcpu=cortex-m4 -mthumb  -T$(BSP_ROOT)/STM32F4xxxx-HAL/LinkerScripts/STM32F427xG_flash.lds
 COMMONFLAGS +=  -mfloat-abi=hard
 

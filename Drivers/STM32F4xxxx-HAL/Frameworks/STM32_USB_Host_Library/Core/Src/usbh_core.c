@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    usbh_core.c 
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    18-February-2014
+  * @version V3.1.0
+  * @date    19-June-2014
   * @brief   This file implements the functions for the core state machine process
   *          the enumeration and the control transfer process
   ******************************************************************************
@@ -121,7 +121,11 @@ USBH_StatusTypeDef  USBH_Init(USBH_HandleTypeDef *phost, void (*pUsrFunc)(USBH_H
   phost->os_event = osMessageCreate (osMessageQ(USBH_Queue), NULL); 
   
   /*Create USB Host Task */
+#if defined (USBH_PROCESS_STACK_SIZE)
+  osThreadDef(USBH_Thread, USBH_Process_OS, USBH_PROCESS_PRIO, 0, USBH_PROCESS_STACK_SIZE);
+#else
   osThreadDef(USBH_Thread, USBH_Process_OS, USBH_PROCESS_PRIO, 0, 8 * configMINIMAL_STACK_SIZE);
+#endif  
   phost->thread = osThreadCreate (osThread(USBH_Thread), phost);
 #endif  
   
@@ -275,11 +279,6 @@ uint8_t  USBH_FindInterface(USBH_HandleTypeDef *phost, uint8_t Class, uint8_t Su
   
   pif = (USBH_InterfaceDescTypeDef *)0;
   pcfg = &phost->device.CfgDesc;  
-  
-  if((pif->bInterfaceClass == 0xFF) &&(pif->bInterfaceSubClass == 0xFF) && (pif->bInterfaceProtocol == 0xFF))
-  {
-    return 0xFF;
-  }
   
   while (if_ix < USBH_MAX_NUM_INTERFACES)
   {
