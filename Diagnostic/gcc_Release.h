@@ -63,7 +63,6 @@
 #define __UINTMAX_TYPE__ long long unsigned int
 #define __LLFRACT_EPSILON__ 0x1P-63LLR
 #define __DEC32_EPSILON__ 1E-6DF
-#define __OPTIMIZE__ 1
 #define __CHAR_UNSIGNED__ 1
 #define __UINT32_MAX__ 4294967295UL
 #define __ULFRACT_MAX__ 0XFFFFFFFFP-32ULR
@@ -79,7 +78,6 @@
 #define __LLACCUM_MIN__ (-0X1P31LLK-0X1P31LLK)
 #define __SIZEOF_INT__ 4
 #define __SIZEOF_POINTER__ 4
-#define NDEBUG 1
 #define __GCC_ATOMIC_CHAR16_T_LOCK_FREE 2
 #define __USACCUM_IBIT__ 8
 #define __USER_LABEL_PREFIX__ 
@@ -105,7 +103,6 @@
 #define __DECIMAL_DIG__ 17
 #define __LFRACT_EPSILON__ 0x1P-31LR
 #define __ULFRACT_MIN__ 0.0ULR
-#define RELEASE 1
 #define __ARM_PCS_VFP 1
 #define __LDBL_HAS_QUIET_NAN__ 1
 #define __ULACCUM_IBIT__ 32
@@ -177,6 +174,7 @@
 #define __SQ_IBIT__ 0
 #define __UINT8_TYPE__ unsigned char
 #define __UHA_FBIT__ 8
+#define __NO_INLINE__ 1
 #define __SFRACT_MIN__ (-0.5HR-0.5HR)
 #define __UTQ_FBIT__ 128
 #define __FLT_MANT_DIG__ 24
@@ -361,6 +359,8 @@
 #define __QQ_IBIT__ 0
 #define __ATOMIC_ACQ_REL 4
 #define __ATOMIC_RELEASE 3
+#define NDEBUG 
+#define RELEASE 
 #endif
 
 // --- Include directories begin --- //
@@ -376,7 +376,6 @@
 //c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/4.8.2/include-fixed
 //c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/4.8.2/../../../../arm-eabi/sys-include
 //c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/4.8.2/../../../../arm-eabi/include
-//.
 // --- Library directories end --- //
 
 

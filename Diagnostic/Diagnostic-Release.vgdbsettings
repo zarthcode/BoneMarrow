@@ -71,7 +71,7 @@
         </KeyValue>
         <KeyValue>
           <Key>com.sysprogs.arm.texane-stlink.resetcommand</Key>
-          <Value>mon reset</Value>
+          <Value />
         </KeyValue>
       </Entries>
     </DebugMethodProperties>
