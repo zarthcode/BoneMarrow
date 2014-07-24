@@ -6,14 +6,14 @@ BINARYDIR := Debug
 
 #Additional flags
 PREPROCESSOR_MACROS := DEBUG
-INCLUDE_DIRS := 
+INCLUDE_DIRS := ../Configuration/Inc
 LIBRARY_DIRS := 
 LIBRARY_NAMES := 
 ADDITIONAL_LINKER_INPUTS := 
 MACOS_FRAMEWORKS := 
 LINUX_PACKAGES := 
 
-CFLAGS := -ggdb -ffunction-sections -O0
+CFLAGS := -ggdb -ffunction-sections -std=c99 -O0
 CXXFLAGS := -ggdb -ffunction-sections -fno-exceptions -O0
 ASFLAGS := 
 LDFLAGS := -Wl,-gc-sections

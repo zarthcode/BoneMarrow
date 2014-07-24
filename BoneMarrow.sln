@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30324.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Diagnostic", "Diagnostic\Diagnostic.vcxproj", "{6DA6B9F1-D3C8-4EA3-A3F2-CBCDCCB32CE9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Diagnostic", "Diagnostic\Diagnostic.vcxproj", "{1918B128-E4D8-4F03-9F54-4A5EB60F4852}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|ARM = Release|ARM
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6DA6B9F1-D3C8-4EA3-A3F2-CBCDCCB32CE9}.Debug|ARM.ActiveCfg = Debug|ARM
-		{6DA6B9F1-D3C8-4EA3-A3F2-CBCDCCB32CE9}.Debug|ARM.Build.0 = Debug|ARM
-		{6DA6B9F1-D3C8-4EA3-A3F2-CBCDCCB32CE9}.Release|ARM.ActiveCfg = Release|ARM
-		{6DA6B9F1-D3C8-4EA3-A3F2-CBCDCCB32CE9}.Release|ARM.Build.0 = Release|ARM
+		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.Debug|ARM.ActiveCfg = Release|ARM
+		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.Debug|ARM.Build.0 = Release|ARM
+		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.Release|ARM.ActiveCfg = Release|ARM
+		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.Release|ARM.Build.0 = Release|ARM
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

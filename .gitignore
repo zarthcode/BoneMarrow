@@ -3,3 +3,4 @@
 *.old
 *.opensdf
 *.log
+/Diagnostic/*.user
