@@ -26,6 +26,9 @@
     <Filter Include="Header files\Drivers">
       <UniqueIdentifier>{1394e217-16d6-4fc7-a75a-075b4e188ef9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header files\Configuration">
+      <UniqueIdentifier>{fe195bdc-23f4-4459-bad4-dc5a8c70b9bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LEDBlink.c">
@@ -217,6 +220,9 @@
     <ClCompile Include="..\Configuration\Src\i2c.c">
       <Filter>Source files\Configuration</Filter>
     </ClCompile>
+    <ClCompile Include="..\Configuration\Src\main.c">
+      <Filter>Source files\Configuration</Filter>
+    </ClCompile>
     <ClCompile Include="..\Configuration\Src\spi.c">
       <Filter>Source files\Configuration</Filter>
     </ClCompile>
@@ -231,9 +237,6 @@
     </ClCompile>
     <ClCompile Include="..\Configuration\Src\usb_otg.c">
       <Filter>Source files\Configuration</Filter>
-    </ClCompile>
-    <ClCompile Include="main.c">
-      <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -493,31 +496,31 @@
       <Filter>Header files\Drivers</Filter>
     </ClInclude>
     <ClInclude Include="..\Configuration\Inc\adc.h">
-      <Filter>Header files</Filter>
+      <Filter>Header files\Configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\Configuration\Inc\gpio.h">
-      <Filter>Header files</Filter>
+      <Filter>Header files\Configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\Configuration\Inc\i2c.h">
-      <Filter>Header files</Filter>
+      <Filter>Header files\Configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\Configuration\Inc\spi.h">
-      <Filter>Header files</Filter>
+      <Filter>Header files\Configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\Configuration\Inc\stm32f4xx_hal_conf.h">
-      <Filter>Header files</Filter>
+      <Filter>Header files\Configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\Configuration\Inc\stm32f4xx_it.h">
-      <Filter>Header files</Filter>
+      <Filter>Header files\Configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\Configuration\Inc\tim.h">
-      <Filter>Header files</Filter>
+      <Filter>Header files\Configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\Configuration\Inc\usart.h">
-      <Filter>Header files</Filter>
+      <Filter>Header files\Configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\Configuration\Inc\usb_otg.h">
-      <Filter>Header files</Filter>
+      <Filter>Header files\Configuration</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

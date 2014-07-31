@@ -64,6 +64,7 @@
     <ClCompile Include="..\Configuration\Src\adc.c" />
     <ClCompile Include="..\Configuration\Src\gpio.c" />
     <ClCompile Include="..\Configuration\Src\i2c.c" />
+    <ClCompile Include="..\Configuration\Src\main.c" />
     <ClCompile Include="..\Configuration\Src\spi.c" />
     <ClCompile Include="..\Configuration\Src\stm32f4xx_it.c" />
     <ClCompile Include="..\Configuration\Src\tim.c" />
@@ -129,9 +130,6 @@
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_sdmmc.c" />
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_usb.c" />
     <ClCompile Include="LEDBlink.c" />
-    <ClCompile Include="main.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</ExcludedFromBuild>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Configuration\Inc\adc.h" />

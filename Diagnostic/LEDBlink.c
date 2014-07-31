@@ -1,5 +1,5 @@
 #include <stm32f4xx_hal.h>
-
+#include "tim.h"
 typedef enum LED { D1, D2, D3, D4, D5 } LEDType;
 
 void SetColor(LEDType led, int R, int G, int B);
@@ -34,9 +34,47 @@ TIM5_CH3 - PH12 - D5_GREEN
 */
 
 
-int mainOFF(void)
+void initPWM(void);
+
+int app_postinit(void)
 {
 
+/*
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
+	
+	
+
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
+
+	HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_3);
+*/
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
+
+
+	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
+}
+
+int app_main(void)
+{
+
+
+
+}
+
+void blinkMain(void)
+{
 	HAL_Init();
 
 
@@ -102,7 +140,7 @@ int mainOFF(void)
 	GPIO_InitStructure.Pull = GPIO_PULLUP;
 	HAL_GPIO_Init(GPIOG, &GPIO_InitStructure);
 
-	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_15, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOG, GPIO_PIN_15, GPIO_PIN_SET);
 
 
 	// Turn Red and Blue LEDs on.
@@ -192,19 +230,23 @@ int mainOFF(void)
 			break;
 		}
 
-		rgb++;
 
 		HAL_Delay(1000);
 
 
 	}
 
-	SetColor(D1, 0, 0, 0);
-	SetColor(D2, 0, 0, 0);
-	SetColor(D3, 0, 0, 0);
-	SetColor(D4, 0, 0, 0);
-	SetColor(D5, 0, 0, 0);
+	SetColor(D1, 1, 0, 0);
+	SetColor(D2, 1, 0, 0);
+	SetColor(D3, 1, 0, 0);
+	SetColor(D4, 1, 0, 0);
+	SetColor(D5, 1, 0, 0);
 	
+	
+}
+
+void initPWM(void)
+{
 
 	
 }
