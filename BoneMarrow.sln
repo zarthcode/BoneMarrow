@@ -11,8 +11,8 @@ Global
 		Release|ARM = Release|ARM
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.Debug|ARM.ActiveCfg = Release|ARM
-		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.Debug|ARM.Build.0 = Release|ARM
+		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.Debug|ARM.ActiveCfg = Debug|ARM
+		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.Debug|ARM.Build.0 = Debug|ARM
 		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.Release|ARM.ActiveCfg = Release|ARM
 		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.Release|ARM.Build.0 = Release|ARM
 	EndGlobalSection

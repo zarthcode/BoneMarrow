@@ -40,6 +40,7 @@
  extern "C" {
 #endif
 
+
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 
@@ -389,7 +390,13 @@
   void assert_failed(uint8_t* file, uint32_t line);
 #else
   #define assert_param(expr) ((void)0)
-#endif /* USE_FULL_ASSERT */    
+#endif /* USE_FULL_ASSERT */   
+
+/* USER DEFINES ------------------------------------------------------------*/
+// A damn-dirty Fix for STM32CubeMX code generator's incorrect flash latency setting.
+#undef FLASH_LATENCY_0
+#define FLASH_LATENCY_0                FLASH_ACR_LATENCY_5WS   /*!< FLASH Five Latency cycles     */
+
 
 #ifdef __cplusplus
 }

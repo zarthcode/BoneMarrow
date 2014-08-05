@@ -6,9 +6,9 @@ BINARYDIR := Release
 
 #Additional flags
 PREPROCESSOR_MACROS := NDEBUG RELEASE
-INCLUDE_DIRS := ../Configuration/Inc
+INCLUDE_DIRS := ../Configuration/Inc ../Features
 LIBRARY_DIRS := 
-LIBRARY_NAMES := 
+LIBRARY_NAMES := c nosys
 ADDITIONAL_LINKER_INPUTS := 
 MACOS_FRAMEWORKS := 
 LINUX_PACKAGES := 

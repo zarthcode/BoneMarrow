@@ -29,11 +29,17 @@
     <Filter Include="Header files\Configuration">
       <UniqueIdentifier>{fe195bdc-23f4-4459-bad4-dc5a8c70b9bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source files\Features">
+      <UniqueIdentifier>{ea9581af-330d-4046-ab4a-58a52e443d3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\Features">
+      <UniqueIdentifier>{d21228db-29a8-4af8-a65b-b279e5cbed70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files\Drivers\CMSIS">
+      <UniqueIdentifier>{ffaa0f85-9665-4329-9732-8867d0ebfbdd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LEDBlink.c">
-      <Filter>Source files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\startup_stm32f4xx.c">
       <Filter>Source files\Drivers</Filter>
     </ClCompile>
@@ -238,6 +244,15 @@
     <ClCompile Include="..\Configuration\Src\usb_otg.c">
       <Filter>Source files\Configuration</Filter>
     </ClCompile>
+    <ClCompile Include="Diagnostic.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Features\LED.c">
+      <Filter>Source files\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Features\Battery.c">
+      <Filter>Source files\Features</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f401xc.h">
@@ -277,45 +292,6 @@
       <Filter>Header files\Drivers</Filter>
     </ClInclude>
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\system_stm32f4xx.h">
-      <Filter>Header files\Drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\arm_common_tables.h">
-      <Filter>Header files\Drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\arm_const_structs.h">
-      <Filter>Header files\Drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\arm_math.h">
-      <Filter>Header files\Drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_cm0.h">
-      <Filter>Header files\Drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_cm0plus.h">
-      <Filter>Header files\Drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_cm3.h">
-      <Filter>Header files\Drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_cm4.h">
-      <Filter>Header files\Drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_cm4_simd.h">
-      <Filter>Header files\Drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_cmFunc.h">
-      <Filter>Header files\Drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_cmInstr.h">
-      <Filter>Header files\Drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_sc000.h">
-      <Filter>Header files\Drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_sc300.h">
-      <Filter>Header files\Drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\RTOS\cmsis_os.h">
       <Filter>Header files\Drivers</Filter>
     </ClInclude>
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h">
@@ -521,6 +497,57 @@
     </ClInclude>
     <ClInclude Include="..\Configuration\Inc\usb_otg.h">
       <Filter>Header files\Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\Battery.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\Eeprom.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\Glove.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\LED.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\RTOS\cmsis_os.h">
+      <Filter>Header files\Drivers\CMSIS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_cm0.h">
+      <Filter>Header files\Drivers\CMSIS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_cm0plus.h">
+      <Filter>Header files\Drivers\CMSIS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_cm3.h">
+      <Filter>Header files\Drivers\CMSIS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_cm4.h">
+      <Filter>Header files\Drivers\CMSIS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_cm4_simd.h">
+      <Filter>Header files\Drivers\CMSIS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_cmFunc.h">
+      <Filter>Header files\Drivers\CMSIS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_cmInstr.h">
+      <Filter>Header files\Drivers\CMSIS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_sc000.h">
+      <Filter>Header files\Drivers\CMSIS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_sc300.h">
+      <Filter>Header files\Drivers\CMSIS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\arm_common_tables.h">
+      <Filter>Header files\Drivers\CMSIS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\arm_const_structs.h">
+      <Filter>Header files\Drivers\CMSIS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\arm_math.h">
+      <Filter>Header files\Drivers\CMSIS</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

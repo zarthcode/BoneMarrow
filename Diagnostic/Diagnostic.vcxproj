@@ -35,9 +35,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <NMakeIncludeSearchPath>..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include;..\Drivers\STM32F4xxxx-HAL\CMSIS\Include;..\Drivers\STM32F4xxxx-HAL\CMSIS\RTOS;..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\arm-eabi\thumb\fpu\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include;..\Drivers\STM32F4xxxx-HAL\CMSIS\Include;..\Drivers\STM32F4xxxx-HAL\CMSIS\RTOS;..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\arm-eabi\thumb\fpu\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;..\Configuration\Inc;..\Features;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes>$(ProjectDir)\gcc_Debug.h;$(VISUALGDB_DIR)\gcc_compat.h;..\Drivers\stm32_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakePreprocessorDefinitions>__VisualGDB_CFG_Debug;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
@@ -45,6 +44,7 @@
     <IncludePath />
     <ReferencePath />
     <LibraryPath />
+    <NMakePreprocessorDefinitions>__VisualGDB_CFG_Debug;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <NMakeIncludeSearchPath>..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include;..\Drivers\STM32F4xxxx-HAL\CMSIS\Include;..\Drivers\STM32F4xxxx-HAL\CMSIS\RTOS;..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc;..\Configuration\Inc;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\arm-eabi\thumb\fpu\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
@@ -129,7 +129,9 @@
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fsmc.c" />
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_sdmmc.c" />
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_usb.c" />
-    <ClCompile Include="LEDBlink.c" />
+    <ClCompile Include="..\Features\Battery.c" />
+    <ClCompile Include="..\Features\LED.c" />
+    <ClCompile Include="Diagnostic.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Configuration\Inc\adc.h" />
@@ -226,6 +228,10 @@
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_fsmc.h" />
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_sdmmc.h" />
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_usb.h" />
+    <ClInclude Include="..\Features\Battery.h" />
+    <ClInclude Include="..\Features\Eeprom.h" />
+    <ClInclude Include="..\Features\Glove.h" />
+    <ClInclude Include="..\Features\LED.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="debug.mak" />

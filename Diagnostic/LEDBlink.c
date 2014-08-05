@@ -39,13 +39,12 @@ void initPWM(void);
 int app_postinit(void)
 {
 
-/*
+
+	// activate the TIM1 & TIM8 outputs
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
-	
-	
 
 	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
@@ -54,12 +53,17 @@ int app_postinit(void)
 	HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_3);
-*/
+	
+	// Disable CCPC on advanced timers.
+	htim1.Instance->CR2 &= ~(TIM_CR2_CCPC);
+	htim8.Instance->CR2 &= ~(TIM_CR2_CCPC);
+
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
 
+	
 
 	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2);
@@ -68,11 +72,45 @@ int app_postinit(void)
 
 int app_main(void)
 {
+	/*
+	// Check button state
+	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET)
+	{
+		// Enable the timers for 10s
+		HAL_Delay(10000);
 
+		// Disable the PWM units.
+		HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
+		HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_2);
+		HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_3);
+		HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_4);
 
+		HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_1);
+		HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_2);
+		HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_3);
+
+		HAL_TIM_PWM_Stop(&htim5, TIM_CHANNEL_1);
+		HAL_TIM_PWM_Stop(&htim5, TIM_CHANNEL_2);
+		HAL_TIM_PWM_Stop(&htim5, TIM_CHANNEL_3);
+
+		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
+		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_3);
+		HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_4);
+
+		HAL_TIM_PWM_Stop(&htim8, TIM_CHANNEL_1);
+		HAL_TIM_PWM_Stop(&htim8, TIM_CHANNEL_2);
+		HAL_TIM_PWM_Stop(&htim8, TIM_CHANNEL_3);
+	}
+	*/
 
 }
-
+/*
+void HAL_SYSTICK_Callback(void)
+{
+	HAL_Delay(1);
+}
+*/
 void blinkMain(void)
 {
 	HAL_Init();

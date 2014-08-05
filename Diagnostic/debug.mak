@@ -6,14 +6,14 @@ BINARYDIR := Debug
 
 #Additional flags
 PREPROCESSOR_MACROS := DEBUG
-INCLUDE_DIRS := ../Configuration/Inc
+INCLUDE_DIRS := ../Configuration/Inc ../Features
 LIBRARY_DIRS := 
-LIBRARY_NAMES := 
+LIBRARY_NAMES := c rdimon
 ADDITIONAL_LINKER_INPUTS := 
 MACOS_FRAMEWORKS := 
 LINUX_PACKAGES := 
 
-CFLAGS := -ggdb -ffunction-sections -std=c99 -O0
+CFLAGS := -specs=rdimon.specs -ggdb -ffunction-sections -std=c99 -O0
 CXXFLAGS := -ggdb -ffunction-sections -fno-exceptions -O0
 ASFLAGS := 
 LDFLAGS := -Wl,-gc-sections
