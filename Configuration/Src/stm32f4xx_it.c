@@ -5,6 +5,7 @@
 
 #include "LED.h"
 #include <stdio.h>
+#include "Button.h"
 
 /* External variables --------------------------------------------------------*/
 
@@ -29,6 +30,9 @@ void HAL_SYSTICK_Callback(void)
 {
 	// Update animation state
 	LED_Anim_Callback();
+
+	// Check for pushbutton events - debounce.
+	ButtonSystickHandler();
 
 }
 

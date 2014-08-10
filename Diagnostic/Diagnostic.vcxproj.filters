@@ -253,6 +253,18 @@
     <ClCompile Include="..\Features\Battery.c">
       <Filter>Source files\Features</Filter>
     </ClCompile>
+    <ClCompile Include="..\Features\imu.c">
+      <Filter>Source files\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="ClockTest.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Features\OTP.c">
+      <Filter>Source files\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Features\Button.c">
+      <Filter>Source files\Features</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f401xc.h">
@@ -548,6 +560,12 @@
     </ClInclude>
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\arm_math.h">
       <Filter>Header files\Drivers\CMSIS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\OTP.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\Button.h">
+      <Filter>Header files\Features</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

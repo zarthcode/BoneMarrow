@@ -2,8 +2,10 @@
 #include "adc.h"
 #include <stdio.h>
 
+/// @todo Add a calibration function that stores data to eeprom.
 
-// Read the ADC battery level
+/// @brief Read the ADC battery level
+/// @returns Battery voltage, (In volts. accurate to 12bits.)
 float readBatteryLevel(void)
 {
 
@@ -54,13 +56,26 @@ float readBatteryLevel(void)
 	// Determine the battery voltage.
 
 	// Zener voltage is ~2.7V
-	// R20 is 68 Ohm
-	// R22 is 240 Ohm
-
+	/// @TODO - Clean this up, replace non-calibrated variables w/#defines
 	/// @TODO - Zener Voltage Calibration values from EEPROM
-	float BatteryVoltage = 1.283f * ((float)ConversionResult / 1000.0f) + 2.7f;
+	float Vzener = 2.58f;
+
+	// R20 is 68 Ohm
+	float R20 = 68.0f;
+
+	// R22 is 240 Ohm
+	float R22 = 240.0f;
+
+	// Vref is 3.3V (buck-boost supply voltage. Accurate enough.)
+	float Vref = 3.3f;
+	
+	// Conversion is a 12-bit number, referenced from 0 to Vref.
+	float ADCVoltage = ConversionResult * (Vref / 4096);
+	
+	float BatteryVoltage = ((ADCVoltage * (R20 + R22)) / R22) + Vzener;
 
 #ifdef DEBUG
+	// Work-around for printing floats
 	printf("Battery Level reading is %d mV (Raw reading: %d)\n", (uint32_t)(BatteryVoltage * 1000), ConversionResult);
 #endif
 

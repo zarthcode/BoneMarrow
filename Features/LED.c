@@ -51,6 +51,25 @@ void LED_Anim_Callback(void)
 				case LED_STATE_BLINK:
 
 					// At 0, toggle 
+					if (TransitionTimeRemaining[i] == LED_BLINK_SPEED)
+					{
+						// Start at black
+						SetLEDColor((LED_IDType)i, black, 0);
+					}
+					else if (TransitionTimeRemaining[i] == 0)
+					{
+
+						// Optionally end the animation?
+
+						// Restart the pulse.
+						TransitionTimeRemaining[i] = LED_BLINK_SPEED;
+
+					}
+					else if (TransitionTimeRemaining[i] == (LED_BLINK_SPEED / 2))
+					{
+						// Decreasing brightness
+						SetLEDColor((LED_IDType)i, RGBLED_Color[i - D1], MAX_BRIGHTNESS);
+					}
 
 					break;
 
@@ -205,6 +224,7 @@ void StoreLEDColor(LED_IDType led, ColorStruct color)
 {
 
 	// Store LED color
+	/// @bug The color needs to be scaled for LED_MAX and MAX_BRIGHTNESS.
 	RGBLED_Color[led - D1] = color;
 
 }
@@ -221,6 +241,7 @@ void SetLEDState(LED_IDType led, LED_STATEType state)
 
 		break;
 	case LED_STATE_ON:
+		SetLEDColor(led, RGBLED_Color[led - D1], MAX_BRIGHTNESS);
 
 		break;
 

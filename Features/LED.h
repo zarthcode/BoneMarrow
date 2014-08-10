@@ -29,8 +29,8 @@ TIM5_CH3 - PH12 - D5_GREEN
 
 // LED speed 
 #define LED_PULSE_SPEED 1000 /* mS */
-#define LED_BLINK_SPEED 250 /* mS */
-#define LED_FAST_BLINK_SPEED 125 /* mS */
+#define LED_BLINK_SPEED 125 /* mS */
+#define LED_FAST_BLINK_SPEED 85 /* mS */
 #define MAX_BRIGHTNESS 0.25f /* % */
 
 #define LED_MAX 250

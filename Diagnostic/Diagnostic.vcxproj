@@ -130,7 +130,11 @@
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_sdmmc.c" />
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_usb.c" />
     <ClCompile Include="..\Features\Battery.c" />
+    <ClCompile Include="..\Features\Button.c" />
+    <ClCompile Include="..\Features\OTP.c" />
+    <ClCompile Include="..\Features\imu.c" />
     <ClCompile Include="..\Features\LED.c" />
+    <ClCompile Include="ClockTest.c" />
     <ClCompile Include="Diagnostic.c" />
   </ItemGroup>
   <ItemGroup>
@@ -229,9 +233,11 @@
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_sdmmc.h" />
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_usb.h" />
     <ClInclude Include="..\Features\Battery.h" />
+    <ClInclude Include="..\Features\Button.h" />
     <ClInclude Include="..\Features\Eeprom.h" />
     <ClInclude Include="..\Features\Glove.h" />
     <ClInclude Include="..\Features\LED.h" />
+    <ClInclude Include="..\Features\OTP.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="debug.mak" />
