@@ -21,7 +21,7 @@ LED_ANIMATIONType animationState = LED_ANIM_NONE;
 
 
 /// LED Animation Manager
-void LED_Anim_Callback(void)
+void LED_SystickHandler(void)
 {
 
 	// Update each LED
