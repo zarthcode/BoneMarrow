@@ -13,10 +13,10 @@ ADDITIONAL_LINKER_INPUTS :=
 MACOS_FRAMEWORKS := 
 LINUX_PACKAGES := 
 
-CFLAGS := -specs=rdimon.specs -ggdb -ffunction-sections -std=c99 -O0
-CXXFLAGS := -ggdb -ffunction-sections -fno-exceptions -O0
+CFLAGS := -specs=rdimon.specs -ggdb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -ffunction-sections -std=c99 -O0 -Werror
+CXXFLAGS := -ggdb -ffunction-sections -fno-exceptions -O0 -Werror
 ASFLAGS := 
-LDFLAGS := -Wl,-gc-sections
+LDFLAGS := -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Wl,-gc-sections
 COMMONFLAGS := 
 
 START_GROUP := -Wl,--start-group

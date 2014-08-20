@@ -35,7 +35,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <NMakeIncludeSearchPath>..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include;..\Drivers\STM32F4xxxx-HAL\CMSIS\Include;..\Drivers\STM32F4xxxx-HAL\CMSIS\RTOS;..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\arm-eabi\thumb\fpu\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;..\Configuration\Inc;..\Features;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>$(ProjectDir)\.;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\RTOS;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\arm-eabi\thumb\fpu\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;$(ProjectDir)\../Configuration/Inc;$(ProjectDir)\../Features;$(ProjectDir)\.;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes>$(ProjectDir)\gcc_Debug.h;$(VISUALGDB_DIR)\gcc_compat.h;..\Drivers\stm32_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
@@ -131,8 +131,11 @@
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_usb.c" />
     <ClCompile Include="..\Features\Battery.c" />
     <ClCompile Include="..\Features\Button.c" />
+    <ClCompile Include="..\Features\Filters.c" />
+    <ClCompile Include="..\Features\Interrupt.c" />
+    <ClCompile Include="..\Features\LSM330DLC.c" />
     <ClCompile Include="..\Features\OTP.c" />
-    <ClCompile Include="..\Features\imu.c" />
+    <ClCompile Include="..\Features\IMU.c" />
     <ClCompile Include="..\Features\LED.c" />
     <ClCompile Include="ClockTest.c" />
     <ClCompile Include="Diagnostic.c" />
@@ -233,11 +236,16 @@
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_sdmmc.h" />
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_usb.h" />
     <ClInclude Include="..\Features\Battery.h" />
+    <ClInclude Include="..\Features\Bone.h" />
     <ClInclude Include="..\Features\Button.h" />
     <ClInclude Include="..\Features\Eeprom.h" />
+    <ClInclude Include="..\Features\Filters.h" />
     <ClInclude Include="..\Features\Glove.h" />
+    <ClInclude Include="..\Features\IMU.h" />
     <ClInclude Include="..\Features\LED.h" />
+    <ClInclude Include="..\Features\LSM330DLC.h" />
     <ClInclude Include="..\Features\OTP.h" />
+    <ClInclude Include="..\Features\Quaternion.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="debug.mak" />

@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : ADC.c
-  * Date               : 01/08/2014 04:43:41
+  * Date               : 13/08/2014 10:56:53
   * Description        : This file provides code for the configuration
   *                      of the ADC instances.
   ******************************************************************************
@@ -85,10 +85,9 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     __ADC1_CLK_ENABLE();
   
     /**ADC1 GPIO Configuration    
-    PC0     ------> ADC1_IN10
-    PC1     ------> ADC1_IN11 
+    PC0     ------> ADC1_IN10 
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
+    GPIO_InitStruct.Pin = GPIO_PIN_0;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -105,10 +104,9 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
     __ADC1_CLK_DISABLE();
   
     /**ADC1 GPIO Configuration    
-    PC0     ------> ADC1_IN10
-    PC1     ------> ADC1_IN11 
+    PC0     ------> ADC1_IN10 
     */
-    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_0|GPIO_PIN_1);
+    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_0);
 
   }
 } 

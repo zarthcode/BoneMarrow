@@ -253,9 +253,6 @@
     <ClCompile Include="..\Features\Battery.c">
       <Filter>Source files\Features</Filter>
     </ClCompile>
-    <ClCompile Include="..\Features\imu.c">
-      <Filter>Source files\Features</Filter>
-    </ClCompile>
     <ClCompile Include="ClockTest.c">
       <Filter>Source files</Filter>
     </ClCompile>
@@ -263,6 +260,18 @@
       <Filter>Source files\Features</Filter>
     </ClCompile>
     <ClCompile Include="..\Features\Button.c">
+      <Filter>Source files\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Features\Interrupt.c">
+      <Filter>Source files\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Features\IMU.c">
+      <Filter>Source files\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Features\LSM330DLC.c">
+      <Filter>Source files\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Features\Filters.c">
       <Filter>Source files\Features</Filter>
     </ClCompile>
   </ItemGroup>
@@ -565,6 +574,21 @@
       <Filter>Header files\Features</Filter>
     </ClInclude>
     <ClInclude Include="..\Features\Button.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\IMU.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\Bone.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\LSM330DLC.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\Filters.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\Quaternion.h">
       <Filter>Header files\Features</Filter>
     </ClInclude>
   </ItemGroup>

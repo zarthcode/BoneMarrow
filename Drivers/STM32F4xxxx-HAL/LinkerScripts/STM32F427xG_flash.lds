@@ -121,6 +121,8 @@ SECTIONS
 	} > SRAM
 
 	PROVIDE(end = .);
+	PROVIDE(_end = .);
+	PROVIDE(__end__ = .);
 
 }
 

@@ -1,12 +1,14 @@
 /**
   ******************************************************************************
-  * File Name          : SPI.h
-  * Date               : 13/08/2014 10:56:54
-  * Description        : This file provides code for the configuration
-  *                      of the SPI instances.
+  * @file    TIM/TIM_TimeBase/Inc/main.h 
+  * @author  MCD Application Team
+  * @version V1.1.0
+  * @date    26-June-2014
+  * @brief   Header for main.c module
   ******************************************************************************
+  * @attention
   *
-  * COPYRIGHT(c) 2014 STMicroelectronics
+  * <h2><center>&copy; COPYRIGHT(c) 2014 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -32,41 +34,29 @@
   *
   ******************************************************************************
   */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __spi_H
-#define __spi_H
-#ifdef __cplusplus
- extern "C" {
-#endif
+#ifndef __MAIN_H
+#define __MAIN_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-extern SPI_HandleTypeDef hspi1;
-extern SPI_HandleTypeDef hspi2;
-extern SPI_HandleTypeDef hspi3;
-extern SPI_HandleTypeDef hspi4;
-extern SPI_HandleTypeDef hspi5;
-extern SPI_HandleTypeDef hspi6;
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+/* Exported macro ------------------------------------------------------------*/
+/* User can use this section to tailor TIMx instance used and associated 
+   resources */
+/* Definition for TIMx clock resources */
+#define TIMx                           TIM3
+#define TIMx_CLK_ENABLE                __TIM3_CLK_ENABLE
 
-void MX_SPI1_Init(void);
-void MX_SPI2_Init(void);
-void MX_SPI3_Init(void);
-void MX_SPI4_Init(void);
-void MX_SPI5_Init(void);
-void MX_SPI6_Init(void);
+/* Definition for TIMx's NVIC */
+#define TIMx_IRQn                      TIM3_IRQn
+#define TIMx_IRQHandler                TIM3_IRQHandler
 
-#ifdef __cplusplus
-}
-#endif
-#endif /*__ spi_H */
+/* Exported functions ------------------------------------------------------- */
 
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
+#endif /* __MAIN_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -109,7 +109,7 @@ void SetLEDState(LED_IDType led, LED_STATEType state);
 void SetLED_Animation(LED_ANIMATIONType animation);
 
 /// LED 1ms callback handler
-void LED_Anim_Callback(void);
+void LED_SystickHandler(void);
 
 /// LED PWM Start
 void LED_PWM_Start(void);

@@ -200,6 +200,7 @@
 #define __SIZE_TYPE__ unsigned int
 #define __UINT64_MAX__ 18446744073709551615ULL
 #define __UDQ_FBIT__ 64
+#define DEBUG 1
 #define __INT8_TYPE__ signed char
 #define __thumb__ 1
 #define __ELF__ 1
@@ -359,7 +360,6 @@
 #define __QQ_IBIT__ 0
 #define __ATOMIC_ACQ_REL 4
 #define __ATOMIC_RELEASE 3
-#define DEBUG 
 #endif
 
 // --- Include directories begin --- //
@@ -375,6 +375,9 @@
 //c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/4.8.2/include-fixed
 //c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/4.8.2/../../../../arm-eabi/sys-include
 //c:\sysgcc\arm-eabi\bin\../lib/gcc/arm-eabi/4.8.2/../../../../arm-eabi/include
+//../Configuration/Inc
+//../Features
+//.
 // --- Library directories end --- //
 
 
