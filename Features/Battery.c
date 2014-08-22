@@ -1,6 +1,6 @@
 #include "Battery.h"
 #include "adc.h"
-#include <stdio.h>
+#include "Semihosting.h"
 
 /// @todo Add a calibration function that stores data to eeprom.
 
@@ -36,9 +36,7 @@ float readBatteryLevel(void)
 
 	default:
 		// Unimplemented HAL result
-#ifdef DEBUG
-		printf("Unknown HAL return code.\n");
-#endif
+		printf_semi("Unknown HAL return code.\n");
 		break;
 	}
 	
@@ -74,10 +72,8 @@ float readBatteryLevel(void)
 	
 	float BatteryVoltage = ((ADCVoltage * (R20 + R22)) / R22) + Vzener;
 
-#ifdef DEBUG
 	// Work-around for printing floats
-	printf("Battery Level reading is %d mV (Raw reading: %d)\n", (uint32_t)(BatteryVoltage * 1000), ConversionResult);
-#endif
+	printf_semi("Battery Level reading is %d mV (Raw reading: %d)\n", (uint32_t)(BatteryVoltage * 1000), ConversionResult);
 
 	return BatteryVoltage;
 }

@@ -134,6 +134,7 @@
     <ClCompile Include="..\Features\Filters.c" />
     <ClCompile Include="..\Features\Interrupt.c" />
     <ClCompile Include="..\Features\LSM330DLC.c" />
+    <ClCompile Include="..\Features\MadgwickAHRS.c" />
     <ClCompile Include="..\Features\OTP.c" />
     <ClCompile Include="..\Features\IMU.c" />
     <ClCompile Include="..\Features\LED.c" />
@@ -244,8 +245,10 @@
     <ClInclude Include="..\Features\IMU.h" />
     <ClInclude Include="..\Features\LED.h" />
     <ClInclude Include="..\Features\LSM330DLC.h" />
+    <ClInclude Include="..\Features\MadgwickAHRS.h" />
     <ClInclude Include="..\Features\OTP.h" />
     <ClInclude Include="..\Features\Quaternion.h" />
+    <ClInclude Include="..\Features\Semihosting.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="debug.mak" />

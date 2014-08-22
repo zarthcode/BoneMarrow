@@ -91,10 +91,14 @@ void SelectIMUSubDevice(IMU_PortType finger, IMU_SubDeviceType component);
 /// Detect connected IMUs and
 IMU_ComponentType DetectIMU(IMU_MappingStruct* device);
 
+/// Configures the selected IMU
+void ConfigureIMU(IMU_PortType finger);
+
 /// Configures Interrupt Pins
 void IMU_ConfigureEXTI(IMU_PinMappingType* pinmap);
 
 /// Retrieves IMU data as a DMA transfer
+void IMU_StartDMATransfer(IMU_PortType finger, IMU_SubDeviceType component);
 
 /*
 
@@ -135,3 +139,9 @@ void IMU_ConfigureEXTI(IMU_PinMappingType* pinmap);
 	
 
 */
+
+
+// AHRS Algorithm(s)
+
+// Madgwick AHRS (http://www.x-io.co.uk/open-source-imu-and-ahrs-algorithms/)
+// Optimized for ARM Cortex M4F

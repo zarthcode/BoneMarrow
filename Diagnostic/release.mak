@@ -6,15 +6,15 @@ BINARYDIR := Release
 
 #Additional flags
 PREPROCESSOR_MACROS := NDEBUG RELEASE
-INCLUDE_DIRS := ../Configuration/Inc ../Features
+INCLUDE_DIRS := 
 LIBRARY_DIRS := 
 LIBRARY_NAMES := c nosys
 ADDITIONAL_LINKER_INPUTS := 
 MACOS_FRAMEWORKS := 
 LINUX_PACKAGES := 
 
-CFLAGS := -ggdb -ffunction-sections -O0 -std=c99 -Werror
-CXXFLAGS := -ggdb -ffunction-sections -fno-exceptions -O0 -Werror
+CFLAGS := -ffunction-sections -O0 
+CXXFLAGS := -ffunction-sections -fno-exceptions -O0
 ASFLAGS := 
 LDFLAGS := -Wl,-gc-sections
 COMMONFLAGS := 
