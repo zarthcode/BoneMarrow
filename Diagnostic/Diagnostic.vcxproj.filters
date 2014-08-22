@@ -614,5 +614,8 @@
     <None Include="stm32.mak">
       <Filter>Make files</Filter>
     </None>
+    <None Include="debugsemihosting.mak">
+      <Filter>Make files</Filter>
+    </None>
   </ItemGroup>
 </Project>

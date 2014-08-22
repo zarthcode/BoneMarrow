@@ -13,8 +13,8 @@ ADDITIONAL_LINKER_INPUTS :=
 MACOS_FRAMEWORKS := 
 LINUX_PACKAGES := 
 
-CFLAGS := -specs=rdimon.specs -ggdb -ffunction-sections -O0 
-CXXFLAGS := -ggdb -ffunction-sections -fno-exceptions -O0
+CFLAGS := -specs=rdimon.specs -ggdb -ffunction-sections -Og 
+CXXFLAGS := -ggdb -ffunction-sections -fno-exceptions -Og
 ASFLAGS := 
 LDFLAGS := -Wl,-gc-sections
 COMMONFLAGS := 

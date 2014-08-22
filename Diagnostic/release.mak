@@ -13,8 +13,8 @@ ADDITIONAL_LINKER_INPUTS :=
 MACOS_FRAMEWORKS := 
 LINUX_PACKAGES := 
 
-CFLAGS := -ffunction-sections -O0 
-CXXFLAGS := -ffunction-sections -fno-exceptions -O0
+CFLAGS := -ffunction-sections -O3 
+CXXFLAGS := -ffunction-sections -fno-exceptions -O3
 ASFLAGS := 
 LDFLAGS := -Wl,-gc-sections
 COMMONFLAGS := 
