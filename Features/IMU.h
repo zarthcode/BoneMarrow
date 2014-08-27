@@ -4,6 +4,7 @@
 #include "spi.h"
 #include <stdbool.h>
 #include "LSM330DLC.h"
+#include "Quaternion.h"
 
 
 #define SPI_TIMEOUT 200
@@ -64,6 +65,17 @@ typedef enum
 //	IMU_DEVICE_LSM330,
 	IMU_DEVICE_LAST
 } IMU_Device;
+
+
+/// Acceleration, Gyroscope, and Magnetometer Data
+typedef struct 
+{
+
+	IVector3 accelerometer;
+	IVector3 gyroscope;
+	IVector3 magnetometer;
+
+} IMU_RAW;
 
 
 /// @brief Information needed to access a single IMU

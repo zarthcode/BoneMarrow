@@ -277,6 +277,9 @@
     <ClCompile Include="..\Features\MadgwickAHRS.c">
       <Filter>Source files\Features</Filter>
     </ClCompile>
+    <ClCompile Include="..\Features\SPIManager.c">
+      <Filter>Source files\Features</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f401xc.h">
@@ -591,13 +594,16 @@
     <ClInclude Include="..\Features\Filters.h">
       <Filter>Header files\Features</Filter>
     </ClInclude>
-    <ClInclude Include="..\Features\Quaternion.h">
-      <Filter>Header files\Features</Filter>
-    </ClInclude>
     <ClInclude Include="..\Features\MadgwickAHRS.h">
       <Filter>Header files\Features</Filter>
     </ClInclude>
     <ClInclude Include="..\Features\Semihosting.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\SPIManager.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\Spatial.h">
       <Filter>Header files\Features</Filter>
     </ClInclude>
   </ItemGroup>
