@@ -28,6 +28,37 @@ IMU_TransferStateType IMU_TransferState;
 void DBG_SPICheckState(HAL_SPI_StateTypeDef state);
 
 
+/// Test IVector3 alignment
+void IMU_CheckAlignment(void)
+{
+	// Quick analysis of IVector3 alignment
+	IVector3 testbyte;
+
+	testbyte.txbyte = 0xDE;
+	testbyte.x = 0;
+	testbyte.y = INT16_MAX;
+	testbyte.z = 0;
+
+	// printout data
+	printf_semi("IMU_CheckAlignment() - Test byte\n");
+	printf_semi("testbyte.txbyte = %d [0x%02x] \t\t[address = %p]\n", testbyte.txbyte, testbyte.txbyte, &testbyte.txbyte);
+	printf_semi("testbyte.x = %d [0x%04x] \t[address = %p]\n", testbyte.x, testbyte.x, &testbyte.x);
+	printf_semi("testbyte.y = %d [0x%04x] \t[address = %p]\n", testbyte.y, testbyte.y, &testbyte.y);
+	printf_semi("testbyte.z = %d [0x%04x] \t[address = %p]\n", testbyte.z, testbyte.z, &testbyte.z);
+
+	// With padding, size should be 8 bytes.
+	printf_semi("size = %d, expected 8 bytes\nbase addr = %p\n", sizeof(testbyte), &testbyte);
+
+	for (int i = 0; i < sizeof(testbyte); i++)
+	{
+		printf_semi("\t[%d][%p] = 0x%02x\n", i, &((uint8_t*)&testbyte)[i],((uint8_t*)&testbyte)[i]);
+	}
+
+
+
+
+}
+
 
 /// Determines if the SPI port can communicate with the IMU.
 bool IMUTest(IMU_PortType imuport)
@@ -48,30 +79,8 @@ bool IMUTest(IMU_PortType imuport)
 					// Select the gyroscope
 					SelectIMUSubDevice(imuport, IMU_SUBDEV_GYRO);
 
-				/*
-					// Access WHO_AM_I_G register at address 0F.
-					uint8_t addressbyte = LSM330DLC_FormatAddress(true, false, LSM330DLC_REG_WHO_AM_I_G);
-
-					// Send a byte...
-					if (HAL_SPI_Transmit(IMUDevice[imuport].hspi, &addressbyte, 1, SPI_TIMEOUT) != HAL_OK)
-					{
-						// No! Bad! Bad STM32! 
-						printf_semi("SPI IMU Test (transmit) failed.\n");
-				
-					}
-					// Read a byte...
-					uint8_t responsebyte = 0;
-
-					if (HAL_SPI_Receive(IMUDevice[imuport].hspi, &responsebyte, 1, SPI_TIMEOUT) != HAL_OK)
-					{
-						// No! Bad! Bad IMU! 
-						printf_semi("SPI IMU Test (receive) failed.\n");
-					}
-				*/
-
-					/// Test for combination tx/rx
+					/// Test for combination tx/rx buffer
 					uint8_t spi_txrx[2] = { 0, 0 };
-					
 					spi_txrx[0] = LSM330DLC_FormatAddress(true, false, LSM330DLC_REG_WHO_AM_I_G);
 
 					// Attempt combination TX/RX
@@ -82,23 +91,22 @@ bool IMUTest(IMU_PortType imuport)
 				
 					}
 
-
-
-					// Reset CS
+					// Reset \CS
 					SelectIMUSubDevice(imuport, IMU_SUBDEV_NONE);
 
 					// ...Result should equal 0b11010100
 					if (spi_txrx[1] == LSM330DLC_WHO_AM_I_G_VALUE)
 					{
 						// Ready to go!
-						printf_semi("SPI IMU Test successful. (Received 0x%02x)\n", spi_txrx[1]);
+						printf_semi("SPI IMU Test successful. (TxRx buffer: 0x%02x 0x%02x).\n", spi_txrx[0], spi_txrx[1]);
+
 						return true;
 						
 					} 
 					else
 					{
 						// Ready to go!
-						printf_semi("SPI IMU Test unsuccessful (received 0x%02x).\n", spi_txrx[1]);
+						printf_semi("SPI IMU Test unsuccessful (received 0x%02x 0x%02x).\n", spi_txrx[0], spi_txrx[1]);
 					}
 				}
 				else

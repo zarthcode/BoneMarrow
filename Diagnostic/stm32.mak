@@ -4,7 +4,7 @@
 #Use VisualGDB Project Properties dialog or modify Makefile or per-configuration .mak files instead.
 
 #VisualGDB provides BSP_ROOT via environment when running Make. The line below will only be active if GNU Make is started manually.
-BSP_ROOT ?= ../Drivers
+BSP_ROOT ?= C:/Users/Anthony/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32
 TOOLCHAIN_ROOT := C:/gcc/4.8-2014q2
 
 #Embedded toolchain

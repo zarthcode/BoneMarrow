@@ -107,6 +107,8 @@ int app_postinit(void)
 	}
 	*/
 
+	IMU_CheckAlignment();
+
 	// Onboard SPI Test
 	SetupIMU();
 	IMUTest(IMU_ONBOARD);

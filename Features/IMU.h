@@ -136,6 +136,9 @@ void IMU_HandleSPIEvent(void);
 /// Starts appropriate DMA transfer on the given port
 void IMU_HandleTransfer(IMU_PortType finger);
 
+/// Debug/Dev function to check structure alignment
+void IMU_CheckAlignment(void);
+
 /// Performs initial setup of IMU mapping structures
 void SetupIMU(void);
 
