@@ -25,9 +25,9 @@ typedef struct
 } Vector3;
 
 /// 16-bit (twos compliment) Vector3
-typedef struct 
+typedef struct __attribute__((packed)) 
 {
-	uint8_t pad;		/// Padding byte, for alignment purposes.
+//	uint8_t pad;		/// Padding byte, for alignment purposes.
 	uint8_t txbyte;		/// Used to hold the spi address byte.
 	struct 
 	{
@@ -35,7 +35,7 @@ typedef struct
 		int16_t y;
 		int16_t z;
 	};
-} IVector3;
+} IVector3 ;
 
 /// Unscaled Acceleration, Gyroscope, and Magnetometer Data
 typedef struct 

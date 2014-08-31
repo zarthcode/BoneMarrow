@@ -47,15 +47,12 @@ void IMU_CheckAlignment(void)
 	printf_semi("testbyte.z = %d [0x%04x] \t[address = %p]\n", testbyte.z, testbyte.z, &testbyte.z);
 
 	// With padding, size should be 8 bytes.
-	printf_semi("size = %d, expected 8 bytes\nbase addr = %p\n", sizeof(testbyte), &testbyte);
+	printf_semi("size = %d, expected 7 bytes\nbase addr = %p\n", sizeof(testbyte), &testbyte);
 
 	for (int i = 0; i < sizeof(testbyte); i++)
 	{
 		printf_semi("\t[%d][%p] = 0x%02x\n", i, &((uint8_t*)&testbyte)[i],((uint8_t*)&testbyte)[i]);
 	}
-
-
-
 
 }
 
