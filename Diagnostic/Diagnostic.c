@@ -29,9 +29,11 @@ int app_postinit(void)
 	__BKPT(0);
 	// Enable debug module during all modes
 
+#ifdef SEMIHOSTING
 	// NOTE: SIGTRAP?  Run "mon arm semihosting enable" in your GDB session. Then continue.
 	initialise_monitor_handles();
 
+#endif
 #endif
 
 	// Greeting banner
@@ -259,6 +261,7 @@ bool Diag_ButtonTest(void)
 /// Battery Meter Test
 bool Diag_BatteryMeterTest(void)
 {
+
 	float voltage = readBatteryLevel();
 
 	// Printing floats is a big, stack-sucking deal.  Print as mV  
@@ -269,7 +272,6 @@ bool Diag_BatteryMeterTest(void)
 
 	return true;
 
-
 }
 
 /// Onboard IMU Test
@@ -277,6 +279,7 @@ bool Diag_BatteryMeterTest(void)
 /// Radio Test
 
 /// Off-board SPI test
+
 
 /// Off-board I²C test
 

@@ -1,23 +1,31 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.30324.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Diagnostic", "Diagnostic\Diagnostic.vcxproj", "{1918B128-E4D8-4F03-9F54-4A5EB60F4852}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Glove", "Glove\Glove.vcxproj", "{4FBFFF02-9D4F-47D3-8306-B31FF1050FD8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
-		DebugSemihosting|ARM = DebugSemihosting|ARM
 		Release|ARM = Release|ARM
+		Semihosting|ARM = Semihosting|ARM
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.Debug|ARM.ActiveCfg = Debug|ARM
 		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.Debug|ARM.Build.0 = Debug|ARM
-		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.DebugSemihosting|ARM.ActiveCfg = DebugSemihosting|ARM
-		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.DebugSemihosting|ARM.Build.0 = DebugSemihosting|ARM
 		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.Release|ARM.ActiveCfg = Release|ARM
 		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.Release|ARM.Build.0 = Release|ARM
+		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.Semihosting|ARM.ActiveCfg = Semihosting|ARM
+		{1918B128-E4D8-4F03-9F54-4A5EB60F4852}.Semihosting|ARM.Build.0 = Semihosting|ARM
+		{4FBFFF02-9D4F-47D3-8306-B31FF1050FD8}.Debug|ARM.ActiveCfg = Debug|ARM
+		{4FBFFF02-9D4F-47D3-8306-B31FF1050FD8}.Debug|ARM.Build.0 = Debug|ARM
+		{4FBFFF02-9D4F-47D3-8306-B31FF1050FD8}.Release|ARM.ActiveCfg = Release|ARM
+		{4FBFFF02-9D4F-47D3-8306-B31FF1050FD8}.Release|ARM.Build.0 = Release|ARM
+		{4FBFFF02-9D4F-47D3-8306-B31FF1050FD8}.Semihosting|ARM.ActiveCfg = Semihosting|ARM
+		{4FBFFF02-9D4F-47D3-8306-B31FF1050FD8}.Semihosting|ARM.Build.0 = Semihosting|ARM
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

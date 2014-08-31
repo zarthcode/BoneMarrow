@@ -1,9 +1,9 @@
 /**
   ******************************************************************************
-  * File Name          : SPI.h
+  * File Name          : dma.c
   * Date               : 27/08/2014 09:12:57
   * Description        : This file provides code for the configuration
-  *                      of the SPI instances.
+  *                      of all the requested memory to memory DMA transfers.
   ******************************************************************************
   *
   * COPYRIGHT(c) 2014 STMicroelectronics
@@ -32,34 +32,37 @@
   *
   ******************************************************************************
   */
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __spi_H
-#define __spi_H
-#ifdef __cplusplus
- extern "C" {
-#endif
-
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx_hal.h"
+#include "dma.h"
 
-extern SPI_HandleTypeDef hspi1;
-extern SPI_HandleTypeDef hspi2;
-extern SPI_HandleTypeDef hspi3;
-extern SPI_HandleTypeDef hspi4;
-extern SPI_HandleTypeDef hspi5;
-extern SPI_HandleTypeDef hspi6;
+/* USER CODE BEGIN 0 */
 
-void MX_SPI1_Init(void);
-void MX_SPI2_Init(void);
-void MX_SPI3_Init(void);
-void MX_SPI4_Init(void);
-void MX_SPI5_Init(void);
-void MX_SPI6_Init(void);
+/* USER CODE END 0 */
 
-#ifdef __cplusplus
+/*----------------------------------------------------------------------------*/
+/* Configure DMA                                                              */
+/*----------------------------------------------------------------------------*/
+
+/* USER CODE BEGIN 1 */
+
+/* USER CODE END 1 */
+
+/** 
+  * Enable DMA controller clock
+  */
+void MX_DMA_Init(void) 
+{
+  /* DMA controller clock enable */
+  __DMA2_CLK_ENABLE();
+  __DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+
 }
-#endif
-#endif /*__ spi_H */
+
+/* USER CODE BEGIN 2 */
+
+/* USER CODE END 2 */
 
 /**
   * @}

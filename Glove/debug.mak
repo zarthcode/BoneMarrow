@@ -13,7 +13,7 @@ ADDITIONAL_LINKER_INPUTS :=
 MACOS_FRAMEWORKS := 
 LINUX_PACKAGES := 
 
-CFLAGS := -ggdb -ffunction-sections -Og 
+CFLAGS := -ggdb -ffunction-sections -Og
 CXXFLAGS := -ggdb -ffunction-sections -fno-exceptions -Og
 ASFLAGS := 
 LDFLAGS := -Wl,-gc-sections

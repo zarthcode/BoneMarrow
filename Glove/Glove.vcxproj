@@ -15,7 +15,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{1918B128-E4D8-4F03-9F54-4A5EB60F4852}</ProjectGuid>
+    <ProjectGuid>{4FBFFF02-9D4F-47D3-8306-B31FF1050FD8}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
@@ -28,7 +28,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Semihosting|ARM'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Semihosting|ARM'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -42,24 +42,24 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <NMakeIncludeSearchPath>$(ProjectDir)\.;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\RTOS;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\arm-eabi\thumb\fpu\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;$(ProjectDir)\../Configuration/Inc;$(ProjectDir)\../Features;$(ProjectDir)\.;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeForcedIncludes>$(ProjectDir)\gcc_Debug.h;$(VISUALGDB_DIR)\gcc_compat.h;..\Drivers\stm32_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeIncludeSearchPath>$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\RTOS;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.9.1;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.9.1\arm-eabi\thumb\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.9.1\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.9.1\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.9.1\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes>$(ProjectDir)\gcc_Debug.h;$(VISUALGDB_DIR)\gcc_compat.h;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\stm32_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakePreprocessorDefinitions>__VisualGDB_CFG_Debug;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
-    <NMakeOutput>$(ProjectDir)Diagnostic-Debug.vgdbsettings</NMakeOutput>
+    <NMakeOutput>$(ProjectDir)Glove-Debug.vgdbsettings</NMakeOutput>
     <IncludePath />
     <ReferencePath />
     <LibraryPath />
-    <NMakePreprocessorDefinitions>__VisualGDB_CFG_Debug;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <NMakeIncludeSearchPath>..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include;..\Drivers\STM32F4xxxx-HAL\CMSIS\Include;..\Drivers\STM32F4xxxx-HAL\CMSIS\RTOS;..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc;..\Configuration\Inc;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\arm-eabi\thumb\fpu\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeForcedIncludes>$(ProjectDir)\gcc_Release.h;$(VISUALGDB_DIR)\gcc_compat.h;..\Drivers\stm32_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeIncludeSearchPath>$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\RTOS;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.9.1;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.9.1\arm-eabi\thumb\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.9.1\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.9.1\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.9.1\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;..\Configuration\Inc;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes>$(ProjectDir)\gcc_Release.h;$(VISUALGDB_DIR)\gcc_compat.h;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\stm32_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
-    <NMakeOutput>$(ProjectDir)Diagnostic-Release.vgdbsettings</NMakeOutput>
+    <NMakeOutput>$(ProjectDir)Glove-Release.vgdbsettings</NMakeOutput>
     <IncludePath />
     <ReferencePath />
     <LibraryPath />
@@ -69,9 +69,9 @@
     <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
-    <NMakeOutput>$(ProjectDir)Diagnostic-Semihosting.vgdbsettings</NMakeOutput>
-    <NMakeIncludeSearchPath>$(ProjectDir)\.;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\RTOS;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\arm-eabi\thumb\fpu\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.8.2\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.8.2\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;$(ProjectDir)\../Configuration/Inc;$(ProjectDir)\../Features;$(ProjectDir)\.;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeForcedIncludes>$(ProjectDir)\gcc_Semihosting.h;$(VISUALGDB_DIR)\gcc_compat.h;..\Drivers\stm32_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeOutput>$(ProjectDir)Glove-Semihosting.vgdbsettings</NMakeOutput>
+    <NMakeIncludeSearchPath>$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\Include;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\CMSIS\RTOS;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.9.1;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.9.1\arm-eabi\thumb\cortex_m4;c:\sysgcc\arm-eabi\arm-eabi\include\c++\4.9.1\backward;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.9.1\include;c:\sysgcc\arm-eabi\lib\gcc\arm-eabi\4.9.1\include-fixed;c:\sysgcc\arm-eabi\arm-eabi\sys-include;c:\sysgcc\arm-eabi\arm-eabi\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes>$(ProjectDir)\gcc_Semihosting.h;$(VISUALGDB_DIR)\gcc_compat.h;$(LOCALAPPDATA)\VisualGDB\EmbeddedBSPs\arm-eabi\com.sysprogs.arm.stm32\stm32_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakePreprocessorDefinitions>__VisualGDB_CFG_Semihosting;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <ItemDefinitionGroup>
@@ -149,15 +149,15 @@
     <ClCompile Include="..\Features\Battery.c" />
     <ClCompile Include="..\Features\Button.c" />
     <ClCompile Include="..\Features\Filters.c" />
+    <ClCompile Include="..\Features\IMU.c" />
     <ClCompile Include="..\Features\Interrupt.c" />
+    <ClCompile Include="..\Features\LED.c" />
     <ClCompile Include="..\Features\LSM330DLC.c" />
     <ClCompile Include="..\Features\MadgwickAHRS.c" />
+    <ClCompile Include="..\Features\newlib.c" />
     <ClCompile Include="..\Features\OTP.c" />
-    <ClCompile Include="..\Features\IMU.c" />
-    <ClCompile Include="..\Features\LED.c" />
     <ClCompile Include="..\Features\SPICallbacks.c" />
-    <ClCompile Include="ClockTest.c" />
-    <ClCompile Include="Diagnostic.c" />
+    <ClCompile Include="Glove.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Configuration\Inc\adc.h" />
@@ -170,19 +170,6 @@
     <ClInclude Include="..\Configuration\Inc\tim.h" />
     <ClInclude Include="..\Configuration\Inc\usart.h" />
     <ClInclude Include="..\Configuration\Inc\usb_otg.h" />
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f401xc.h" />
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f401xe.h" />
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f405xx.h" />
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f407xx.h" />
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f411xe.h" />
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f415xx.h" />
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f417xx.h" />
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f427xx.h" />
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f429xx.h" />
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f437xx.h" />
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f439xx.h" />
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h" />
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\system_stm32f4xx.h" />
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\arm_common_tables.h" />
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\arm_const_structs.h" />
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\arm_math.h" />
@@ -195,7 +182,6 @@
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_cmInstr.h" />
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_sc000.h" />
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Include\core_sc300.h" />
-    <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\RTOS\cmsis_os.h" />
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h" />
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_adc.h" />
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_adc_ex.h" />
@@ -266,15 +252,16 @@
     <ClInclude Include="..\Features\LSM330DLC.h" />
     <ClInclude Include="..\Features\MadgwickAHRS.h" />
     <ClInclude Include="..\Features\OTP.h" />
-    <ClInclude Include="..\Features\Spatial.h" />
     <ClInclude Include="..\Features\Semihosting.h" />
+    <ClInclude Include="..\Features\Spatial.h" />
     <ClInclude Include="..\Features\SPIManager.h" />
+    <ClInclude Include="stm32f4xx_hal_conf.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="debug.mak" />
-    <None Include="semihosting.mak" />
     <None Include="Makefile" />
     <None Include="release.mak" />
+    <None Include="semihosting.mak" />
     <None Include="stm32.mak" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

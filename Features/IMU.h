@@ -4,7 +4,7 @@
 #include "spi.h"
 #include <stdbool.h>
 #include "LSM330DLC.h"
-#include "Quaternion.h"
+#include "Spatial.h"
 
 
 #define SPI_TIMEOUT 200
@@ -67,15 +67,6 @@ typedef enum
 } IMU_Device;
 
 
-/// Acceleration, Gyroscope, and Magnetometer Data
-typedef struct 
-{
-
-	IVector3 accelerometer;
-	IVector3 gyroscope;
-	IVector3 magnetometer;
-
-} IMU_RAW;
 
 
 /// @brief Information needed to access a single IMU
@@ -89,6 +80,61 @@ typedef struct
 	IMU_ComponentType IMUType;
 } IMU_MappingStruct;
 
+typedef struct 
+{
+	IMU_RAW imu[IMU_LAST];
+} IMU_RAWFrame;
+
+// IMU Map
+extern IMU_MappingStruct IMUDevice[IMU_LAST];
+
+/// Total number of RAW buffers.
+#define IMU_FRAMEBUFFER_SIZE 1
+
+/// IMU Framebuffer
+extern IMU_RAWFrame IMU_RAWFramebuffer[IMU_FRAMEBUFFER_SIZE];		/// @todo Implement FIFO 
+
+extern uint8_t volatile IMU_RAWFramebuffersPending;
+extern uint8_t volatile IMU_RAWFramebuffer_ReadIndex;
+extern uint8_t volatile IMU_RAWFramebuffer_WriteIndex;
+
+
+// IMU Frame State
+typedef enum
+{
+	IMU_FRAME_UNLOCKED,			// No data. Waiting for event. (no lock)
+	IMU_FRAME_WRITELOCK,		// Frame is currently being assembled.	(write lock)
+	IMU_FRAME_READLOCK			// Application is reading data from this frame.	(read lock)
+} IMU_FrameLockType;
+
+// Data transfer steps
+typedef enum
+{
+	IMU_XFER_IDLE,				// Waiting for trigger (poll, interrupt)
+	IMU_XFER_PENDING,			// Data ready for transfer (interrupt/poll confirmed)
+	IMU_XFER_WAIT,				// Data transfer in progress
+	IMU_XFER_COMPLETE,			// Data transfer completed.
+} IMU_TransferStepType;
+
+
+#define IMU_POLL_BUFFER_SIZE 2	// Only 2 bytes needed to hold TxRx polling transfers.
+
+/// Transfer State
+typedef struct 
+{
+	IMU_FrameLockType Lock;
+	IMU_TransferStepType TransferStep[IMU_LAST][IMU_SUBDEV_NONE];	
+	int8_t PollingBuffer[IMU_LAST][IMU_POLL_BUFFER_SIZE];
+} IMU_TransferStateType;
+
+/// Checks For Interrupt Events
+void IMU_HandleInterruptEvents(void);
+
+/// Moves to next transfer
+void IMU_HandleSPIEvent(void);
+
+/// Starts appropriate DMA transfer on the given port
+void IMU_HandleTransfer(IMU_PortType finger);
 
 /// Performs initial setup of IMU mapping structures
 void SetupIMU(void);
@@ -96,22 +142,19 @@ void SetupIMU(void);
 /// Determines if the SPI port can communicate with the IMU.
 bool IMUTest(IMU_PortType imuport);
 
+/// Utility function that returns the imu associated w/an hspi
+IMU_PortType GetIMU(SPI_HandleTypeDef* hspi);
 
 /// Selects the requested component
 void SelectIMUSubDevice(IMU_PortType finger, IMU_SubDeviceType component);
 
-/// Detect connected IMUs and
+/// Detect connected IMU(s)
 IMU_ComponentType DetectIMU(IMU_MappingStruct* device);
 
 /// Configures the selected IMU
 void ConfigureIMU(IMU_PortType finger);
 
-/// Configures Interrupt Pins
-void IMU_ConfigureEXTI(IMU_PinMappingType* pinmap);
-
-/// Retrieves IMU data as a DMA transfer
-void IMU_StartDMATransfer(IMU_PortType finger, IMU_SubDeviceType component);
-
+ 
 /*
 
 	Interrupt Mapping (EVP4)
