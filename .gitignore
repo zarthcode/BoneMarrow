@@ -6,3 +6,5 @@
 /Diagnostic/*.user
 *.o
 *.dep
+html
+latex

@@ -414,7 +414,7 @@ void IMU_Poll(IMU_PortType port, IMU_SubDeviceType subdev)
 	pPollingBuffer[1] = 0;
 
 	// Start DMA transfer to appropriate frame
-	HAL_StatusTypeDef result = HAL_SPI_TransmitReceive_DMA(IMUDevice[port].hspi, pPollingBuffer, pPollingBuffer, 2);	// size = addr + xyz
+	HAL_StatusTypeDef result = HAL_SPI_TransmitReceive(IMUDevice[port].hspi, pPollingBuffer, pPollingBuffer, 2, 1000);	// size = addr + xyz
 	if (HAL_OK != result)
 	{
 		// Transfer start failed.

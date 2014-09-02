@@ -26,7 +26,6 @@ int app_postinit(void)
 	HAL_EnableDBGStandbyMode();
 	HAL_EnableDBGStopMode();
 
-	__BKPT(0);
 	// Enable debug module during all modes
 
 #ifdef SEMIHOSTING
@@ -114,6 +113,11 @@ int app_postinit(void)
 	IMU_Test(IMU_ONBOARD);
 	HAL_Delay(1);
 	IMU_Configure(IMU_ONBOARD);
+
+	HAL_Delay(20);
+
+	IMU_Poll(IMU_ONBOARD, IMU_SUBDEV_ACC);
+
 	HAL_Delay(3000);
 
 }
