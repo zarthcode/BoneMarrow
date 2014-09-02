@@ -234,6 +234,7 @@ void EXTI4_IRQHandler(void)
 
 }
 
+/*
 void DMA1_Stream0_IRQHandler(void)
 {
 
@@ -310,7 +311,7 @@ void DMA1_Stream6_IRQHandler(void)
 	while (1) {};
 
 }
-
+*/
 void ADC_IRQHandler(void)
 {
 
@@ -630,6 +631,7 @@ void TIM8_CC_IRQHandler(void)
 
 }
 
+/*
 void DMA1_Stream7_IRQHandler(void)
 {
 
@@ -640,6 +642,7 @@ void DMA1_Stream7_IRQHandler(void)
 	while (1) {};
 
 }
+*/
 
 void FSMC_IRQHandler(void)
 {
@@ -728,7 +731,7 @@ void TIM7_IRQHandler(void)
 	while (1) {};
 
 }
-
+/*
 void DMA2_Stream0_IRQHandler(void)
 {
 
@@ -783,6 +786,7 @@ void DMA2_Stream4_IRQHandler(void)
 	while (1) {};
 
 }
+*/
 
 void ETH_IRQHandler(void)
 {
@@ -860,7 +864,7 @@ void OTG_FS_IRQHandler(void)
 	while (1) {};
 
 }
-
+/*
 void DMA2_Stream5_IRQHandler(void)
 {
 
@@ -893,6 +897,7 @@ void DMA2_Stream7_IRQHandler(void)
 	while (1) {};
 
 }
+*/
 
 void USART6_IRQHandler(void)
 {

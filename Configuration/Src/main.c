@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : main.c
-  * Date               : 27/08/2014 09:12:59
+  * Date               : 02/09/2014 09:24:51
   * Description        : Main program body
   ******************************************************************************
   *
@@ -71,7 +71,7 @@ int main(void)
 
   /* System interrupt init*/
   /* Sets the priority grouping field */
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_0);
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_1);
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 
   /* Initialize all configured peripherals */

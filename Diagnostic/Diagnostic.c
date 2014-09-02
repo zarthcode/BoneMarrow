@@ -114,7 +114,7 @@ int app_postinit(void)
 	HAL_Delay(1);
 	IMU_Configure(IMU_ONBOARD);
 
-	HAL_Delay(20);
+	HAL_Delay(2);
 
 	IMU_Poll(IMU_ONBOARD, IMU_SUBDEV_ACC);
 

@@ -1,4 +1,5 @@
 #include "IMU.h"
+#include "Semihosting.h"
 
 
 /**
@@ -53,3 +54,12 @@ void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
 	IMU_HandleSPIEvent(port);
 
 }
+
+void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
+{
+
+	printf_semi("HAL_SPI_ErrorCallback() - Damn, you!\n");
+}
+// void HAL_SPI_TxHalfCpltCallback(SPI_HandleTypeDef *hspi);
+// void HAL_SPI_RxHalfCpltCallback(SPI_HandleTypeDef *hspi);
+// void HAL_SPI_TxRxHalfCpltCallback(SPI_HandleTypeDef *hspi);

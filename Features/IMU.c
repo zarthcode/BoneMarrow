@@ -414,7 +414,7 @@ void IMU_Poll(IMU_PortType port, IMU_SubDeviceType subdev)
 	pPollingBuffer[1] = 0;
 
 	// Start DMA transfer to appropriate frame
-	HAL_StatusTypeDef result = HAL_SPI_TransmitReceive(IMUDevice[port].hspi, pPollingBuffer, pPollingBuffer, 2, 1000);	// size = addr + xyz
+	HAL_StatusTypeDef result = HAL_SPI_TransmitReceive_DMA(IMUDevice[port].hspi, pPollingBuffer, pPollingBuffer, 2);	// size = addr + xyz
 	if (HAL_OK != result)
 	{
 		// Transfer start failed.
@@ -467,7 +467,7 @@ IMU_TransferStepType IMU_CheckPollingResult(IMU_PortType port, IMU_SubDeviceType
 	case IMU_DEVICE_LSM330DLC:
 		/// Ensure X, Y, & Z data has been updated.
 
-		if (CHECK_BIT(IMU_TransferState.PollingBuffer[port][subdev], LSM330DLC_STATUS_ZYXDA))
+		if (CHECK_BIT(IMU_TransferState.PollingBuffer[port][1], LSM330DLC_STATUS_ZYXDA))
 		{
 			// Change status to pending.
 			IMU_TransferState.TransferStep[port][subdev] = IMU_XFER_PENDING;
@@ -565,30 +565,27 @@ void IMU_Configure(IMU_PortType port)
 		{
 			IMU_SelectSubDevice(port, IMU_SUBDEV_ACC);
 
-			uint8_t configurationPacket[7];
+			uint8_t configurationPacket[7] = { 0, 0, 0, 0, 0, 0, 0 };
 		// Accelerometer setup.
 			// Configure address packet
 			configurationPacket[0] = LSM330DLC_FormatAddress(false, true, LSM330DLC_REG_CTRL_REG1_A);
 
 			// Reset IMU
 
-				// Power on.
+			// Power on.
 			configurationPacket[1] = LSM330DLC_CTRL_REG1_A_ODR_100HZ;
 			
 			// Setup internal filter
-			configurationPacket[2] = LSM330DLC_CTRL_REG2_A_HPM_NORMAL_RESET |
-										LSM330DLC_CTRL_REG2_A_FDS_ENABLE;	
+//			configurationPacket[2] = LSM330DLC_CTRL_REG2_A_HPM_NORMAL_RESET | LSM330DLC_CTRL_REG2_A_FDS_ENABLE;	
 
 			// Interrupt configuration
-			configurationPacket[3] = LSM330DLC_CTRL_REG3_A_I1_DRDY1_ENABLE |
-									LSM330DLC_CTRL_REG3_A_I1_DRDY2_ENABLE;
+//			configurationPacket[3] = LSM330DLC_CTRL_REG3_A_I1_DRDY1_ENABLE | LSM330DLC_CTRL_REG3_A_I1_DRDY2_ENABLE;
 
 			// Full scale, endianness, resolution 
-			configurationPacket[4] = LSM330DLC_CTRL_REG4_A_BLE_LITTLEENDIAN |
-				LSM330DLC_CTRL_REG4_A_FS_2G;
+//			configurationPacket[4] = LSM330DLC_CTRL_REG4_A_BLE_LITTLEENDIAN | LSM330DLC_CTRL_REG4_A_FS_2G;
 			
 			// FIFO reset, FIFO settings, Interrupt latch, 4D detection
-			configurationPacket[5] = LSM330DLC_CTRL_REG5_A_BOOT;
+//			configurationPacket[5] = LSM330DLC_CTRL_REG5_A_BOOT;
 
 			// Active high interrupt, no INT2_A, for now.
 			configurationPacket[6] = 0;
@@ -623,10 +620,8 @@ void IMU_Configure(IMU_PortType port)
 			// CTRL_REG1_G - power on.
 			configurationPacket[1] = LSM330DLC_CTRL_REG1_G_ODR_95HZ_BW25;
 
-
 			// CTRL_REG2_G - Reset filter, default HP cutoff frequency.
-			configurationPacket[2] = LSM330DLC_CTRL_REG2_G_HPM_NORMAL_RESET
-									| LSM330DLC_CTRL_REG2_G_HPCF_0;
+			configurationPacket[2] = LSM330DLC_CTRL_REG2_G_HPM_NORMAL_RESET | LSM330DLC_CTRL_REG2_G_HPCF_0;
 
 			// CTRL_REG3_G - Interrupt settings
 			configurationPacket[3] = LSM330DLC_CTRL_REG3_G_H_Lactive;
@@ -635,8 +630,7 @@ void IMU_Configure(IMU_PortType port)
 			configurationPacket[4] = LSM330DLC_CTRL_REG4_G_FS_250DPS;
 
 			// CTRL_REG5_G - FIFO, high pass filter, Output selection, Interrupt selection
-			configurationPacket[5] = LSM330DLC_CTRL_REG5_G_HPen
-									| LSM330DLC_CTRL_REG5_G_OUT_SEL_HPF;
+			configurationPacket[5] = LSM330DLC_CTRL_REG5_G_HPen | LSM330DLC_CTRL_REG5_G_OUT_SEL_HPF;
 
 			// Send
 			result = HAL_SPI_Transmit(IMUDevice[port].hspi, configurationPacket, sizeof(configurationPacket) - 1, 200);
