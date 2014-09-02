@@ -14,7 +14,7 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 
 	/// @note After T_hold - Release \CS line.
 	/// @bug T_hold needs to be verified.
-	SelectIMUSubDevice(GetIMU(hspi), IMU_SUBDEV_NONE);
+	IMU_SelectSubDevice(IMU_GetFromSPIHandle(hspi), IMU_SUBDEV_NONE);
 
 }
 
@@ -28,7 +28,12 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 {
 	/// @note After T_hold - Release \CS line.
 	/// @bug T_hold needs to be verified.
-	SelectIMUSubDevice(GetIMU(hspi), IMU_SUBDEV_NONE);
+
+	// Determine the port and subdevice.
+	IMU_PortType port = IMU_GetFromSPIHandle(hspi);
+
+	// Allow the spi event to be handled immediately.
+	IMU_HandleSPIEvent(port);
 
 }
 
@@ -41,17 +46,10 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
 {
 
-	// Handle SPI event
+	// Determine the port and subdevice.
+	IMU_PortType port = IMU_GetFromSPIHandle(hspi);
 
-	IMU_PortType imu = GetIMU(hspi);
-
-	// Place tick timestamp
-//	IMUDevice->current_frame->tickstamp = HAL_GetTick();
-
-	/// @note After T_hold - Release \CS line.
-	/// @bug T_hold needs to be verified.
-	SelectIMUSubDevice(imu, IMU_SUBDEV_NONE);
-
-	// Start AHRS calculation.
+	// Allow the spi event to be handled immediately.
+	IMU_HandleSPIEvent(port);
 
 }

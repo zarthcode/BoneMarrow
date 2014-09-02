@@ -256,6 +256,7 @@
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_sdmmc.h" />
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_usb.h" />
     <ClInclude Include="..\Features\Battery.h" />
+    <ClInclude Include="..\Features\bitmanip.h" />
     <ClInclude Include="..\Features\Bone.h" />
     <ClInclude Include="..\Features\Button.h" />
     <ClInclude Include="..\Features\Eeprom.h" />

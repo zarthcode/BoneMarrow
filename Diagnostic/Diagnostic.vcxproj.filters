@@ -612,6 +612,9 @@
     <ClInclude Include="..\Configuration\Inc\dma.h">
       <Filter>Header files\Configuration</Filter>
     </ClInclude>
+    <ClInclude Include="..\Features\bitmanip.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="debug.mak">

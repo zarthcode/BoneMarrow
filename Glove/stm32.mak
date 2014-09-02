@@ -5,14 +5,14 @@
 
 #VisualGDB provides BSP_ROOT via environment when running Make. The line below will only be active if GNU Make is started manually.
 BSP_ROOT ?= C:/Users/Anthony/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32
-TOOLCHAIN_ROOT := C:/SysGCC/arm-eabi
+TOOLCHAIN_ROOT := C:/gcc/4.8-2014q2
 
 #Embedded toolchain
-CC := $(TOOLCHAIN_ROOT)/bin/arm-eabi-gcc.exe
-CXX := $(TOOLCHAIN_ROOT)/bin/arm-eabi-g++.exe
+CC := $(TOOLCHAIN_ROOT)/bin/arm-none-eabi-gcc.exe
+CXX := $(TOOLCHAIN_ROOT)/bin/arm-none-eabi-g++.exe
 LD := $(CXX)
-AR := $(TOOLCHAIN_ROOT)/bin/arm-eabi-ar.exe
-OBJCOPY := $(TOOLCHAIN_ROOT)/bin/arm-eabi-objcopy.exe
+AR := $(TOOLCHAIN_ROOT)/bin/arm-none-eabi-ar.exe
+OBJCOPY := $(TOOLCHAIN_ROOT)/bin/arm-none-eabi-objcopy.exe
 
 #Additional flags
 PREPROCESSOR_MACROS += ARM_MATH_CM4 stm32_flash_layout STM32F427IG STM32F427xx

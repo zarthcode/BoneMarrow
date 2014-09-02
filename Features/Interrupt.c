@@ -81,13 +81,11 @@ void UsageFault_Handler(void)
 void SVC_Handler(void)
 {
 
-	/*
 	#ifdef DEBUG
-//	printf_semi("SVC_Handler called. (Unimplemented - HALT)\n");
+	printf_semi("SVC_Handler called. (Unimplemented - HALT)\n");
 __BKPT(0);
 	#endif
 	while (1) {};
-	*/
 
 }
 

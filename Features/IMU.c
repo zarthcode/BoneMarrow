@@ -5,7 +5,7 @@
 #include "IMU.h"
 #include "Semihosting.h"
 #include <string.h>
-#include <string.h>
+#include "bitmanip.h"
 
 /// IMU Map
 IMU_MappingStruct IMUDevice[IMU_LAST];
@@ -31,6 +31,7 @@ void DBG_SPICheckState(HAL_SPI_StateTypeDef state);
 /// Test IVector3 alignment
 void IMU_CheckAlignment(void)
 {
+	/// @todo automate this test to provide PASS/FAIL results.
 	// Quick analysis of IVector3 alignment
 	IVector3 testbyte;
 
@@ -47,7 +48,13 @@ void IMU_CheckAlignment(void)
 	printf_semi("testbyte.z = %d [0x%04x] \t[address = %p]\n", testbyte.z, testbyte.z, &testbyte.z);
 
 	// With padding, size should be 8 bytes.
-	printf_semi("size = %d, expected 7 bytes\nbase addr = %p\n", sizeof(testbyte), &testbyte);
+	uint8_t expectedSize = sizeof(uint8_t) + (sizeof(int16_t) * 3);
+
+#ifdef IMU_RAW_PADDING
+	expectedSize += 1;
+#endif // IMU_RAW_PADDING
+
+	printf_semi("size = %d, (expected %d bytes)\nbase addr = %p\n", sizeof(testbyte),  &testbyte);
 
 	for (int i = 0; i < sizeof(testbyte); i++)
 	{
@@ -58,7 +65,7 @@ void IMU_CheckAlignment(void)
 
 
 /// Determines if the SPI port can communicate with the IMU.
-bool IMUTest(IMU_PortType imuport)
+bool IMU_Test(IMU_PortType imuport)
 {
 	/// @bug - we are currently assuming Alpha-0 IMUs (LSM330DLC)
 	switch (IMUDevice[imuport].DeviceName)
@@ -74,7 +81,7 @@ bool IMUTest(IMU_PortType imuport)
 				{
 
 					// Select the gyroscope
-					SelectIMUSubDevice(imuport, IMU_SUBDEV_GYRO);
+					IMU_SelectSubDevice(imuport, IMU_SUBDEV_GYRO);
 
 					/// Test for combination tx/rx buffer
 					uint8_t spi_txrx[2] = { 0, 0 };
@@ -89,7 +96,7 @@ bool IMUTest(IMU_PortType imuport)
 					}
 
 					// Reset \CS
-					SelectIMUSubDevice(imuport, IMU_SUBDEV_NONE);
+					IMU_SelectSubDevice(imuport, IMU_SUBDEV_NONE);
 
 					// ...Result should equal 0b11010100
 					if (spi_txrx[1] == LSM330DLC_WHO_AM_I_G_VALUE)
@@ -125,32 +132,35 @@ bool IMUTest(IMU_PortType imuport)
 	return false;
 }
 
-void SelectIMUSubDevice(IMU_PortType finger, IMU_SubDeviceType component)
+void IMU_SelectSubDevice(IMU_PortType port, IMU_SubDeviceType component)
 {
+	IMU_TransferState.SelectedSubDevice[port] = component;
 	/// @bug It may be better to specifically deactivate all components, first.
 
 	// Select the requested component
 	for (int i = 0; i < IMU_SUBDEV_NONE; i++)
 	{
-		// Disable
 		
-		if (IMUDevice[finger].CSMappings[i].port != NULL)		// Paranoia, until it isn't.
+		if (IMUDevice[port].CSMappings[i].port != NULL)		// Paranoia, until it isn't.
 		{
-			HAL_GPIO_WritePin(IMUDevice[finger].CSMappings[i].port, IMUDevice[finger].CSMappings[i].pin, (i == component) ? GPIO_PIN_RESET : GPIO_PIN_SET);		// Active-low.
+			HAL_GPIO_WritePin(IMUDevice[port].CSMappings[i].port, IMUDevice[port].CSMappings[i].pin, (i == component) ? GPIO_PIN_RESET : GPIO_PIN_SET);		// Active-low.
 		}
 	}
 
-#ifdef DEBUG_MONITOR_SPI6_ONBOARD
+#ifdef DEBUG_MONITOR_SPI6_ONBOARD_CS
 	// Mirror onto PB4/PB5 to use a logic analyzer connected to SPI6 to monitor onboard SPI communications. (EVP4)
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, (IMU_SUBDEV_ACC == component) ? GPIO_PIN_RESET : GPIO_PIN_SET);		// Active-low.
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, (IMU_SUBDEV_GYRO == component) ? GPIO_PIN_RESET : GPIO_PIN_SET);		// Active-low.
+	if (IMU_ONBOARD == port)
+	{
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, (IMU_SUBDEV_ACC == component) ? GPIO_PIN_RESET : GPIO_PIN_SET);		// Active-low.
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, (IMU_SUBDEV_GYRO == component) ? GPIO_PIN_RESET : GPIO_PIN_SET);		// Active-low.
+	}
 #endif
 
 }
 
 
 
-void SetupIMU(void)
+void IMU_Setup(void)
 {
 	
 	/// @bug - I don't know if this is necessary on arm-eabi....
@@ -158,6 +168,13 @@ void SetupIMU(void)
 
 	/// @bug - I don't know if this is necessary on arm-eabi....
 	memset(&IMU_TransferState, 0, sizeof(IMU_TransferState));
+	for (int i = 0; i < IMU_LAST; i++)
+	{
+		IMU_TransferState.SelectedSubDevice[i] = IMU_SUBDEV_NONE;
+	}
+
+	/// @bug - I don't know if this is necessary on arm-eabi....
+	memset(&IMU_RAWFramebuffer, 0, sizeof(IMU_RAWFramebuffer));
 	
 	/// @bug This needs to be done via auto-detection.
 	for (int i = 0; i < IMU_LAST; i++)
@@ -179,25 +196,27 @@ void SetupIMU(void)
 			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_9;
 			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
 
-			SelectIMUSubDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
+			IMU_SelectSubDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
 
 			// Configure Interrupts
-			// INT2
-			IMUDevice[i].INTMappings[0].port = GPIOG;
-			IMUDevice[i].INTMappings[0].pin = GPIO_PIN_10;
-			IMUDevice[i].INTMappings[0].type = IMU_SUBDEV_ACC;
-			// INT3
+			// INT2 (INT1_A)
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].port = GPIOG;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].pin = GPIO_PIN_10;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].type = IMU_SUBDEV_ACC;
+/*			// INT3 (INT2_A)
 			IMUDevice[i].INTMappings[1].port = GPIOG;
 			IMUDevice[i].INTMappings[1].pin = GPIO_PIN_11;
 			IMUDevice[i].INTMappings[1].type = IMU_SUBDEV_ACC;
-			// INT4
+
+			// INT4 (INT1_G)
 			IMUDevice[i].INTMappings[2].port = GPIOE;
 			IMUDevice[i].INTMappings[2].pin = GPIO_PIN_0;
 			IMUDevice[i].INTMappings[2].type = IMU_SUBDEV_GYRO;
-			// INT5
-			IMUDevice[i].INTMappings[3].port = GPIOE;
-			IMUDevice[i].INTMappings[3].pin = GPIO_PIN_1;
-			IMUDevice[i].INTMappings[3].type = IMU_SUBDEV_GYRO;
+*/
+			// INT5 (DRDY_G/INT2_G)
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].port = GPIOE;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_1;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
 
 			// Test IMU connectivity
 
@@ -235,6 +254,9 @@ void SetupIMU(void)
 		}
 	}
 
+
+	// Initialize the framebuffers
+
 }
 
 
@@ -270,49 +292,262 @@ void DBG_SPICheckState(HAL_SPI_StateTypeDef state)
 	
 }
 
-void GetIMUFrame(IMU_PortType finger)
+void IMU_GetRAWBurst(IMU_PortType port, IMU_SubDeviceType subdev)
 {
-	// Fill frame w/IMU data
+	// This is a special circumstance.
+	// The imu is in a known state, and ready for an immediate receive operation.
+
+	IVector3* pIVector3 = NULL;
+	switch (subdev)
+	{
+	case IMU_SUBDEV_ACC:
+		pIVector3 = (void*)&IMU_RAWFramebuffer[IMU_RAWFramebuffer_WriteIndex].imu[port].accelerometer;
+		break;
+
+	case IMU_SUBDEV_GYRO:
+		pIVector3 = (void*)&IMU_RAWFramebuffer[IMU_RAWFramebuffer_WriteIndex].imu[port].gyroscope;
+		break;
+
+	default:
+		printf_semi("IMU_GetRAWBurst(port %d, subdev %d) - Unimplemented subdevice.\n", port, subdev);
+#ifdef DEBUG
+		__BKPT(0);
+#endif // DEBUG
+		break;
+	}
+
+	// Declare the transfer
+	IMU_TransferState.TransferStep[port][subdev] = IMU_XFER_WAIT;
+
+	// Start DMA transfer to appropriate frame
+	HAL_StatusTypeDef result = HAL_SPI_Receive_DMA(IMUDevice[port].hspi, (uint8_t*)&pIVector3->x, 6);	// size = addr + xyz
+	if (HAL_OK != result)
+	{
+		// Transfer start failed.
+		printf_semi("IMU_GetRAW(port %d, subdev %d) - HAL_SPI_TransmitReceive_DMA failed(%d)\n", port, subdev, result);
+		/// @todo introduce a DBG_HAL_StatusTypeDef helper function.
+	}
+
+
+	// All done
+}
+
+void IMU_GetRAW(IMU_PortType port, IMU_SubDeviceType subdev)
+{
+
+	// Select subdevice.
+	IMU_SelectSubDevice(port, subdev);
+
+	// Address
+	IVector3* pIVector3 = NULL;
+	uint8_t addressByte = 0;
+	switch (subdev)
+	{
+	case IMU_SUBDEV_ACC:
+		pIVector3 = (void*)&IMU_RAWFramebuffer[IMU_RAWFramebuffer_WriteIndex].imu[port].accelerometer;
+		addressByte = LSM330DLC_REG_OUT_X_L_A;
+		break;
+
+	case IMU_SUBDEV_GYRO:
+		pIVector3 = (void*)&IMU_RAWFramebuffer[IMU_RAWFramebuffer_WriteIndex].imu[port].gyroscope;
+		addressByte = LSM330DLC_REG_OUT_X_L_G;
+		break;
+
+	default:
+		printf_semi("IMU_GetRAW(port %d, subdev %d) - Unimplemented subdevice.\n", port, subdev);
+#ifdef DEBUG
+		__BKPT(0);
+#endif // DEBUG
+		break;
+	}
+
+	// Setup address byte
+	/// @bug - This needs to be accessed via a function pointer that matches devices w/ports based on detection.
+	pIVector3->txbyte = LSM330DLC_FormatAddress(true, true, addressByte);
+
+	// Declare the transfer
+	IMU_TransferState.TransferStep[port][subdev] = IMU_XFER_WAIT;
+
+	// Start DMA transfer to appropriate frame
+	HAL_StatusTypeDef result = HAL_SPI_TransmitReceive_DMA(IMUDevice[port].hspi, &pIVector3->txbyte, &pIVector3->txbyte, 7);	// size = addr + xyz
+	if (HAL_OK != result)
+	{
+		// Transfer start failed.
+		printf_semi("IMU_GetRAW(port %d, subdev %d) - HAL_SPI_TransmitReceive_DMA failed(%d)\n", port, subdev, result);
+		/// @todo introduce a DBG_HAL_StatusTypeDef helper function.
+	}
+
+
+	// All done
+}
+
+void IMU_Poll(IMU_PortType port, IMU_SubDeviceType subdev)
+{
+	// Fire a full-duplex request at the IMU.
+	// Select subdevice.
+	IMU_SelectSubDevice(port, subdev);
+
+	// Address
+	uint8_t* pPollingBuffer = (void*)&IMU_TransferState.PollingBuffer[port];
+	uint8_t addressByte = 0;
+	switch (subdev)
+	{
+	case IMU_SUBDEV_ACC:
+		addressByte = LSM330DLC_REG_STATUS_REG_A;
+		break;
+
+	case IMU_SUBDEV_GYRO:
+		addressByte = LSM330DLC_REG_STATUS_REG_G;
+		break;
+
+	default:
+		printf_semi("IMU_Poll(port %d, subdev %d) - Unimplemented subdevice.\n", port, subdev);
+#ifdef DEBUG
+		__BKPT(0);
+#endif // DEBUG
+		break;
+	}
+
+	// Setup address byte
+	/// @bug - This needs to be accessed via a function pointer that matches devices w/ports based on detection.
+	pPollingBuffer[0] = LSM330DLC_FormatAddress(true, true, addressByte);
+	pPollingBuffer[1] = 0;
+
+	// Start DMA transfer to appropriate frame
+	HAL_StatusTypeDef result = HAL_SPI_TransmitReceive_DMA(IMUDevice[port].hspi, pPollingBuffer, pPollingBuffer, 2);	// size = addr + xyz
+	if (HAL_OK != result)
+	{
+		// Transfer start failed.
+		printf_semi("IMU_Poll(port %d, subdev %d) - HAL_SPI_TransmitReceive_DMA failed(%d)\n", port, subdev, result);
+		/// @todo introduce a DBG_HAL_StatusTypeDef helper function.
+	}
+
+	// All done
 }
 
 /// Checks For Interrupt Events
-void IMU_HandleInterruptEvents(void)
+void IMU_CheckIMUInterrupts(void)
 {
-	// For the current frame
-		// Check for 'idle' imu pairs.
-			// Polling: kick-off a polling DMA transfer to check status
-			// Interrupt: kick-off a DMA read
+	/// @bug This code assumes only one imu/port.  It will eventually need a rewrite.
+	// For the each port...
+	for (int port = 0; port < IMU_LAST; port++)
+	{
+		// and each subdevice...
+		for (int subdev = 0; subdev < IMU_SUBDEV_NONE; subdev++)
+		{
+			// ... Each each interrupt
+
+			/// @bug - This code is inappropriately specific to the LSM330DLC.  This WILL need to be changed to a single-interrupt system!
+
+			/// @bug - Interrupts MAY need to be followed by a polling operation. (in the case of not all axis values being updated)
+
+			// If subdevice interrupt is configured, and transferstate is idle...
+			if ((IMUDevice[port].INTMappings[subdev].type == subdev) && (IMU_TransferState.TransferStep[port][subdev] == IMU_XFER_IDLE))
+			{
+				// Check for active interrupt.
+				if (GPIO_PIN_SET == HAL_GPIO_ReadPin(IMUDevice[port].INTMappings[subdev].port, IMUDevice[port].INTMappings[subdev].pin))
+				{
+					/// @bug - Unknown if interrupt is active high or low. A device-driver function may be required here.
+					// Change status to pending.
+					IMU_TransferState.TransferStep[port][subdev] = IMU_XFER_PENDING;
+				}
+			}
+
+		}
+	}
 }
 
-/// Moves to next transfer
-void IMU_HandleSPIEvent(void)
+/// Evaluates Polling Results
+IMU_TransferStepType IMU_CheckPollingResult(IMU_PortType port, IMU_SubDeviceType subdev)
+{
+	/// @todo Implement a more dynamic device driver here.
+	// Evaluate polling buffer.
+	switch (IMUDevice[port].DeviceName)
+	{
+	case IMU_DEVICE_LSM330DLC:
+		/// Ensure X, Y, & Z data has been updated.
+
+		if (CHECK_BIT(IMU_TransferState.PollingBuffer[port][subdev], LSM330DLC_STATUS_ZYXDA))
+		{
+			// Change status to pending.
+			IMU_TransferState.TransferStep[port][subdev] = IMU_XFER_PENDING;
+		} 
+		else
+		{
+			// Not ready... Back to idle.
+			IMU_TransferState.TransferStep[port][subdev] = IMU_XFER_IDLE;
+		}
+
+		break;
+	default:
+		printf_semi("IMU_CheckPollingResult(port %d, subdev %d) - Unimplemented device.\n", port, subdev);
+	}
+
+	return IMU_TransferState.TransferStep[port][subdev];
+}
+
+/// Moves to next transfer stage
+void IMU_HandleSPIEvent(IMU_PortType port)
 {
 	// Determine selected imu and subdevice
+	IMU_SubDeviceType subdev = IMU_TransferState.SelectedSubDevice[port];
 	
 	// Per state
-	switch (0)
+	switch (IMU_TransferState.TransferStep[port][subdev])
 	{
 	case IMU_XFER_IDLE:
 		// A polling event was just completed.
+		
 
+		// If the polling result changed the state to pending, drop through.
+		if (IMU_XFER_IDLE == IMU_CheckPollingResult(port, subdev))
+		{
+			// Nothing pending.
+			// Release the CS line. We'll be back later.
+			IMU_SelectSubDevice(port, IMU_SUBDEV_NONE);
+
+			return;
+		}
+		// The device is already selected and addressed.
+		// Followup the polling operation with a burst receive.
+		IMU_GetRAWBurst(port, subdev);
 		break;
 
 	case IMU_XFER_PENDING:
-		// Poll/Interrupt has determined that data is available
+		// Poll has determined that data is available
+		//
+		// Prepare and start the transfer
+		IMU_GetRAW(port, subdev);
 
 		break;
 
 	case IMU_XFER_WAIT:
-		// Data transfer was in progress. 
+		// Data transfer was in progress and has completed.
+
+		// Timestamp the data
+		IMU_RAWFramebuffer[IMU_RAWFramebuffer_WriteIndex].imu[port].tickstamp = HAL_GetTick();
+
+		// Mark as complete.
+		IMU_TransferState.TransferStep[port][subdev] = IMU_XFER_COMPLETE;
+
+		// Deselect the device.
+		IMU_SelectSubDevice(port, IMU_SUBDEV_NONE);
+
+
 
 		break;
 
 	case IMU_XFER_COMPLETE:
 		// A polling event was just completed.
-
+		printf_semi("IMU_HandleSPIEvent(port %d) - IMU_XFER_COMPLETE isn't a SPI event...\n", port);
 		break;
 
 	default:
+		printf_semi("IMU_HandleSPIEvent(port %d) - Unimplemented IMU_XFER state.\n", port);
+#ifdef DEBUG
+		__BKPT(0);
+#endif // DEBUG
+
 		break;
 	}
 
@@ -320,14 +555,15 @@ void IMU_HandleSPIEvent(void)
 
 }
 
-void ConfigureIMU(IMU_PortType finger)
+
+void IMU_Configure(IMU_PortType port)
 {
-	switch (IMUDevice[finger].DeviceName)
+	switch (IMUDevice[port].DeviceName)
 	{
 
 	case IMU_DEVICE_LSM330DLC:
 		{
-			SelectIMUSubDevice(finger, IMU_SUBDEV_ACC);
+			IMU_SelectSubDevice(port, IMU_SUBDEV_ACC);
 
 			uint8_t configurationPacket[7];
 		// Accelerometer setup.
@@ -359,13 +595,13 @@ void ConfigureIMU(IMU_PortType finger)
 									
 
 			// Send data
-			HAL_StatusTypeDef result = HAL_SPI_Transmit(IMUDevice[finger].hspi, configurationPacket, sizeof(configurationPacket), 200);
+			HAL_StatusTypeDef result = HAL_SPI_Transmit(IMUDevice[port].hspi, configurationPacket, sizeof(configurationPacket), 200);
 			if(result != HAL_OK)
 			{
 #ifdef DEBUG
-				printf_semi("ConfigureIMU(%d), IMU acc setup failed (%d)\n", finger, result);
+				printf_semi("ConfigureIMU(%d), IMU acc setup failed (%d)\n", port, result);
 
-				SelectIMUSubDevice(finger, IMU_SUBDEV_NONE);
+				IMU_SelectSubDevice(port, IMU_SUBDEV_NONE);
 				__BKPT(0);
 				return;
 #endif // DEBUG
@@ -373,7 +609,7 @@ void ConfigureIMU(IMU_PortType finger)
 			}
 
 			
-			SelectIMUSubDevice(finger, IMU_SUBDEV_GYRO);
+			IMU_SelectSubDevice(port, IMU_SUBDEV_GYRO);
 			
 			// clear
 			memset(configurationPacket, 0, sizeof(configurationPacket));
@@ -403,15 +639,15 @@ void ConfigureIMU(IMU_PortType finger)
 									| LSM330DLC_CTRL_REG5_G_OUT_SEL_HPF;
 
 			// Send
-			result = HAL_SPI_Transmit(IMUDevice[finger].hspi, configurationPacket, sizeof(configurationPacket) - 1, 200);
+			result = HAL_SPI_Transmit(IMUDevice[port].hspi, configurationPacket, sizeof(configurationPacket) - 1, 200);
 			if(result != HAL_OK)
 			{
-				printf_semi("ConfigureIMU(%d) - IMU gyro setup failed (%d)\n", finger, result);
+				printf_semi("ConfigureIMU(%d) - IMU gyro setup failed (%d)\n", port, result);
 				return;
 
 			}
 
-			SelectIMUSubDevice(finger, IMU_SUBDEV_NONE);
+			IMU_SelectSubDevice(port, IMU_SUBDEV_NONE);
 
 
 			// ? Power on
@@ -432,10 +668,11 @@ void ConfigureIMU(IMU_PortType finger)
 
 }
 
-IMU_PortType GetIMU(SPI_HandleTypeDef* hspi)
+IMU_PortType IMU_GetFromSPIHandle(SPI_HandleTypeDef* hspi)
 {
 	/// @bug This may need to be manually unrolled.	Analyze/profile this!
-	/*
+
+	/* Flesh this out to manually unroll...
 	intptr_t ihspi = (intptr_t)(void *)hspi;	// I know what you're thinking...
 
 	switch (ihspi)
@@ -467,6 +704,65 @@ IMU_PortType GetIMU(SPI_HandleTypeDef* hspi)
 #endif
 
 	return IMU_LAST;
+
+
+}
+
+void IMU_ServiceTick(void)
+{
+	// Update interrupt status
+	IMU_CheckIMUInterrupts();
+
+	bool bFrameComplete = true;
+	// Check frame status
+	for (int port = 0; port < IMU_LAST; port++)
+	{
+
+		for (int subdev = 0; subdev < IMU_SUBDEV_NONE; subdev++)
+		{
+
+			if (IMU_TransferState.TransferStep[port][subdev] != IMU_XFER_COMPLETE)
+			{
+				// Not complete yet.
+				bFrameComplete = false;
+			}
+
+			if(IMU_TransferState.TransferStep[port][subdev] == IMU_XFER_PENDING)
+			{
+				// Start a retrieval operation
+				IMU_GetRAW(port, subdev);
+	
+				// Skip remaining subdevices.
+				break;
+			}
+
+		}
+
+	}
+
+	if (bFrameComplete)
+	{
+			
+		// Advance WriteIndex.
+		if (++IMU_RAWFramebuffer_WriteIndex == IMU_FRAMEBUFFER_SIZE)
+			IMU_RAWFramebuffer_WriteIndex = 0;
+
+		// Initialize next frame.
+		memset(&IMU_RAWFramebuffer[IMU_RAWFramebuffer_WriteIndex], 0, sizeof(IMU_RAWFrame));
+
+		// Reset Transfer State
+		memset(&IMU_TransferState, 0, sizeof(IMU_TransferState));
+		for (int i = 0; i < IMU_LAST; i++)
+		{
+			IMU_TransferState.SelectedSubDevice[i] = IMU_SUBDEV_NONE;
+		}
+
+
+
+
+	}
+
+	//
 
 
 }

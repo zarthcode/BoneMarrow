@@ -75,8 +75,8 @@ typedef struct
 	IMU_Device DeviceName;
 	SPI_HandleTypeDef* hspi;
 	bool hasMagnetometer;
-	IMU_PinMappingType CSMappings[2];	/// @bug this needs to be configurable based on hardware and detected IMU
-	IMU_PinMappingType INTMappings[4];	/// @bug this needs to be configurable based on hardware and detected IMU
+	IMU_PinMappingType CSMappings[IMU_SUBDEV_NONE];	/// @bug this needs to be configurable based on hardware and detected IMU
+	IMU_PinMappingType INTMappings[IMU_SUBDEV_NONE];	/// @bug this needs to be configurable based on hardware and detected IMU
 	IMU_ComponentType IMUType;
 } IMU_MappingStruct;
 
@@ -111,9 +111,10 @@ typedef enum
 typedef enum
 {
 	IMU_XFER_IDLE,				// Waiting for trigger (poll, interrupt)
+	IMU_XFER_CHECKING,			// A polling operation is in progress.
 	IMU_XFER_PENDING,			// Data ready for transfer (interrupt/poll confirmed)
 	IMU_XFER_WAIT,				// Data transfer in progress
-	IMU_XFER_COMPLETE,			// Data transfer completed.
+	IMU_XFER_COMPLETE			// Data transfer completed.
 } IMU_TransferStepType;
 
 
@@ -125,38 +126,53 @@ typedef struct
 	IMU_FrameLockType Lock;
 	IMU_TransferStepType TransferStep[IMU_LAST][IMU_SUBDEV_NONE];	
 	int8_t PollingBuffer[IMU_LAST][IMU_POLL_BUFFER_SIZE];
+	IMU_SubDeviceType SelectedSubDevice[IMU_LAST];
 } IMU_TransferStateType;
 
 /// Checks For Interrupt Events
-void IMU_HandleInterruptEvents(void);
+void IMU_CheckIMUInterrupts(void);
+
+/// Initiates DMA transfer to grab data info from device.
+void IMU_Poll(IMU_PortType port, IMU_SubDeviceType subdev);
+
+/// Evaluates the result of the polling operation.
+IMU_TransferStepType IMU_CheckPollingResult(IMU_PortType port, IMU_SubDeviceType subdev);
 
 /// Moves to next transfer
-void IMU_HandleSPIEvent(void);
+void IMU_HandleSPIEvent(IMU_PortType port);
 
 /// Starts appropriate DMA transfer on the given port
-void IMU_HandleTransfer(IMU_PortType finger);
+void IMU_HandleTransfer(IMU_PortType port);
+
+/// Start DMA transfer of data from specified port/subdevice.
+void IMU_GetRAW(IMU_PortType port, IMU_SubDeviceType subdev);
+
+/// A special case DMA transfer that takes place after a successful polling operation.
+void IMU_GetRAWBurst(IMU_PortType port, IMU_SubDeviceType subdev);
 
 /// Debug/Dev function to check structure alignment
 void IMU_CheckAlignment(void);
 
 /// Performs initial setup of IMU mapping structures
-void SetupIMU(void);
+void IMU_Setup(void);
 
 /// Determines if the SPI port can communicate with the IMU.
-bool IMUTest(IMU_PortType imuport);
+bool IMU_Test(IMU_PortType imuport);
 
 /// Utility function that returns the imu associated w/an hspi
-IMU_PortType GetIMU(SPI_HandleTypeDef* hspi);
+IMU_PortType IMU_GetFromSPIHandle(SPI_HandleTypeDef* hspi);
 
 /// Selects the requested component
-void SelectIMUSubDevice(IMU_PortType finger, IMU_SubDeviceType component);
+void IMU_SelectSubDevice(IMU_PortType port, IMU_SubDeviceType component);
 
 /// Detect connected IMU(s)
 IMU_ComponentType DetectIMU(IMU_MappingStruct* device);
 
 /// Configures the selected IMU
-void ConfigureIMU(IMU_PortType finger);
+void IMU_Configure(IMU_PortType port);
 
+/// Performs IMU service once per mS
+void IMU_ServiceTick(void);
  
 /*
 

@@ -17,6 +17,7 @@
  * @param bool read TRUE if this is a read operation.  False, otherwise.
  * @param bool increment TRUE if subsequently reading/writing multiple bytes of data using this one command.
  * @param uint8_t address Register address to begin reading/writing from/to.
+ * @bug this needs to be accessed indirectly, via a switch.
  */
 uint8_t LSM330DLC_FormatAddress(bool read, bool increment, uint8_t address);
 
@@ -85,7 +86,7 @@ uint8_t LSM330DLC_FormatAddress(bool read, bool increment, uint8_t address);
 
 // LSM330DLC Data rate
 #define LSM330DLC_CTRL_REG1_A_ODR_POWERDOWN					(0x00)
-#define LSM330DLC_CTRL_REG1_A_ODR_1HZ							(0x10)
+#define LSM330DLC_CTRL_REG1_A_ODR_1HZ						(0x10)
 #define LSM330DLC_CTRL_REG1_A_ODR_10HZ						(0x20)
 #define LSM330DLC_CTRL_REG1_A_ODR_25HZ						(0x30)
 #define LSM330DLC_CTRL_REG1_A_ODR_50HZ						(0x40)
@@ -95,7 +96,7 @@ uint8_t LSM330DLC_FormatAddress(bool read, bool increment, uint8_t address);
 #define LSM330DLC_CTRL_REG1_A_ODR_LP1620HZ					(0x80)
 #define LSM330DLC_CTRL_REG1_A_ODR_NORMAL1344HZ_LP5376HZ		(0x90)
 
-#define LSM330DLC_CTRL_REG1_A_LOWPOWER_ENABLE					(0x08)		/// Low power mode
+#define LSM330DLC_CTRL_REG1_A_LOWPOWER_ENABLE				(0x08)		/// Low power mode
 #define LSM330DLC_CTRL_REG1_A_Z_ENABLE						(0x04)
 #define LSM330DLC_CTRL_REG1_A_Y_ENABLE						(0x02)
 #define LSM330DLC_CTRL_REG1_A_X_ENABLE						(0x01)
@@ -142,16 +143,16 @@ uint8_t LSM330DLC_FormatAddress(bool read, bool increment, uint8_t address);
 
 													// Reserved bit. Must be 0
 // Endianness
-#define LSM330DLC_CTRL_REG4_A_BLE_LITTLEENDIAN		(0x00)	/// Little Endian Data 
-#define LSM330DLC_CTRL_REG4_A_BLE_BIGENDIAN			(0x40)	/// Big Endian Data 
+#define LSM330DLC_CTRL_REG4_A_BLE_LITTLEENDIAN		(0x00)		/// Little Endian Data 
+#define LSM330DLC_CTRL_REG4_A_BLE_BIGENDIAN			(0x40)		/// Big Endian Data 
 
 // Full-scale selection
-#define LSM330DLC_CTRL_REG4_A_FS_2G					(0x00)	/// 2G (default)
-#define LSM330DLC_CTRL_REG4_A_FS_4G					(0x10)	/// 4G
-#define LSM330DLC_CTRL_REG4_A_FS_8G					(0x20)	/// 8G
-#define LSM330DLC_CTRL_REG4_A_FS_16G					(0x30)	/// 16G
+#define LSM330DLC_CTRL_REG4_A_FS_2G					(0x00)		/// 2G (default)
+#define LSM330DLC_CTRL_REG4_A_FS_4G					(0x10)		/// 4G
+#define LSM330DLC_CTRL_REG4_A_FS_8G					(0x20)		/// 8G
+#define LSM330DLC_CTRL_REG4_A_FS_16G				(0x30)		/// 16G
 
-#define LSM330DLC_CTRL_REG4_A_HR_ENABLE				(0x08)	/// High-resolution mode enable.
+#define LSM330DLC_CTRL_REG4_A_HR_ENABLE				(0x08)		/// High-resolution mode enable.
 													// Reserved bit. Must be 0.
 													// Reserved bit. Must be 0.
 #define LSM330DLC_CTRL_REG4_A_SPI_3WIRE				(0x01)	/// Enable SPI 3-wire mode
@@ -224,15 +225,15 @@ uint8_t LSM330DLC_FormatAddress(bool read, bool increment, uint8_t address);
 
 #define LSM330DLC_FIFO_SRC_REG_A_WTM								(0x80)	/// WTM bit is set high when FIFO content exceeds watermark level
 #define LSM330DLC_FIFO_SRC_REG_A_OVRN_FIFO							(0x40)	/** OVRN bit is set high when FIFO buffer is full, this means that the FIFO buffer
-															 * contains 32 unread samples.At the following ODR a new sample set replaces the
-															 * oldest FIFO value.The OVRN bit is reset when the first sample set has been read
-															 */
+																			 * contains 32 unread samples.At the following ODR a new sample set replaces the
+																			 * oldest FIFO value.The OVRN bit is reset when the first sample set has been read
+																			 */
 #define LSM330DLC_FIFO_SRC_REG_A_EMPTY								(0x20)	/// EMPTY flag is set high when all FIFO samples have been read and FIFO is empty
 #define LSM330DLC_FIFO_SRC_REG_A_FSS								(0x1F)	/** FSS[4:0] field always contains the current number of unread samples stored in the
-															 *	FIFO buffer.When FIFO is enabled, this value increases at ODR frequency until
-															 *	the buffer is full, whereas, it decreases every time that one sample set is retrieved
-															 *	from FIFO
-															 */
+																			 *	FIFO buffer.When FIFO is enabled, this value increases at ODR frequency until
+																			 *	the buffer is full, whereas, it decreases every time that one sample set is retrieved
+																			 *	from FIFO
+																			 */
 
 
 

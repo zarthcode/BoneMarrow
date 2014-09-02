@@ -22,6 +22,8 @@ void app_switchstate(AppState state);
 /// Check and service IMU interrupts
 void CheckIMUInterrupts(void);
 
+extern void initialise_monitor_handles(void);
+
 void app_preinit(void)
 {
 
@@ -46,6 +48,9 @@ void app_postinit(void)
 // Application Main loop
 void app_main(void)
 {
+	initialise_monitor_handles();
+
+	printf_semi("ZarthCode LLC\n");
 
 	while (1)
 	{
@@ -75,7 +80,7 @@ void app_main(void)
 
 		default:
 			// Aww man...
-			printf_semi("Unrecognized glove AppState(%d)", glove_state);
+			printf_semi("Unrecognized glove AppState(%d)\n", glove_state);
 			break;
 		}
 
