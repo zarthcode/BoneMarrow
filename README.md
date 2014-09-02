@@ -26,16 +26,19 @@ Hosted on github at the url: https://github.com/zarthcode/BoneMarrow
   
 Windows 8.1 Development Environment Setup
 =========================================
+This is what we're using...
+
   
 Visual Studio 2013 Professional (Optional, http://msdn.microsoft.com)  
 VisualGDB (Optional, http://www.visualgdb.com/)  
-Sysprogs GNU Toolchain (GCC 4.8.2 http://gnutoolchains.com/arm-eabi/)  
-  
+
+GCC-arm-none-eabi: Launchpad GNU Tools for ARM Embedded Processors (https://launchpad.net/gcc-arm-embedded/+download)
+
   
 Required Hardware
 =================
   
-MantisVR (EVP4)  
+MantisVR (EVP4 or later)  
 Bluetooth 4.0/LE adapter  
 ST-Link/V2 and drivers (http://goo.gl/FjQ2A3)  
 Tag-Connect TC2050-ARM2010 (ARM 20-pin to TC2050 Adapter - http://www.tag-connect.com/TC2050-ARM2010)  
@@ -46,6 +49,7 @@ Project Components
   
 BoneMarrow.sln - Visual Studio 2013 project solution  
 Diagnostic - Basic hardware functional and connectivity testing firmware.  
+Glove - VR 
 (TODO)Bootloader - DFU bootloader firmware (Allows update to new firmware without use of st-link.)  
   
   
