@@ -106,15 +106,15 @@ int app_postinit(void)
 	}
 	*/
 
-	IMU_CheckAlignment();
+//	IMU_CheckAlignment();
 
 	// Onboard SPI Test
 	IMU_Setup();
-	IMU_Test(IMU_ONBOARD);
+//	IMU_Test(IMU_ONBOARD);
 	HAL_Delay(1);
 	IMU_Configure(IMU_ONBOARD);
 
-	HAL_Delay(2);
+	HAL_Delay(100);
 
 	IMU_Poll(IMU_ONBOARD, IMU_SUBDEV_ACC);
 

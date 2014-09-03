@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : SPI.c
-  * Date               : 02/09/2014 09:24:49
+  * Date               : 02/09/2014 21:06:15
   * Description        : This file provides code for the configuration
   *                      of the SPI instances.
   ******************************************************************************
@@ -196,7 +196,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     hdma_spi1_rx.Instance = DMA2_Stream2;
     hdma_spi1_rx.Init.Channel = DMA_CHANNEL_3;
     hdma_spi1_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
-    hdma_spi1_rx.Init.PeriphInc = DMA_PINC_ENABLE;
+    hdma_spi1_rx.Init.PeriphInc = DMA_PINC_DISABLE;
     hdma_spi1_rx.Init.MemInc = DMA_MINC_ENABLE;
     hdma_spi1_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     hdma_spi1_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
@@ -230,7 +230,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     hdma_spi2_rx.Instance = DMA1_Stream3;
     hdma_spi2_rx.Init.Channel = DMA_CHANNEL_0;
     hdma_spi2_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
-    hdma_spi2_rx.Init.PeriphInc = DMA_PINC_ENABLE;
+    hdma_spi2_rx.Init.PeriphInc = DMA_PINC_DISABLE;
     hdma_spi2_rx.Init.MemInc = DMA_MINC_ENABLE;
     hdma_spi2_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     hdma_spi2_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
@@ -244,7 +244,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     hdma_spi2_tx.Instance = DMA1_Stream4;
     hdma_spi2_tx.Init.Channel = DMA_CHANNEL_0;
     hdma_spi2_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    hdma_spi2_tx.Init.PeriphInc = DMA_PINC_ENABLE;
+    hdma_spi2_tx.Init.PeriphInc = DMA_PINC_DISABLE;
     hdma_spi2_tx.Init.MemInc = DMA_MINC_ENABLE;
     hdma_spi2_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     hdma_spi2_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
@@ -292,7 +292,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     hdma_spi3_tx.Instance = DMA1_Stream7;
     hdma_spi3_tx.Init.Channel = DMA_CHANNEL_0;
     hdma_spi3_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    hdma_spi3_tx.Init.PeriphInc = DMA_PINC_ENABLE;
+    hdma_spi3_tx.Init.PeriphInc = DMA_PINC_DISABLE;
     hdma_spi3_tx.Init.MemInc = DMA_MINC_ENABLE;
     hdma_spi3_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     hdma_spi3_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
@@ -326,7 +326,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     hdma_spi4_rx.Instance = DMA2_Stream0;
     hdma_spi4_rx.Init.Channel = DMA_CHANNEL_4;
     hdma_spi4_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
-    hdma_spi4_rx.Init.PeriphInc = DMA_PINC_ENABLE;
+    hdma_spi4_rx.Init.PeriphInc = DMA_PINC_DISABLE;
     hdma_spi4_rx.Init.MemInc = DMA_MINC_ENABLE;
     hdma_spi4_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     hdma_spi4_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
@@ -340,7 +340,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     hdma_spi4_tx.Instance = DMA2_Stream1;
     hdma_spi4_tx.Init.Channel = DMA_CHANNEL_4;
     hdma_spi4_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    hdma_spi4_tx.Init.PeriphInc = DMA_PINC_ENABLE;
+    hdma_spi4_tx.Init.PeriphInc = DMA_PINC_DISABLE;
     hdma_spi4_tx.Init.MemInc = DMA_MINC_ENABLE;
     hdma_spi4_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     hdma_spi4_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
@@ -374,7 +374,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     hdma_spi5_tx.Instance = DMA2_Stream4;
     hdma_spi5_tx.Init.Channel = DMA_CHANNEL_2;
     hdma_spi5_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    hdma_spi5_tx.Init.PeriphInc = DMA_PINC_ENABLE;
+    hdma_spi5_tx.Init.PeriphInc = DMA_PINC_DISABLE;
     hdma_spi5_tx.Init.MemInc = DMA_MINC_ENABLE;
     hdma_spi5_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     hdma_spi5_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
@@ -388,7 +388,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     hdma_spi5_rx.Instance = DMA2_Stream3;
     hdma_spi5_rx.Init.Channel = DMA_CHANNEL_2;
     hdma_spi5_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
-    hdma_spi5_rx.Init.PeriphInc = DMA_PINC_ENABLE;
+    hdma_spi5_rx.Init.PeriphInc = DMA_PINC_DISABLE;
     hdma_spi5_rx.Init.MemInc = DMA_MINC_ENABLE;
     hdma_spi5_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     hdma_spi5_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
@@ -436,7 +436,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     hdma_spi6_tx.Instance = DMA2_Stream5;
     hdma_spi6_tx.Init.Channel = DMA_CHANNEL_1;
     hdma_spi6_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    hdma_spi6_tx.Init.PeriphInc = DMA_PINC_ENABLE;
+    hdma_spi6_tx.Init.PeriphInc = DMA_PINC_DISABLE;
     hdma_spi6_tx.Init.MemInc = DMA_MINC_ENABLE;
     hdma_spi6_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     hdma_spi6_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;

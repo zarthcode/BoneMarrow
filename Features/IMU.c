@@ -316,15 +316,20 @@ void IMU_GetRAWBurst(IMU_PortType port, IMU_SubDeviceType subdev)
 		break;
 	}
 
+	pIVector3->txbyte = 0;
+	pIVector3->x = 0;
+	pIVector3->y = 0;
+	pIVector3->z = 0;
+
 	// Declare the transfer
 	IMU_TransferState.TransferStep[port][subdev] = IMU_XFER_WAIT;
 
 	// Start DMA transfer to appropriate frame
-	HAL_StatusTypeDef result = HAL_SPI_Receive_DMA(IMUDevice[port].hspi, (uint8_t*)&pIVector3->x, 6);	// size = addr + xyz
+	HAL_StatusTypeDef result = HAL_SPI_Receive_DMA(IMUDevice[port].hspi, /*(uint8_t*)&pIVector3->x, */(uint8_t*)&pIVector3->x, 6);	// size = xyz
 	if (HAL_OK != result)
 	{
 		// Transfer start failed.
-		printf_semi("IMU_GetRAW(port %d, subdev %d) - HAL_SPI_TransmitReceive_DMA failed(%d)\n", port, subdev, result);
+		printf_semi("IMU_GetRAW(port %d, subdev %d) - HAL_SPI_Receive_DMA failed(%d)\n", port, subdev, result);
 		/// @todo introduce a DBG_HAL_StatusTypeDef helper function.
 	}
 
@@ -467,7 +472,7 @@ IMU_TransferStepType IMU_CheckPollingResult(IMU_PortType port, IMU_SubDeviceType
 	case IMU_DEVICE_LSM330DLC:
 		/// Ensure X, Y, & Z data has been updated.
 
-		if (CHECK_BIT(IMU_TransferState.PollingBuffer[port][1], LSM330DLC_STATUS_ZYXDA))
+		if (CHECK_FLAGS(IMU_TransferState.PollingBuffer[port][1], LSM330DLC_STATUS_ZYXDA))
 		{
 			// Change status to pending.
 			IMU_TransferState.TransferStep[port][subdev] = IMU_XFER_PENDING;
@@ -573,7 +578,7 @@ void IMU_Configure(IMU_PortType port)
 			// Reset IMU
 
 			// Power on.
-			configurationPacket[1] = LSM330DLC_CTRL_REG1_A_ODR_100HZ;
+			configurationPacket[1] = LSM330DLC_CTRL_REG1_A_ODR_100HZ | LSM330DLC_CTRL_REG1_A_X_ENABLE| LSM330DLC_CTRL_REG1_A_Y_ENABLE | LSM330DLC_CTRL_REG1_A_Z_ENABLE;
 			
 			// Setup internal filter
 //			configurationPacket[2] = LSM330DLC_CTRL_REG2_A_HPM_NORMAL_RESET | LSM330DLC_CTRL_REG2_A_FDS_ENABLE;	
@@ -582,7 +587,7 @@ void IMU_Configure(IMU_PortType port)
 //			configurationPacket[3] = LSM330DLC_CTRL_REG3_A_I1_DRDY1_ENABLE | LSM330DLC_CTRL_REG3_A_I1_DRDY2_ENABLE;
 
 			// Full scale, endianness, resolution 
-//			configurationPacket[4] = LSM330DLC_CTRL_REG4_A_BLE_LITTLEENDIAN | LSM330DLC_CTRL_REG4_A_FS_2G;
+			configurationPacket[4] = LSM330DLC_CTRL_REG4_A_BLE_LITTLEENDIAN | LSM330DLC_CTRL_REG4_A_FS_2G | LSM330DLC_CTRL_REG4_A_HR_ENABLE;
 			
 			// FIFO reset, FIFO settings, Interrupt latch, 4D detection
 //			configurationPacket[5] = LSM330DLC_CTRL_REG5_A_BOOT;

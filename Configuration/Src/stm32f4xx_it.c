@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @file    stm32f4xx_it.c
-  * @date    02/09/2014 09:24:50
+  * @date    02/09/2014 21:06:16
   * @brief   Interrupt Service Routines.
   ******************************************************************************
   *
@@ -117,6 +117,7 @@ void DMA2_Stream6_IRQHandler(void)
 {
   HAL_NVIC_ClearPendingIRQ(DMA2_Stream6_IRQn);
   HAL_DMA_IRQHandler(&hdma_spi6_rx);
+  
 }
 
 /**

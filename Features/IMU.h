@@ -125,7 +125,7 @@ typedef struct
 {
 	IMU_FrameLockType Lock;
 	IMU_TransferStepType TransferStep[IMU_LAST][IMU_SUBDEV_NONE];	
-	int8_t PollingBuffer[IMU_LAST][IMU_POLL_BUFFER_SIZE];
+	uint8_t PollingBuffer[IMU_LAST][IMU_POLL_BUFFER_SIZE];
 	IMU_SubDeviceType SelectedSubDevice[IMU_LAST];
 } IMU_TransferStateType;
 
