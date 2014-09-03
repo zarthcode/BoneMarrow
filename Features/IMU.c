@@ -18,6 +18,10 @@ uint8_t volatile IMU_RAWFramebuffersPending = 0;
 uint8_t volatile IMU_RAWFramebuffer_ReadIndex = 0;
 uint8_t volatile IMU_RAWFramebuffer_WriteIndex = 0;
 
+// Performance tracking variables
+uint32_t volatile IMU_framecount;
+/// @todo implement FPS tracking
+
 /// Transfer state
 IMU_TransferStateType IMU_TransferState;
 
@@ -29,7 +33,7 @@ void DBG_SPICheckState(HAL_SPI_StateTypeDef state);
 
 
 /// Test IVector3 alignment
-void IMU_CheckAlignment(void)
+bool DIAG_IMU_CheckAlignment(void)
 {
 	/// @todo automate this test to provide PASS/FAIL results.
 	// Quick analysis of IVector3 alignment
@@ -61,11 +65,14 @@ void IMU_CheckAlignment(void)
 		printf_semi("\t[%d][%p] = 0x%02x\n", i, &((uint8_t*)&testbyte)[i],((uint8_t*)&testbyte)[i]);
 	}
 
+	// Don't fix this until we're actually able to determine the results programattically
+	return false;
+
 }
 
 
 /// Determines if the SPI port can communicate with the IMU.
-bool IMU_Test(IMU_PortType imuport)
+bool DIAG_IMU_Test(IMU_PortType imuport)
 {
 	/// @bug - we are currently assuming Alpha-0 IMUs (LSM330DLC)
 	switch (IMUDevice[imuport].DeviceName)
@@ -333,12 +340,21 @@ void IMU_GetRAWBurst(IMU_PortType port, IMU_SubDeviceType subdev)
 		/// @todo introduce a DBG_HAL_StatusTypeDef helper function.
 	}
 
-
 	// All done
+
 }
 
 void IMU_GetRAW(IMU_PortType port, IMU_SubDeviceType subdev)
 {
+
+	/**
+	* @todo LSM6DS0 support will support a different approach.
+	* Using a single CS, subdevice settings will not be required. 
+	* Burst transfers of all gyroscope and accelerometer settings
+	* will need a new RAW structure.	
+	*/
+
+	/// @todo Break apart all device-specific options and methods into a driver-architecture.
 
 	// Select subdevice.
 	IMU_SelectSubDevice(port, subdev);
@@ -377,17 +393,20 @@ void IMU_GetRAW(IMU_PortType port, IMU_SubDeviceType subdev)
 	HAL_StatusTypeDef result = HAL_SPI_TransmitReceive_DMA(IMUDevice[port].hspi, &pIVector3->txbyte, &pIVector3->txbyte, 7);	// size = addr + xyz
 	if (HAL_OK != result)
 	{
+
 		// Transfer start failed.
 		printf_semi("IMU_GetRAW(port %d, subdev %d) - HAL_SPI_TransmitReceive_DMA failed(%d)\n", port, subdev, result);
 		/// @todo introduce a DBG_HAL_StatusTypeDef helper function.
+
 	}
 
+	// All done 
 
-	// All done
 }
 
 void IMU_Poll(IMU_PortType port, IMU_SubDeviceType subdev)
 {
+	/// @todo Change polling to deposit data directly into the the RAW data structure (requires an alternate RAW structure w/2 accessible padding bytes.)
 	// Fire a full-duplex request at the IMU.
 	// Select subdevice.
 	IMU_SelectSubDevice(port, subdev);
@@ -440,7 +459,7 @@ void IMU_CheckIMUInterrupts(void)
 		// and each subdevice...
 		for (int subdev = 0; subdev < IMU_SUBDEV_NONE; subdev++)
 		{
-			// ... Each each interrupt
+			// ... check each interrupt
 
 			/// @bug - This code is inappropriately specific to the LSM330DLC.  This WILL need to be changed to a single-interrupt system!
 
@@ -578,19 +597,19 @@ void IMU_Configure(IMU_PortType port)
 			// Reset IMU
 
 			// Power on.
-			configurationPacket[1] = LSM330DLC_CTRL_REG1_A_ODR_100HZ | LSM330DLC_CTRL_REG1_A_X_ENABLE| LSM330DLC_CTRL_REG1_A_Y_ENABLE | LSM330DLC_CTRL_REG1_A_Z_ENABLE;
+			configurationPacket[1] = LSM330DLC_CTRL_REG1_A_ODR_100HZ | LSM330DLC_CTRL_REG1_A_X_ENABLE | LSM330DLC_CTRL_REG1_A_Y_ENABLE | LSM330DLC_CTRL_REG1_A_Z_ENABLE;
 			
 			// Setup internal filter
-//			configurationPacket[2] = LSM330DLC_CTRL_REG2_A_HPM_NORMAL_RESET | LSM330DLC_CTRL_REG2_A_FDS_ENABLE;	
+			configurationPacket[2] = LSM330DLC_CTRL_REG2_A_HPM_NORMAL_RESET | LSM330DLC_CTRL_REG2_A_FDS_ENABLE;	
 
 			// Interrupt configuration
-//			configurationPacket[3] = LSM330DLC_CTRL_REG3_A_I1_DRDY1_ENABLE | LSM330DLC_CTRL_REG3_A_I1_DRDY2_ENABLE;
+			configurationPacket[3] = LSM330DLC_CTRL_REG3_A_I1_DRDY1_ENABLE | LSM330DLC_CTRL_REG3_A_I1_DRDY2_ENABLE;
 
 			// Full scale, endianness, resolution 
 			configurationPacket[4] = LSM330DLC_CTRL_REG4_A_BLE_LITTLEENDIAN | LSM330DLC_CTRL_REG4_A_FS_2G | LSM330DLC_CTRL_REG4_A_HR_ENABLE;
 			
 			// FIFO reset, FIFO settings, Interrupt latch, 4D detection
-//			configurationPacket[5] = LSM330DLC_CTRL_REG5_A_BOOT;
+			configurationPacket[5] = LSM330DLC_CTRL_REG5_A_BOOT;
 
 			// Active high interrupt, no INT2_A, for now.
 			configurationPacket[6] = 0;
@@ -623,13 +642,13 @@ void IMU_Configure(IMU_PortType port)
 			configurationPacket[0] = LSM330DLC_FormatAddress(false, true, LSM330DLC_REG_CTRL_REG1_G);
 
 			// CTRL_REG1_G - power on.
-			configurationPacket[1] = LSM330DLC_CTRL_REG1_G_ODR_95HZ_BW25;
+			configurationPacket[1] = LSM330DLC_CTRL_REG1_G_ODR_95HZ_BW25 | LSM330DLC_CTRL_REG1_G_X_ENABLE | LSM330DLC_CTRL_REG1_G_Y_ENABLE | LSM330DLC_CTRL_REG1_G_Z_ENABLE;
 
 			// CTRL_REG2_G - Reset filter, default HP cutoff frequency.
 			configurationPacket[2] = LSM330DLC_CTRL_REG2_G_HPM_NORMAL_RESET | LSM330DLC_CTRL_REG2_G_HPCF_0;
 
 			// CTRL_REG3_G - Interrupt settings
-			configurationPacket[3] = LSM330DLC_CTRL_REG3_G_H_Lactive;
+			configurationPacket[3] = 0;
 
 			// CTRL_REG4_G - Endianness, Full scale selection
 			configurationPacket[4] = LSM330DLC_CTRL_REG4_G_FS_250DPS;
@@ -667,7 +686,7 @@ void IMU_Configure(IMU_PortType port)
 
 }
 
-IMU_PortType IMU_GetFromSPIHandle(SPI_HandleTypeDef* hspi)
+IMU_PortType IMU_GetPortFromSPIHandle(SPI_HandleTypeDef* hspi)
 {
 	/// @bug This may need to be manually unrolled.	Analyze/profile this!
 
@@ -707,12 +726,16 @@ IMU_PortType IMU_GetFromSPIHandle(SPI_HandleTypeDef* hspi)
 
 }
 
+
 void IMU_ServiceTick(void)
 {
 	// Update interrupt status
 	IMU_CheckIMUInterrupts();
 
 	bool bFrameComplete = true;
+
+	/// @todo Profile and improve this.  1mS is "good enough" for polling", But this ISR is running at a really high (Max) priority... Maybe a low-priority timer needs to be setup?
+	/// @todo This could use up a lot less memory for TransferState, also.
 	// Check frame status
 	for (int port = 0; port < IMU_LAST; port++)
 	{
@@ -757,13 +780,28 @@ void IMU_ServiceTick(void)
 		}
 
 
-
-
 	}
 
 	//
 
 
+}
+
+float IMU_GetFullScaleMultiplier(IMU_PortType port, IMU_SubDeviceType subdev)
+{
+	/// @todo Breakout device-specific settings into their own files, methods, etc.
+
+	switch (subdev)
+	{
+	case IMU_SUBDEV_ACC:
+
+		break;
+	case IMU_SUBDEV_GYRO:
+		break;
+	/// @todo implement magnetometer support.
+	default:
+		break;
+	}
 }
 
 

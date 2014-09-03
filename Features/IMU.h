@@ -78,6 +78,7 @@ typedef struct
 	IMU_PinMappingType CSMappings[IMU_SUBDEV_NONE];	/// @bug this needs to be configurable based on hardware and detected IMU
 	IMU_PinMappingType INTMappings[IMU_SUBDEV_NONE];	/// @bug this needs to be configurable based on hardware and detected IMU
 	IMU_ComponentType IMUType;
+	float FullScale[IMU_SUBDEV_NONE];
 } IMU_MappingStruct;
 
 typedef struct 
@@ -150,23 +151,33 @@ void IMU_GetRAW(IMU_PortType port, IMU_SubDeviceType subdev);
 /// A special case DMA transfer that takes place after a successful polling operation.
 void IMU_GetRAWBurst(IMU_PortType port, IMU_SubDeviceType subdev);
 
-/// Debug/Dev function to check structure alignment
-void IMU_CheckAlignment(void);
 
 /// Performs initial setup of IMU mapping structures
+/// @todo Rewrite IMU methods using a driver approach. IMU_Setup should detect/configure devices.
 void IMU_Setup(void);
 
-/// Determines if the SPI port can communicate with the IMU.
-bool IMU_Test(IMU_PortType imuport);
+/// Returns a multiplier for the currently-configured full-scale setting.
+float IMU_GetFullScaleMultiplier(IMU_PortType port, IMU_SubDeviceType subdev);
+
+/// Evaluates FullScale setting for each port, based on the last few frames.
+void IMU_AutoSetFullScaleSetting(IMU_PortType port, IMU_SubDeviceType subdev);
+
+/**
+ * @brief Attempts to force a particular full-scale setting.
+ * @returns final full-scale setting.
+ * @param IMU_PortType port IMU device descriptor 
+ * @param IMU_SubDeviceType subdev IMU subdevice
+ */
+float IMU_ForceFullScaleSetting(IMU_PortType port, IMU_SubDeviceType subdev);
 
 /// Utility function that returns the imu associated w/an hspi
-IMU_PortType IMU_GetFromSPIHandle(SPI_HandleTypeDef* hspi);
+IMU_PortType IMU_GetPortFromSPIHandle(SPI_HandleTypeDef* hspi);
 
 /// Selects the requested component
 void IMU_SelectSubDevice(IMU_PortType port, IMU_SubDeviceType component);
 
-/// Detect connected IMU(s)
-IMU_ComponentType DetectIMU(IMU_MappingStruct* device);
+// Detect connected IMU(s)
+// IMU_ComponentType DetectIMU(IMU_MappingStruct* device);
 
 /// Configures the selected IMU
 void IMU_Configure(IMU_PortType port);
@@ -174,6 +185,13 @@ void IMU_Configure(IMU_PortType port);
 /// Performs IMU service once per mS
 void IMU_ServiceTick(void);
  
+/// Determines if the SPI port can communicate with the IMU.
+bool DIAG_IMU_Test(IMU_PortType imuport);
+
+/// Debug/Dev function to check structure alignment
+bool DIAG_IMU_CheckAlignment(void);
+
+
 /*
 
 	Interrupt Mapping (EVP4)

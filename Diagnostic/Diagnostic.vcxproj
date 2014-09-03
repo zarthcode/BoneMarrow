@@ -155,6 +155,7 @@
     <ClCompile Include="..\Features\OTP.c" />
     <ClCompile Include="..\Features\IMU.c" />
     <ClCompile Include="..\Features\LED.c" />
+    <ClCompile Include="..\Features\Spatial.c" />
     <ClCompile Include="..\Features\SPICallbacks.c" />
     <ClCompile Include="ClockTest.c" />
     <ClCompile Include="Diagnostic.c" />

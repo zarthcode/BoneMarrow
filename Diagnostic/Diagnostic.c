@@ -12,6 +12,7 @@ extern void initialise_monitor_handles(void);
 bool Diag_ButtonTest(void);
 bool Diag_ClockTest(void);
 bool Diag_BatteryMeterTest(void);
+bool Diag_IMUTest(void);
 
 int app_preinit(void)
 {
@@ -108,15 +109,42 @@ int app_postinit(void)
 
 //	IMU_CheckAlignment();
 
+	// Check PG10
+	printf_semi("PG10 IMU_ONBOARD - INT1_A is ");
+	if (HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_10) == GPIO_PIN_SET)
+		printf_semi("HIGH\n");
+	else
+		printf_semi("LOW\n");
+
 	// Onboard SPI Test
 	IMU_Setup();
 //	IMU_Test(IMU_ONBOARD);
 	HAL_Delay(1);
+
+	printf_semi("PG10 IMU_ONBOARD - INT1_A is ");
+	if (HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_10) == GPIO_PIN_SET)
+		printf_semi("HIGH\n");
+	else
+		printf_semi("LOW\n");
+	
 	IMU_Configure(IMU_ONBOARD);
+
+	printf_semi("PG10 IMU_ONBOARD - INT1_A is ");
+	if (HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_10) == GPIO_PIN_SET)
+		printf_semi("HIGH\n");
+	else
+		printf_semi("LOW\n");
 
 	HAL_Delay(100);
 
-	IMU_Poll(IMU_ONBOARD, IMU_SUBDEV_ACC);
+// 	IMU_Poll(IMU_ONBOARD, IMU_SUBDEV_ACC);
+	IMU_CheckIMUInterrupts();
+
+	printf_semi("PG10 IMU_ONBOARD - INT1_A is ");
+	if (HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_10) == GPIO_PIN_SET)
+		printf_semi("HIGH\n");
+	else
+		printf_semi("LOW\n");
 
 	HAL_Delay(3000);
 
@@ -281,6 +309,45 @@ bool Diag_BatteryMeterTest(void)
 }
 
 /// Onboard IMU Test
+bool Diag_IMUTest(void)
+{
+	/// @todo This needs to be an entire function that examines that the compiler has correctly packed the variables together.
+	DIAG_IMU_CheckAlignment();
+
+	// Onboard SPI Test
+	IMU_Setup();
+
+	DIAG_IMU_Test(IMU_ONBOARD);
+	HAL_Delay(1);
+
+	/// @todo This needs to be done while the IMU is not configured.
+	printf_semi("PG10 IMU_ONBOARD - INT1_A is ");
+	if (HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_10) == GPIO_PIN_SET)
+		printf_semi("HIGH\n");
+	else
+		printf_semi("LOW\n");
+	
+	IMU_Configure(IMU_ONBOARD);
+
+	// It should take awhile for a sample to appear...
+	printf_semi("PG10 IMU_ONBOARD - INT1_A is ");
+	if (HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_10) == GPIO_PIN_SET)
+		printf_semi("HIGH\n");
+	else
+		printf_semi("LOW\n");
+
+	HAL_Delay(100);
+
+	/// @todo Verify the interrupt using a polling operation
+// 	IMU_Poll(IMU_ONBOARD, IMU_SUBDEV_ACC);
+	IMU_CheckIMUInterrupts();
+
+
+	/// @todo report success or failure.
+	HAL_Delay(3000);
+
+
+}
 
 /// Radio Test
 

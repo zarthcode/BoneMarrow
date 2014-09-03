@@ -70,7 +70,10 @@ typedef struct
 
 } IMU_SCALED;
 
+#define SPATIAL_IMUFRAMEBUFFER_SIZE 8
 
+/// Scaled IMU data.
+extern IMU_SCALED SPATIAL_IMUFrameBuffer;
 
 
 /// @todo Return Vector3, and evaluate optimization/speed result.
@@ -80,12 +83,14 @@ typedef struct
  * @param[out] out Rescaled imu data
  * @param[in] fullscale Current fullscale setting of the imu (see datasheet for units and values)
  */
-void ToVector3(IVector3* raw, Vector3* out, float fullscale);
+void SPATIAL_RAWToVector3(IVector3* raw, Vector3* out, float fullscale);
 
 /// @todo Consider converting from IVector3 in one step.
 /**
  * @brief Converts degrees/s to rad/sec.
  * @param[in,out] dps_gyro Gyroscope input, in degrees per second.  To be converted, in-place.
  */
-void ToRadiansPerSec(Vector3* dps_gyro);
+void SPATIAL_RAWToRadiansPerSec(Vector3* dps_gyro);
 
+/// Diagnostic Information
+bool DIAG_SPATIAL_BufferStatistics(void);
