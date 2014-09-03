@@ -49,7 +49,7 @@ Project Components
   
 BoneMarrow.sln - Visual Studio 2013 project solution  
 Diagnostic - Basic hardware functional and connectivity testing firmware.  
-Glove - VR 
+Glove - VR dataglove implementation of BoneMarrow
 (TODO)Bootloader - DFU bootloader firmware (Allows update to new firmware without use of st-link.)  
   
   
