@@ -3,6 +3,7 @@
 #include "stm32f4xx_it.h"
 #include "Button.h"
 #include "LED.h"
+#include "IMU.h"
 
 #include "Semihosting.h"
 
@@ -11,9 +12,13 @@
 */
 void HAL_SYSTICK_Callback(void)
 {
+
 	// Update animation state
 	LED_SystickHandler();
 	ButtonSystickHandler();
+
+	// Update frame information
+	IMU_SystickHandler();
 
 }
 

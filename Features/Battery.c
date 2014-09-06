@@ -73,7 +73,7 @@ float readBatteryLevel(void)
 	float BatteryVoltage = ((ADCVoltage * (R20 + R22)) / R22) + Vzener;
 
 	// Work-around for printing floats
-	printf_semi("Battery Level reading is %d mV (Raw reading: %d)\n", (uint32_t)(BatteryVoltage * 1000), ConversionResult);
+	printf_semi("Battery Level reading is %f V (Raw reading: %f)\n", BatteryVoltage, ConversionResult);
 
 	return BatteryVoltage;
 }

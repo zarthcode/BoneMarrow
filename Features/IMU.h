@@ -13,6 +13,7 @@
 /// @todo What about (beta-series) advanced fingers w/brains?
 typedef enum
 {
+
 	IMU_ONBOARD,		// This is the onboard IMU, normally placed on the forearm.
 	IMU_P1,
 	IMU_P2,
@@ -53,13 +54,13 @@ typedef enum
 {
 	IMU_DEV_6AXIS,
 	IMU_DEV_9AXIS
-
 } IMU_ComponentType;
 
 /// @brief This is meant for auto-detection, implementation of multiple MEMS sensor types.
 typedef enum
 {
 	IMU_DEVICE_LSM330DLC,		// EVP4, Alpha-0.
+//	IMU_DEVICE_LSM6DS0,
 //	IMU_DEVICE_LSM9DS0,
 //	IMU_DEVICE_LSM6DB0,
 //	IMU_DEVICE_LSM330,
@@ -90,7 +91,7 @@ typedef struct
 extern IMU_MappingStruct IMUDevice[IMU_LAST];
 
 /// Total number of RAW buffers.
-#define IMU_FRAMEBUFFER_SIZE 1
+#define IMU_FRAMEBUFFER_SIZE 2
 
 /// IMU Framebuffer
 extern IMU_RAWFrame IMU_RAWFramebuffer[IMU_FRAMEBUFFER_SIZE];		/// @todo Implement FIFO 
@@ -119,6 +120,7 @@ typedef enum
 } IMU_TransferStepType;
 
 
+/// @todo IMU_POLL_BUFFER_SIZE is an excellent candidate for malloc/free.
 #define IMU_POLL_BUFFER_SIZE 2	// Only 2 bytes needed to hold TxRx polling transfers.
 
 /// Transfer State
@@ -167,8 +169,9 @@ void IMU_AutoSetFullScaleSetting(IMU_PortType port, IMU_SubDeviceType subdev);
  * @returns final full-scale setting.
  * @param IMU_PortType port IMU device descriptor 
  * @param IMU_SubDeviceType subdev IMU subdevice
+ * @todo Change this routine to utilize a device driver architecture.
  */
-float IMU_ForceFullScaleSetting(IMU_PortType port, IMU_SubDeviceType subdev);
+float IMU_ForceFullScaleSetting(IMU_PortType port, IMU_SubDeviceType subdev, float g_max);
 
 /// Utility function that returns the imu associated w/an hspi
 IMU_PortType IMU_GetPortFromSPIHandle(SPI_HandleTypeDef* hspi);
@@ -176,14 +179,23 @@ IMU_PortType IMU_GetPortFromSPIHandle(SPI_HandleTypeDef* hspi);
 /// Selects the requested component
 void IMU_SelectSubDevice(IMU_PortType port, IMU_SubDeviceType component);
 
-// Detect connected IMU(s)
+/// Detect connected IMU(s)
 // IMU_ComponentType DetectIMU(IMU_MappingStruct* device);
 
 /// Configures the selected IMU
+/**
+ * @brief 
+ * @todo This function needs to be a driver arch.
+ * @todo settings/configuration needs to be be cached into IMUDevice structure.
+ * @param port IMU of the device to configure.
+ */
 void IMU_Configure(IMU_PortType port);
 
+/// Processes Completed/pending IMU_RAW frames into IMU_SCALED frames and frees an IMU_Framebuffer
+void IMU_ProcessRAWFrame(void);
+
 /// Performs IMU service once per mS
-void IMU_ServiceTick(void);
+void IMU_SystickHandler(void);
  
 /// Determines if the SPI port can communicate with the IMU.
 bool DIAG_IMU_Test(IMU_PortType imuport);

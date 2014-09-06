@@ -260,6 +260,7 @@
     <ClInclude Include="..\Features\bitmanip.h" />
     <ClInclude Include="..\Features\Bone.h" />
     <ClInclude Include="..\Features\Button.h" />
+    <ClInclude Include="..\Features\Defines.h" />
     <ClInclude Include="..\Features\Eeprom.h" />
     <ClInclude Include="..\Features\Filters.h" />
     <ClInclude Include="..\Features\Glove.h" />

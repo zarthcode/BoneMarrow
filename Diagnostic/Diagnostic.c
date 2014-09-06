@@ -22,6 +22,7 @@ int app_preinit(void)
 
 int app_postinit(void)
 {
+
 #ifdef DEBUG
 	HAL_EnableDBGSleepMode();
 	HAL_EnableDBGStandbyMode();
@@ -119,50 +120,48 @@ int app_postinit(void)
 	// Onboard SPI Test
 	IMU_Setup();
 //	IMU_Test(IMU_ONBOARD);
-	HAL_Delay(1);
 
-	printf_semi("PG10 IMU_ONBOARD - INT1_A is ");
-	if (HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_10) == GPIO_PIN_SET)
-		printf_semi("HIGH\n");
-	else
-		printf_semi("LOW\n");
-	
 	IMU_Configure(IMU_ONBOARD);
 
-	printf_semi("PG10 IMU_ONBOARD - INT1_A is ");
-	if (HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_10) == GPIO_PIN_SET)
-		printf_semi("HIGH\n");
-	else
-		printf_semi("LOW\n");
-
-	HAL_Delay(100);
-
-// 	IMU_Poll(IMU_ONBOARD, IMU_SUBDEV_ACC);
-	IMU_CheckIMUInterrupts();
-
-	printf_semi("PG10 IMU_ONBOARD - INT1_A is ");
-	if (HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_10) == GPIO_PIN_SET)
-		printf_semi("HIGH\n");
-	else
-		printf_semi("LOW\n");
-
-	HAL_Delay(3000);
+//	HAL_Delay(3000);
 
 }
 
+extern uint32_t volatile IMU_framecount;
+
 int app_main(void)
 {
-	/*
-	// Check button state
-	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET)
+	printf_semi("Waiting for input.\n");
+
+	uint32_t oldfc = IMU_framecount;
+
+
+	// Process frame data for a few secs...
+	uint32_t startTime = HAL_GetTick();
+	while ((startTime + 1000) > HAL_GetTick())
 	{
-		// Enable the timers for 10s
-		HAL_Delay(10000);
+
+		// Process Framedata
+		IMU_ProcessRAWFrame();
+
+		// Process Framedata into Quaternions
+
+		// Perform Gesture Recognition
 
 	}
-	*/
- 	printf_semi("Goodnight!\n");
+	
+	printf_semi("RAW Frames Generated: %d\n", IMU_framecount);
+	printf_semi("SCALED Frames processed: %d\n", SPATIAL_IMUFrameBuffer_NumProcessed);
 
+	printf_semi("Last Frame:\nax = %f\nay = %f\naz = %f\ngx = %f\ngy = %f\ngz = %f\n",
+		SPATIAL_IMUFrameBuffer[0].imu[0].accelerometer.x,
+		SPATIAL_IMUFrameBuffer[0].imu[0].accelerometer.y,
+		SPATIAL_IMUFrameBuffer[0].imu[0].accelerometer.z,
+		SPATIAL_IMUFrameBuffer[0].imu[0].gyroscope.x,
+		SPATIAL_IMUFrameBuffer[0].imu[0].gyroscope.z);
+
+
+ 	printf_semi("Goodnight!\n");
 	SetLEDState(RADIO, LED_STATE_OFF);
 	SetLEDState(POWER, LED_STATE_OFF);
 	SetLEDState(D1, LED_STATE_OFF);
@@ -176,6 +175,7 @@ int app_main(void)
 	{
 		__WFE();
 	}
+	
 
 }
 

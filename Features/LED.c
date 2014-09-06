@@ -236,11 +236,13 @@ void SetLEDState(LED_IDType led, LED_STATEType state)
 	switch (state)
 	{
 	case LED_STATE_OFF:
+
 		// Switch the LED's brightness channel to 0%
 		SetLEDColor(led, black, 0);
 
 		break;
 	case LED_STATE_ON:
+
 		SetLEDColor(led, RGBLED_Color[led - D1], MAX_BRIGHTNESS);
 
 		break;
@@ -250,12 +252,15 @@ void SetLEDState(LED_IDType led, LED_STATEType state)
 		break;
 
 	case LED_STATE_PULSE:
+
 		// Setup transition
 		TransitionTime[led] = LED_PULSE_SPEED;
 		TransitionTimeRemaining[led] = LED_PULSE_SPEED;
+
 		break;
 
 	default:
+
 		// Do nothing.
 		break;
 	}
@@ -277,7 +282,6 @@ void SetLED_Animation(LED_ANIMATIONType animation)
 void LED_PWM_Start(void)
 {
 	// activate the PWM Timers outputs
-
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);

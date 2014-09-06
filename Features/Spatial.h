@@ -3,6 +3,8 @@
  * Spatial structures and operations
  *
  */
+#include <stdint.h>
+#include <stdbool.h>
 
 /// Data-type for 3D quaternions
 typedef struct 
@@ -72,8 +74,22 @@ typedef struct
 
 #define SPATIAL_IMUFRAMEBUFFER_SIZE 8
 
+/// @bug This IMU_COUNT is totally improper.  Please fix this *embarrasment* of a define.
+#define IMU_COUNT 7
+
+typedef struct
+{
+	IMU_SCALED imu[IMU_COUNT];
+
+} IMU_SCALED_FramebufferType;
+
 /// Scaled IMU data.
-extern IMU_SCALED SPATIAL_IMUFrameBuffer;
+extern IMU_SCALED_FramebufferType SPATIAL_IMUFrameBuffer[SPATIAL_IMUFRAMEBUFFER_SIZE];
+
+extern uint8_t SPATIAL_IMUFrameBuffer_ReadIndex;
+extern uint8_t SPATIAL_IMUFramwBuffer_WriteIndex;
+
+extern uint32_t SPATIAL_IMUFrameBuffer_NumProcessed;
 
 
 /// @todo Return Vector3, and evaluate optimization/speed result.

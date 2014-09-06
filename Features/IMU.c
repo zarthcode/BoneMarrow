@@ -8,9 +8,11 @@
 #include "bitmanip.h"
 
 /// IMU Map
+/// @todo Consider using malloc/free to control the size of this buffer dynamically.
 IMU_MappingStruct IMUDevice[IMU_LAST];
 
 /// IMU data buffer
+/// @todo Consider using malloc/free to control the size of this buffer dynamically.
 IMU_RAWFrame IMU_RAWFramebuffer[IMU_FRAMEBUFFER_SIZE];		/// @todo Implement FIFO 
 
 /// Number of IMU framebuffers pending
@@ -20,17 +22,17 @@ uint8_t volatile IMU_RAWFramebuffer_WriteIndex = 0;
 
 // Performance tracking variables
 uint32_t volatile IMU_framecount;
+
+/// Tracks if imu dma is enabled.
+bool IMU_Enabled = false;
+
 /// @todo implement FPS tracking
 
 /// Transfer state
 IMU_TransferStateType IMU_TransferState;
 
-
-
-
 /// Debugging utility function.
 void DBG_SPICheckState(HAL_SPI_StateTypeDef state);
-
 
 /// Test IVector3 alignment
 bool DIAG_IMU_CheckAlignment(void)
@@ -557,11 +559,10 @@ void IMU_HandleSPIEvent(IMU_PortType port)
 		// Deselect the device.
 		IMU_SelectSubDevice(port, IMU_SUBDEV_NONE);
 
-
-
 		break;
 
 	case IMU_XFER_COMPLETE:
+
 		// A polling event was just completed.
 		printf_semi("IMU_HandleSPIEvent(port %d) - IMU_XFER_COMPLETE isn't a SPI event...\n", port);
 		break;
@@ -575,13 +576,13 @@ void IMU_HandleSPIEvent(IMU_PortType port)
 		break;
 	}
 
-
-
 }
 
 
 void IMU_Configure(IMU_PortType port)
 {
+
+
 	switch (IMUDevice[port].DeviceName)
 	{
 
@@ -614,11 +615,14 @@ void IMU_Configure(IMU_PortType port)
 			// Active high interrupt, no INT2_A, for now.
 			configurationPacket[6] = 0;
 									
+			// Cache the fullscale value.
+			IMUDevice[port].FullScale[IMU_SUBDEV_ACC] = 2.0f;
 
 			// Send data
 			HAL_StatusTypeDef result = HAL_SPI_Transmit(IMUDevice[port].hspi, configurationPacket, sizeof(configurationPacket), 200);
 			if(result != HAL_OK)
 			{
+
 #ifdef DEBUG
 				printf_semi("ConfigureIMU(%d), IMU acc setup failed (%d)\n", port, result);
 
@@ -628,13 +632,11 @@ void IMU_Configure(IMU_PortType port)
 #endif // DEBUG
 
 			}
-
 			
 			IMU_SelectSubDevice(port, IMU_SUBDEV_GYRO);
 			
 			// clear
 			memset(configurationPacket, 0, sizeof(configurationPacket));
-
 
 		// Gyroscope
 
@@ -648,7 +650,7 @@ void IMU_Configure(IMU_PortType port)
 			configurationPacket[2] = LSM330DLC_CTRL_REG2_G_HPM_NORMAL_RESET | LSM330DLC_CTRL_REG2_G_HPCF_0;
 
 			// CTRL_REG3_G - Interrupt settings
-			configurationPacket[3] = 0;
+			configurationPacket[3] = LSM330DLC_CTRL_REG3_A_I1_DRDY1_ENABLE;
 
 			// CTRL_REG4_G - Endianness, Full scale selection
 			configurationPacket[4] = LSM330DLC_CTRL_REG4_G_FS_250DPS;
@@ -668,6 +670,10 @@ void IMU_Configure(IMU_PortType port)
 			IMU_SelectSubDevice(port, IMU_SUBDEV_NONE);
 
 
+			// Cache the fullscale value.
+			IMUDevice[port].FullScale[IMU_SUBDEV_GYRO] = 2.0f;
+
+
 			// ? Power on
 			// ODR / Power On
 				// Accelerometer ODR (1Hz, 10Hz, 25Hz, 50Hz, 100Hz, 200Hz, 400Hz, 1.62kHz, 1.344kHz)
@@ -683,11 +689,15 @@ void IMU_Configure(IMU_PortType port)
 	}
 
 	// Setup complete.
+	IMU_Enabled = true;
+	SPATIAL_IMUFrameBuffer_ReadIndex = 0;
+	SPATIAL_IMUFramwBuffer_WriteIndex = 0;
 
 }
 
 IMU_PortType IMU_GetPortFromSPIHandle(SPI_HandleTypeDef* hspi)
 {
+
 	/// @bug This may need to be manually unrolled.	Analyze/profile this!
 
 	/* Flesh this out to manually unroll...
@@ -727,8 +737,12 @@ IMU_PortType IMU_GetPortFromSPIHandle(SPI_HandleTypeDef* hspi)
 }
 
 
-void IMU_ServiceTick(void)
+void IMU_SystickHandler(void)
 {
+	// Wait until enabled.
+	if (IMU_Enabled == false)
+		return;
+
 	// Update interrupt status
 	IMU_CheckIMUInterrupts();
 
@@ -739,6 +753,13 @@ void IMU_ServiceTick(void)
 	// Check frame status
 	for (int port = 0; port < IMU_LAST; port++)
 	{
+
+	/// @bug temporary change to test DMA bandwidth.
+		if (port != IMU_ONBOARD)
+		{
+			IMU_TransferState.TransferStep[port][IMU_SUBDEV_ACC] = IMU_XFER_COMPLETE;
+			IMU_TransferState.TransferStep[port][IMU_SUBDEV_GYRO] = IMU_XFER_COMPLETE;
+		}
 
 		for (int subdev = 0; subdev < IMU_SUBDEV_NONE; subdev++)
 		{
@@ -751,6 +772,7 @@ void IMU_ServiceTick(void)
 
 			if(IMU_TransferState.TransferStep[port][subdev] == IMU_XFER_PENDING)
 			{
+				bFrameComplete = false;
 				// Start a retrieval operation
 				IMU_GetRAW(port, subdev);
 	
@@ -764,6 +786,19 @@ void IMU_ServiceTick(void)
 
 	if (bFrameComplete)
 	{
+
+		// Frame is ready
+		IMU_framecount++;
+		/*
+			printf_semi("Frame %d:\n ax %d\n ay %d\n az %d\n gx %d\n gy %d\n gz %d\n ",
+			IMU_RAWFramebuffer_WriteIndex,
+			IMU_RAWFramebuffer[IMU_RAWFramebuffer_WriteIndex].imu[IMU_ONBOARD].accelerometer.x,
+			IMU_RAWFramebuffer[IMU_RAWFramebuffer_WriteIndex].imu[IMU_ONBOARD].accelerometer.y,
+			IMU_RAWFramebuffer[IMU_RAWFramebuffer_WriteIndex].imu[IMU_ONBOARD].accelerometer.z,
+			IMU_RAWFramebuffer[IMU_RAWFramebuffer_WriteIndex].imu[IMU_ONBOARD].gyroscope.x,
+			IMU_RAWFramebuffer[IMU_RAWFramebuffer_WriteIndex].imu[IMU_ONBOARD].gyroscope.y,
+			IMU_RAWFramebuffer[IMU_RAWFramebuffer_WriteIndex].imu[IMU_ONBOARD].gyroscope.z);
+		*/
 			
 		// Advance WriteIndex.
 		if (++IMU_RAWFramebuffer_WriteIndex == IMU_FRAMEBUFFER_SIZE)
@@ -779,11 +814,56 @@ void IMU_ServiceTick(void)
 			IMU_TransferState.SelectedSubDevice[i] = IMU_SUBDEV_NONE;
 		}
 
+		// Frame Ready
+		// This *would* be a nice time to process the finished frame, but lets queue it for processing instead.
 
 	}
 
-	//
+}
 
+uint32_t SPATIAL_IMUFrameBuffer_NumProcessed = 0;
+
+// Process RAWFrame
+void IMU_ProcessRAWFrame(void)
+{
+	// Make sure there is a frame to process
+	if (IMU_RAWFramebuffer_ReadIndex == IMU_RAWFramebuffer_WriteIndex)
+		return;
+
+	// Process frame data
+
+	// Clear the destination frame
+	memset(&SPATIAL_IMUFrameBuffer[SPATIAL_IMUFramwBuffer_WriteIndex], 0, sizeof(IMU_SCALED_FramebufferType));
+	
+	for (int i = 0; i < IMU_LAST; i++)
+	{
+		// Rescale values
+		SPATIAL_IMUFrameBuffer[SPATIAL_IMUFramwBuffer_WriteIndex].imu[i].tickstamp = IMU_RAWFramebuffer[IMU_RAWFramebuffer_ReadIndex].imu[i].tickstamp;
+		SPATIAL_RAWToVector3(&IMU_RAWFramebuffer[IMU_RAWFramebuffer_ReadIndex].imu[i].accelerometer, &SPATIAL_IMUFrameBuffer[SPATIAL_IMUFramwBuffer_WriteIndex].imu[i].accelerometer, IMU_GetFullScaleMultiplier(i, IMU_SUBDEV_ACC));
+		SPATIAL_RAWToVector3(&IMU_RAWFramebuffer[IMU_RAWFramebuffer_ReadIndex].imu[i].gyroscope, &SPATIAL_IMUFrameBuffer[SPATIAL_IMUFramwBuffer_WriteIndex].imu[i].gyroscope, IMU_GetFullScaleMultiplier(i, IMU_SUBDEV_GYRO));
+//		SPATIAL_RAWToVector3(&IMU_RAWFramebuffer[IMU_RAWFramebuffer_ReadIndex].imu[i].magnetometer, &SPATIAL_IMUFrameBuffer[SPATIAL_IMUFramwBuffer_WriteIndex].imu[i].magnetometer, IMU_GetFullScaleMultiplier(i,IMU_SUBDEV_MAG));
+
+		/// @bug Convert Gyro values from degrees/sec into Radians/sec
+
+	}
+
+
+	// Increment RAW ReadIndex and SCALED Write index
+	IMU_RAWFramebuffer_ReadIndex++;
+
+	if (IMU_RAWFramebuffer_ReadIndex == IMU_FRAMEBUFFER_SIZE)
+	{
+		IMU_RAWFramebuffer_ReadIndex = 0;
+	}
+
+	SPATIAL_IMUFramwBuffer_WriteIndex++;
+
+	if (SPATIAL_IMUFramwBuffer_WriteIndex == SPATIAL_IMUFRAMEBUFFER_SIZE)
+	{
+		SPATIAL_IMUFramwBuffer_WriteIndex = 0;
+	}
+
+	SPATIAL_IMUFrameBuffer_NumProcessed++;
 
 }
 
@@ -791,17 +871,114 @@ float IMU_GetFullScaleMultiplier(IMU_PortType port, IMU_SubDeviceType subdev)
 {
 	/// @todo Breakout device-specific settings into their own files, methods, etc.
 
-	switch (subdev)
-	{
-	case IMU_SUBDEV_ACC:
+	return IMUDevice[port].FullScale[subdev];	// That was easy.
+	
+}
 
+void IMU_AutoSetFullScaleSetting(IMU_PortType port, IMU_SubDeviceType subdev)
+{
+
+	// Evaluate the framebuffer for IMU values and rescale to enchance precision.
+	// If the value is consistently in the middle 50%, do nothing.
+	// If the value is consistently in the bottom or top 25%, scale in that direction.
+	// If the value is consistently in the middle 50%, do nothing.
+	
+	// Evaluate:
+	// Maximum
+	// Minimum
+	// Average
+
+}
+
+float IMU_ForceFullScaleSetting(IMU_PortType port, IMU_SubDeviceType subdev, float g_max)
+{
+	float g_new = 0.0f;
+
+	switch (IMUDevice[port].DeviceName)
+	{
+	case IMU_DEVICE_LSM330DLC:
+
+		switch (subdev)
+		{
+		case IMU_SUBDEV_ACC:
+			// 
+			if ((g_max <= 2.0f) && (g_max >= -2.0f))
+			{
+				g_new = 2.0f;
+			}
+			else if ((g_max <= 4.0f) && (g_max >= -4.0f))
+			{
+				g_new = 4.0f;
+			}
+			else if ((g_max <= 8.0f) && (g_max >= -8.0f))
+			{
+				g_new = 8.0f;
+			}
+			else if ((g_max <= 16.0f) && (g_max >= -16.0f))
+			{
+				g_new = 16.0f;
+			}
+			else
+			{
+				// Requested scale is out of range.
+				/// @todo return some kind of indicator?  set a special flag?
+				printf_semi("IMU_ForceFullScaleSetting() - Requested scale out of range.\n");
+				g_new = 16.0f;
+			}
+
+			// Set full-scale value.
+			/// @todo Each port needs it's own generic buffer and locking.
+			
+			/// @bug send code.
+
+			break;
+
+		case IMU_SUBDEV_GYRO:
+			if ((g_max <= 250.0f) && (g_max >= -250.0f))
+			{
+				g_new = 250.0f;
+			}
+			else if ((g_max <= 500.0f) && (g_max >= -500.0f))
+			{
+				g_new = 500.0f;
+			}
+			else if ((g_max <= 2000.0f) && (g_max >= -2000.0f))
+			{
+				g_new = 2000.0f;
+			}
+			else
+			{
+				// Requested scale is out of range.
+				/// @todo return some kind of indicator?  set a special flag?
+				printf_semi("IMU_ForceFullScaleSetting() - Requested scale out of range.\n");
+				g_new = 2000.0f;
+			}
+
+			/// @bug send code.
+
+
+			break;
+		default:
+			printf_semi("IMU_ForceFullScaleSetting() - Unimplemented/Supported subdevice type.\n");
+			break;
+		}
 		break;
-	case IMU_SUBDEV_GYRO:
-		break;
-	/// @todo implement magnetometer support.
+
+	/// @todo IMU_DEVICE_LSM6DO0:
+
 	default:
+		printf_semi("IMU_ForceFullScaleSetting() - Unimplemented/Supported device type.\n");
 		break;
 	}
+
+	/// @bug systick and old scaling needs to be stored, as older readings 
+	/// @bug need to be tossed or evaluated differently.
+
+	// Cache new value
+	IMUDevice[port].FullScale[subdev] = g_new;
+
+	// All done.
+	return g_new;
 }
 
 
