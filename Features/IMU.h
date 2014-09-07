@@ -1,4 +1,4 @@
-/// @file IMU.h IMU SPI declarations
+/// @file IMU.h IMU SPI driver declarations
 
 #include "stm32f4xx_hal.h"
 #include "spi.h"
@@ -194,6 +194,11 @@ void IMU_Configure(IMU_PortType port);
 /// Processes Completed/pending IMU_RAW frames into IMU_SCALED frames and frees an IMU_Framebuffer
 void IMU_ProcessRAWFrame(void);
 
+/// Processes scaled imu data into quaternions
+void IMU_ProcessOrientation(void);
+
+/// Removes common (world) motion/acceleration from the frame.  Leaving the relative 
+
 /// Performs IMU service once per mS
 void IMU_SystickHandler(void);
  
@@ -203,6 +208,16 @@ bool DIAG_IMU_Test(IMU_PortType imuport);
 /// Debug/Dev function to check structure alignment
 bool DIAG_IMU_CheckAlignment(void);
 
+
+/**
+ * @brief Updates the specified quaternion using the provided IMU data using Madgwick's AHRS Algorithm.
+ * @returns void
+ * @param[in|out]	pQ		The output quaternion to be updated.
+ * @param[in]		pIMU	IMU data to be used to update the quaternion.
+ * @param[in]		ODR		Refresh rate of the IMU.
+ * @param[in]	   	beta	"2 * Proportional Gain (Kp)"
+ */
+void IMU_QuaternionUpdate(Quaternion* pQ, IMU_SCALED* pIMU, float ODR, float beta);
 
 /*
 

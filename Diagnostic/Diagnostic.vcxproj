@@ -148,15 +148,16 @@
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_usb.c" />
     <ClCompile Include="..\Features\Battery.c" />
     <ClCompile Include="..\Features\Button.c" />
+    <ClCompile Include="..\Features\Calibration.c" />
     <ClCompile Include="..\Features\Filters.c" />
     <ClCompile Include="..\Features\Interrupt.c" />
     <ClCompile Include="..\Features\LSM330DLC.c" />
-    <ClCompile Include="..\Features\MadgwickAHRS.c" />
     <ClCompile Include="..\Features\OTP.c" />
     <ClCompile Include="..\Features\IMU.c" />
     <ClCompile Include="..\Features\LED.c" />
     <ClCompile Include="..\Features\Spatial.c" />
     <ClCompile Include="..\Features\SPICallbacks.c" />
+    <ClCompile Include="..\Features\Sqrt.c" />
     <ClCompile Include="ClockTest.c" />
     <ClCompile Include="Diagnostic.c" />
   </ItemGroup>
@@ -260,6 +261,7 @@
     <ClInclude Include="..\Features\bitmanip.h" />
     <ClInclude Include="..\Features\Bone.h" />
     <ClInclude Include="..\Features\Button.h" />
+    <ClInclude Include="..\Features\Calibration.h" />
     <ClInclude Include="..\Features\Defines.h" />
     <ClInclude Include="..\Features\Eeprom.h" />
     <ClInclude Include="..\Features\Filters.h" />
@@ -267,11 +269,11 @@
     <ClInclude Include="..\Features\IMU.h" />
     <ClInclude Include="..\Features\LED.h" />
     <ClInclude Include="..\Features\LSM330DLC.h" />
-    <ClInclude Include="..\Features\MadgwickAHRS.h" />
     <ClInclude Include="..\Features\OTP.h" />
     <ClInclude Include="..\Features\Spatial.h" />
     <ClInclude Include="..\Features\Semihosting.h" />
     <ClInclude Include="..\Features\SPIManager.h" />
+    <ClInclude Include="..\Features\Sqrt.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="debug.mak" />

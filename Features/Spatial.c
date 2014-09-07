@@ -4,9 +4,14 @@
 #include "Semihosting.h"
 
 IMU_SCALED_FramebufferType SPATIAL_IMUFrameBuffer[SPATIAL_IMUFRAMEBUFFER_SIZE];
+SPATIAL_QUATERNION_FramebufferType SPATIAL_QUATERNION_Framebuffer[SPATIAL_IMUFRAMEBUFFER_SIZE];
 
 uint8_t SPATIAL_IMUFrameBuffer_ReadIndex = 0;
-uint8_t SPATIAL_IMUFramwBuffer_WriteIndex = 0;
+uint8_t SPATIAL_IMUFrameBuffer_WriteIndex = 0;
+
+
+uint8_t SPATIAL_QUATERNION_Framebuffer_ReadIndex = 0;
+uint8_t SPATIAL_QUATERNION_Framebuffer_WriteIndex = 0;
 
 void SPATIAL_RAWToVector3(IVector3* raw, Vector3* out, float fullscale)
 {
@@ -14,13 +19,13 @@ void SPATIAL_RAWToVector3(IVector3* raw, Vector3* out, float fullscale)
 	// Lets hope the optimizer does the obvious w/these floating operations...
 
 	// Do the rescale
-	out->x = (raw->x >= 0) ? (float)raw->x * ( fullscale / (float)INT16_MAX ) : (float)raw->x * ( fullscale / (float)INT16_MIN )  ;
-	out->y = (raw->y >= 0) ? (float)raw->y * ( fullscale / (float)INT16_MAX ) : (float)raw->y * ( fullscale / (float)INT16_MIN )  ;
-	out->z = (raw->z >= 0) ? (float)raw->z * ( fullscale / (float)INT16_MAX ) : (float)raw->z * ( fullscale / (float)INT16_MIN )  ;
+	out->x = (raw->x >= 0) ? (float)raw->x * ( fullscale / (float)2048.0f ) : (float)raw->x * ( fullscale / (float)-2048.0f )  ;
+	out->y = (raw->y >= 0) ? (float)raw->y * ( fullscale / (float)2048.0f ) : (float)raw->y * ( fullscale / (float)-2048.0f )  ;
+	out->z = (raw->z >= 0) ? (float)raw->z * ( fullscale / (float)2048.0f ) : (float)raw->z * ( fullscale / (float)-2048.0f )  ;
 
 }
 
-void SPATIAL_RAWToRadiansPerSec(Vector3* dps_gyro)
+void SPATIAL_SCALEDToRadiansPerSec(Vector3* dps_gyro)
 {
 	const float radian = 0.0174532925f; // Yeah, it's like that.
 	

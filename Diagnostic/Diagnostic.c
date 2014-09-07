@@ -137,21 +137,40 @@ int app_main(void)
 
 
 	// Process frame data for a few secs...
-	uint32_t startTime = HAL_GetTick();
-	while ((startTime + 1000) > HAL_GetTick())
+//	uint32_t startTime = HAL_GetTick();
+//	while ((startTime + 1000) > HAL_GetTick())
+	while (IMU_framecount == 0)
 	{
-
-		// Process Framedata
-		IMU_ProcessRAWFrame();
-
-		// Process Framedata into Quaternions
-
-		// Perform Gesture Recognition
-
 	}
+		// Process Framedata
+	IMU_ProcessRAWFrame();		// Scale RAW into scaled data (minimum processing.)
+	IMU_ProcessOrientation();	// Process Framedata into Quaternions
+
+
+		// Update Gesture Recognition
+
+		// Measure Performance
+
+			// Check for idle hands...
+
+			// Adjust buffer sizes
+
+			// Adjust full-scale settings
+
+			// Adjust ODRs
+
+
+	//}
 	
 	printf_semi("RAW Frames Generated: %d\n", IMU_framecount);
 	printf_semi("SCALED Frames processed: %d\n", SPATIAL_IMUFrameBuffer_NumProcessed);
+
+	printf_semi("Last Frame:\nax = %d\nay = %d\naz = %d\ngx = %d\ngy = %d\ngz = %d\n",
+		IMU_RAWFramebuffer[0].imu[0].accelerometer.x,
+		IMU_RAWFramebuffer[0].imu[0].accelerometer.y,
+		IMU_RAWFramebuffer[0].imu[0].accelerometer.z,
+		IMU_RAWFramebuffer[0].imu[0].gyroscope.x,
+		IMU_RAWFramebuffer[0].imu[0].gyroscope.z);
 
 	printf_semi("Last Frame:\nax = %f\nay = %f\naz = %f\ngx = %f\ngy = %f\ngz = %f\n",
 		SPATIAL_IMUFrameBuffer[0].imu[0].accelerometer.x,
@@ -353,6 +372,13 @@ bool Diag_IMUTest(void)
 
 /// Off-board SPI test
 
+/// IMU Zero Calibration Test
+
+/// BoneMarrow Test
+	// Acquire frame
+	// Translate to Scaled data
+	// Translate to Relative data
+	// Translate to Quaternion data
 
 /// Off-board I²C test
 

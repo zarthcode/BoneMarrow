@@ -67,29 +67,48 @@ typedef struct
 	Vector3 accelerometer;		/// Stores scaled accelerometer data.  (g)
 	Vector3 gyroscope;			/// stores scaled gyroscope data	(radians/sec)
 	Vector3 magnetometer;		/// Stores magnetometer data
+
 								/// @bug mag support is unimplemented.
+
 	uint32_t tickstamp;			/// @bug This timestamp is a problem every 47.1 days
 
 } IMU_SCALED;
 
-#define SPATIAL_IMUFRAMEBUFFER_SIZE 8
+#define SPATIAL_IMUFRAMEBUFFER_SIZE 16
 
 /// @bug This IMU_COUNT is totally improper.  Please fix this *embarrasment* of a define.
 #define IMU_COUNT 7
 
+/// Contains scaled IMU data for each configured IMU
 typedef struct
 {
+
 	IMU_SCALED imu[IMU_COUNT];
+
+	/// @todo IMU_SCALED_FramebufferType needs locking/status information.
 
 } IMU_SCALED_FramebufferType;
 
 /// Scaled IMU data.
 extern IMU_SCALED_FramebufferType SPATIAL_IMUFrameBuffer[SPATIAL_IMUFRAMEBUFFER_SIZE];
 
-extern uint8_t SPATIAL_IMUFrameBuffer_ReadIndex;
-extern uint8_t SPATIAL_IMUFramwBuffer_WriteIndex;
+extern uint8_t SPATIAL_IMUFrameBuffer_ReadIndex;	// Used mainly by IMU_ProcessRAWFrame
+extern uint8_t SPATIAL_IMUFrameBuffer_WriteIndex;
 
 extern uint32_t SPATIAL_IMUFrameBuffer_NumProcessed;
+
+
+/// Quaternion Data
+typedef struct  
+{
+	Quaternion q[IMU_COUNT];
+} SPATIAL_QUATERNION_FramebufferType;
+
+/// Quaternion Data Buffer
+extern SPATIAL_QUATERNION_FramebufferType SPATIAL_QUATERNION_Framebuffer[SPATIAL_IMUFRAMEBUFFER_SIZE];
+
+extern uint8_t SPATIAL_QUATERNION_Framebuffer_ReadIndex;
+extern uint8_t SPATIAL_QUATERNION_Framebuffer_WriteIndex;
 
 
 /// @todo Return Vector3, and evaluate optimization/speed result.
@@ -106,7 +125,12 @@ void SPATIAL_RAWToVector3(IVector3* raw, Vector3* out, float fullscale);
  * @brief Converts degrees/s to rad/sec.
  * @param[in,out] dps_gyro Gyroscope input, in degrees per second.  To be converted, in-place.
  */
-void SPATIAL_RAWToRadiansPerSec(Vector3* dps_gyro);
+void SPATIAL_SCALEDToRadiansPerSec(Vector3* dps_gyro);
 
 /// Diagnostic Information
 bool DIAG_SPATIAL_BufferStatistics(void);
+
+
+/// 
+
+

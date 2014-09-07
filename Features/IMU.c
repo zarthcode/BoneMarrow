@@ -6,6 +6,7 @@
 #include "Semihosting.h"
 #include <string.h>
 #include "bitmanip.h"
+#include "Sqrt.h"
 
 /// IMU Map
 /// @todo Consider using malloc/free to control the size of this buffer dynamically.
@@ -671,7 +672,7 @@ void IMU_Configure(IMU_PortType port)
 
 
 			// Cache the fullscale value.
-			IMUDevice[port].FullScale[IMU_SUBDEV_GYRO] = 2.0f;
+			IMUDevice[port].FullScale[IMU_SUBDEV_GYRO] = 250.0f;
 
 
 			// ? Power on
@@ -691,7 +692,7 @@ void IMU_Configure(IMU_PortType port)
 	// Setup complete.
 	IMU_Enabled = true;
 	SPATIAL_IMUFrameBuffer_ReadIndex = 0;
-	SPATIAL_IMUFramwBuffer_WriteIndex = 0;
+	SPATIAL_IMUFrameBuffer_WriteIndex = 0;
 
 }
 
@@ -787,6 +788,9 @@ void IMU_SystickHandler(void)
 	if (bFrameComplete)
 	{
 
+	// @bug Temp debug section.
+	IMU_Enabled = false;
+
 		// Frame is ready
 		IMU_framecount++;
 		/*
@@ -833,17 +837,18 @@ void IMU_ProcessRAWFrame(void)
 	// Process frame data
 
 	// Clear the destination frame
-	memset(&SPATIAL_IMUFrameBuffer[SPATIAL_IMUFramwBuffer_WriteIndex], 0, sizeof(IMU_SCALED_FramebufferType));
+	memset(&SPATIAL_IMUFrameBuffer[SPATIAL_IMUFrameBuffer_WriteIndex], 0, sizeof(IMU_SCALED_FramebufferType));
 	
 	for (int i = 0; i < IMU_LAST; i++)
 	{
 		// Rescale values
-		SPATIAL_IMUFrameBuffer[SPATIAL_IMUFramwBuffer_WriteIndex].imu[i].tickstamp = IMU_RAWFramebuffer[IMU_RAWFramebuffer_ReadIndex].imu[i].tickstamp;
-		SPATIAL_RAWToVector3(&IMU_RAWFramebuffer[IMU_RAWFramebuffer_ReadIndex].imu[i].accelerometer, &SPATIAL_IMUFrameBuffer[SPATIAL_IMUFramwBuffer_WriteIndex].imu[i].accelerometer, IMU_GetFullScaleMultiplier(i, IMU_SUBDEV_ACC));
-		SPATIAL_RAWToVector3(&IMU_RAWFramebuffer[IMU_RAWFramebuffer_ReadIndex].imu[i].gyroscope, &SPATIAL_IMUFrameBuffer[SPATIAL_IMUFramwBuffer_WriteIndex].imu[i].gyroscope, IMU_GetFullScaleMultiplier(i, IMU_SUBDEV_GYRO));
+		SPATIAL_IMUFrameBuffer[SPATIAL_IMUFrameBuffer_WriteIndex].imu[i].tickstamp = IMU_RAWFramebuffer[IMU_RAWFramebuffer_ReadIndex].imu[i].tickstamp;
+		SPATIAL_RAWToVector3(&IMU_RAWFramebuffer[IMU_RAWFramebuffer_ReadIndex].imu[i].accelerometer, &SPATIAL_IMUFrameBuffer[SPATIAL_IMUFrameBuffer_WriteIndex].imu[i].accelerometer, IMU_GetFullScaleMultiplier(i, IMU_SUBDEV_ACC));
+		SPATIAL_RAWToVector3(&IMU_RAWFramebuffer[IMU_RAWFramebuffer_ReadIndex].imu[i].gyroscope, &SPATIAL_IMUFrameBuffer[SPATIAL_IMUFrameBuffer_WriteIndex].imu[i].gyroscope, IMU_GetFullScaleMultiplier(i, IMU_SUBDEV_GYRO));
 //		SPATIAL_RAWToVector3(&IMU_RAWFramebuffer[IMU_RAWFramebuffer_ReadIndex].imu[i].magnetometer, &SPATIAL_IMUFrameBuffer[SPATIAL_IMUFramwBuffer_WriteIndex].imu[i].magnetometer, IMU_GetFullScaleMultiplier(i,IMU_SUBDEV_MAG));
 
-		/// @bug Convert Gyro values from degrees/sec into Radians/sec
+		// Convert scaled Gyro values from degrees/sec into Radians/sec
+		SPATIAL_SCALEDToRadiansPerSec(&SPATIAL_IMUFrameBuffer[SPATIAL_IMUFrameBuffer_WriteIndex].imu[i].gyroscope);
 
 	}
 
@@ -856,23 +861,36 @@ void IMU_ProcessRAWFrame(void)
 		IMU_RAWFramebuffer_ReadIndex = 0;
 	}
 
-	SPATIAL_IMUFramwBuffer_WriteIndex++;
+	SPATIAL_IMUFrameBuffer_WriteIndex++;
 
-	if (SPATIAL_IMUFramwBuffer_WriteIndex == SPATIAL_IMUFRAMEBUFFER_SIZE)
+	if (SPATIAL_IMUFrameBuffer_WriteIndex == SPATIAL_IMUFRAMEBUFFER_SIZE)
 	{
-		SPATIAL_IMUFramwBuffer_WriteIndex = 0;
+		SPATIAL_IMUFrameBuffer_WriteIndex = 0;
 	}
 
 	SPATIAL_IMUFrameBuffer_NumProcessed++;
 
 }
 
+// Process SPATIAL frame into a QUATERNION frame
+void IMU_ProcessOrientation(void)
+{
+
+	// Clear the destination frame
+	memset(&SPATIAL_QUATERNION_Framebuffer[SPATIAL_QUATERNION_Framebuffer_WriteIndex], 0, sizeof(SPATIAL_QUATERNION_FramebufferType));
+
+	for (int i = 0; i < IMU_LAST; i++)
+	{
+		// Quaternion Conversion.
+		
+	}
+}
+
 float IMU_GetFullScaleMultiplier(IMU_PortType port, IMU_SubDeviceType subdev)
 {
 	/// @todo Breakout device-specific settings into their own files, methods, etc.
-
 	return IMUDevice[port].FullScale[subdev];	// That was easy.
-	
+
 }
 
 void IMU_AutoSetFullScaleSetting(IMU_PortType port, IMU_SubDeviceType subdev)
@@ -979,6 +997,139 @@ float IMU_ForceFullScaleSetting(IMU_PortType port, IMU_SubDeviceType subdev, flo
 
 	// All done.
 	return g_new;
+}
+
+void IMU_QuaternionUpdate(Quaternion* pQ, IMU_SCALED* pIMU, float ODR, float beta)
+{
+
+	/// @todo IMU_QuaternionUpdate is ripe for quite a bit of optimization.
+
+	float recipNorm;
+	float s0, s1, s2, s3;
+	float qDot1, qDot2, qDot3, qDot4;
+	float hx, hy;
+	float _2q0mx, _2q0my, _2q0mz, _2q1mx, _2bx, _2bz, _4bx, _4bz, _2q0, _2q1, _2q2, _2q3, _2q0q2, _2q2q3, q0q0, q0q1, q0q2, q0q3, q1q1, q1q2, q1q3, q2q2, q2q3, q3q3;
+	float _4q0, _4q1, _4q2 ,_8q1, _8q2; 
+
+	// Use IMU algorithm if magnetometer measurement invalid (avoids NaN in magnetometer normalization)
+	bool bUseMagnetometer = true;
+	if ((pIMU->magnetometer.x == 0.0f) && (pIMU->magnetometer.y == 0.0f) && (pIMU->magnetometer.z == 0.0f))
+	{
+		bUseMagnetometer = false;
+	}
+
+	// Rate of change of quaternion from gyroscope
+	qDot1 = 0.5f * (-pQ->x * pIMU->gyroscope.x - pQ->y * pIMU->gyroscope.y - pQ->z * pIMU->gyroscope.z);
+	qDot2 = 0.5f * (pQ->w * pIMU->gyroscope.x + pQ->y * pIMU->gyroscope.z - pQ->z * pIMU->gyroscope.y);
+	qDot3 = 0.5f * (pQ->w * pIMU->gyroscope.y - pQ->x * pIMU->gyroscope.z + pQ->z * pIMU->gyroscope.x);
+	qDot4 = 0.5f * (pQ->w * pIMU->gyroscope.z + pQ->x * pIMU->gyroscope.y - pQ->y * pIMU->gyroscope.x);
+
+	// Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalization)
+	if (!((pIMU->accelerometer.x == 0.0f) && (pIMU->accelerometer.y == 0.0f) && (pIMU->accelerometer.z == 0.0f))) {
+
+		// Normalize accelerometer measurement
+		recipNorm = invSqrt(pIMU->accelerometer.x * pIMU->accelerometer.x + pIMU->accelerometer.y * pIMU->accelerometer.y + pIMU->accelerometer.z * pIMU->accelerometer.z);
+		pIMU->accelerometer.x *= recipNorm;
+		pIMU->accelerometer.y *= recipNorm;
+		pIMU->accelerometer.z *= recipNorm;
+
+		// Normalize magnetometer measurement
+		recipNorm = invSqrt(pIMU->magnetometer.x * pIMU->magnetometer.x + pIMU->magnetometer.y * pIMU->magnetometer.y + pIMU->magnetometer.z * pIMU->magnetometer.z);
+		pIMU->magnetometer.x *= recipNorm;
+		pIMU->magnetometer.y *= recipNorm;
+		pIMU->magnetometer.z *= recipNorm;
+
+		// Auxiliary variables to avoid repeated arithmetic
+
+		_2q0 = 2.0f * pQ->w;
+		_2q1 = 2.0f * pQ->x;
+		_2q2 = 2.0f * pQ->y;
+		_2q3 = 2.0f * pQ->z;
+		q0q0 = pQ->w * pQ->w;
+		q1q1 = pQ->x * pQ->x;
+		q2q2 = pQ->y * pQ->y;
+		q3q3 = pQ->z * pQ->z;
+
+		if (bUseMagnetometer)
+		{
+			_2q0mx = 2.0f * pQ->w * pIMU->magnetometer.x;
+			_2q0my = 2.0f * pQ->w * pIMU->magnetometer.y;
+			_2q0mz = 2.0f * pQ->w * pIMU->magnetometer.z;
+			_2q1mx = 2.0f * pQ->x * pIMU->magnetometer.x;
+			_2q0q2 = 2.0f * pQ->w * pQ->y;
+			_2q2q3 = 2.0f * pQ->y * pQ->z;
+			q0q1 = pQ->w * pQ->x;
+			q0q2 = pQ->w * pQ->y;
+			q0q3 = pQ->w * pQ->z;
+			q1q2 = pQ->x * pQ->y;
+			q1q3 = pQ->x * pQ->z;
+			q2q3 = pQ->y * pQ->z;
+		}
+		else
+		{
+
+			_2q0 = 2.0f * pQ->w;
+			_2q1 = 2.0f * pQ->x;
+			_2q2 = 2.0f * pQ->y;
+			_2q3 = 2.0f * pQ->z;
+			_4q0 = 4.0f * pQ->w;
+			_4q1 = 4.0f * pQ->x;
+			_4q2 = 4.0f * pQ->y;
+			_8q1 = 8.0f * pQ->x;
+			_8q2 = 8.0f * pQ->y;
+
+		}
+
+		if (bUseMagnetometer)
+		{
+			// Reference direction of Earth's magnetic field
+			hx = pIMU->magnetometer.x * q0q0 - _2q0my * pQ->z + _2q0mz * pQ->y + pIMU->magnetometer.x * q1q1 + _2q1 * pIMU->magnetometer.y * pQ->y + _2q1 * pIMU->magnetometer.z * pQ->z - pIMU->magnetometer.x * q2q2 - pIMU->magnetometer.x * q3q3;
+			hy = _2q0mx * pQ->z + pIMU->magnetometer.y * q0q0 - _2q0mz * pQ->x + _2q1mx * pQ->y - pIMU->magnetometer.y * q1q1 + pIMU->magnetometer.y * q2q2 + _2q2 * pIMU->magnetometer.z * pQ->z - pIMU->magnetometer.y * q3q3;
+			_2bx = sqrt(hx * hx + hy * hy);
+			_2bz = -_2q0mx * pQ->y + _2q0my * pQ->x + pIMU->magnetometer.z * q0q0 + _2q1mx * pQ->z - pIMU->magnetometer.z * q1q1 + _2q2 * pIMU->magnetometer.y * pQ->z - pIMU->magnetometer.z * q2q2 + pIMU->magnetometer.z * q3q3;
+			_4bx = 2.0f * _2bx;
+			_4bz = 2.0f * _2bz;
+
+			// Gradient decent algorithm corrective step
+			s0 = -_2q2 * (2.0f * q1q3 - _2q0q2 - pIMU->accelerometer.x) + _2q1 * (2.0f * q0q1 + _2q2q3 - pIMU->accelerometer.y) - _2bz * pQ->y * (_2bx * (0.5f - q2q2 - q3q3) + _2bz * (q1q3 - q0q2) - pIMU->magnetometer.x) + (-_2bx * pQ->z + _2bz * pQ->x) * (_2bx * (q1q2 - q0q3) + _2bz * (q0q1 + q2q3) - pIMU->magnetometer.y) + _2bx * pQ->y * (_2bx * (q0q2 + q1q3) + _2bz * (0.5f - q1q1 - q2q2) - pIMU->magnetometer.z);
+			s1 = _2q3 * (2.0f * q1q3 - _2q0q2 - pIMU->accelerometer.x) + _2q0 * (2.0f * q0q1 + _2q2q3 - pIMU->accelerometer.y) - 4.0f * pQ->x * (1 - 2.0f * q1q1 - 2.0f * q2q2 - pIMU->accelerometer.z) + _2bz * pQ->z * (_2bx * (0.5f - q2q2 - q3q3) + _2bz * (q1q3 - q0q2) - pIMU->magnetometer.x) + (_2bx * pQ->y + _2bz * pQ->w) * (_2bx * (q1q2 - q0q3) + _2bz * (q0q1 + q2q3) - pIMU->magnetometer.y) + (_2bx * pQ->z - _4bz * pQ->x) * (_2bx * (q0q2 + q1q3) + _2bz * (0.5f - q1q1 - q2q2) - pIMU->magnetometer.z);
+			s2 = -_2q0 * (2.0f * q1q3 - _2q0q2 - pIMU->accelerometer.x) + _2q3 * (2.0f * q0q1 + _2q2q3 - pIMU->accelerometer.y) - 4.0f * pQ->y * (1 - 2.0f * q1q1 - 2.0f * q2q2 - pIMU->accelerometer.z) + (-_4bx * pQ->y - _2bz * pQ->w) * (_2bx * (0.5f - q2q2 - q3q3) + _2bz * (q1q3 - q0q2) - pIMU->magnetometer.x) + (_2bx * pQ->x + _2bz * pQ->z) * (_2bx * (q1q2 - q0q3) + _2bz * (q0q1 + q2q3) - pIMU->magnetometer.y) + (_2bx * pQ->w - _4bz * pQ->y) * (_2bx * (q0q2 + q1q3) + _2bz * (0.5f - q1q1 - q2q2) - pIMU->magnetometer.z);
+			s3 = _2q1 * (2.0f * q1q3 - _2q0q2 - pIMU->accelerometer.x) + _2q2 * (2.0f * q0q1 + _2q2q3 - pIMU->accelerometer.y) + (-_4bx * pQ->z + _2bz * pQ->x) * (_2bx * (0.5f - q2q2 - q3q3) + _2bz * (q1q3 - q0q2) - pIMU->magnetometer.x) + (-_2bx * pQ->w + _2bz * pQ->y) * (_2bx * (q1q2 - q0q3) + _2bz * (q0q1 + q2q3) - pIMU->magnetometer.y) + _2bx * pQ->x * (_2bx * (q0q2 + q1q3) + _2bz * (0.5f - q1q1 - q2q2) - pIMU->magnetometer.z);
+		}
+		else
+		{
+			// Gradient decent algorithm corrective step
+			s0 = _4q0 * q2q2 + _2q2 * pIMU->accelerometer.x + _4q0 * q1q1 - _2q1 * pIMU->accelerometer.y;
+			s1 = _4q1 * q3q3 - _2q3 * pIMU->accelerometer.x + 4.0f * q0q0 * pQ->x - _2q0 * pIMU->accelerometer.y - _4q1 + _8q1 * q1q1 + _8q1 * q2q2 + _4q1 * pIMU->accelerometer.z;
+			s2 = 4.0f * q0q0 * pQ->y + _2q0 * pIMU->accelerometer.x + _4q2 * q3q3 - _2q3 * pIMU->accelerometer.y - _4q2 + _8q2 * q1q1 + _8q2 * q2q2 + _4q2 * pIMU->accelerometer.z;
+			s3 = 4.0f * q1q1 * pQ->z - _2q1 * pIMU->accelerometer.x + 4.0f * q2q2 * pQ->z - _2q2 * pIMU->accelerometer.y;
+		}
+		recipNorm = invSqrt(s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3); // normalize step magnitude
+		s0 *= recipNorm;
+		s1 *= recipNorm;
+		s2 *= recipNorm;
+		s3 *= recipNorm;
+
+		// Apply feedback step
+		qDot1 -= beta * s0;
+		qDot2 -= beta * s1;
+		qDot3 -= beta * s2;
+		qDot4 -= beta * s3;
+	}
+
+	// Integrate rate of change of quaternion to yield quaternion
+	pQ->w += qDot1 * (1.0f / ODR);
+	pQ->x += qDot2 * (1.0f / ODR);
+	pQ->y += qDot3 * (1.0f / ODR);
+	pQ->z += qDot4 * (1.0f / ODR);
+
+	// Normalize quaternion
+	recipNorm = invSqrt(pQ->w * pQ->w + pQ->x * pQ->x + pQ->y * pQ->y + pQ->z * pQ->z);
+	pQ->w *= recipNorm;
+	pQ->x *= recipNorm;
+	pQ->y *= recipNorm;
+	pQ->z *= recipNorm;
+
 }
 
 
