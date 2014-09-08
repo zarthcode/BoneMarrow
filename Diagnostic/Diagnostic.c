@@ -144,7 +144,6 @@ int app_main(void)
 	}
 		// Process Framedata
 	IMU_ProcessRAWFrame();		// Scale RAW into scaled data (minimum processing.)
-	IMU_ProcessOrientation();	// Process Framedata into Quaternions
 
 
 		// Update Gesture Recognition
@@ -165,6 +164,7 @@ int app_main(void)
 	printf_semi("RAW Frames Generated: %d\n", IMU_framecount);
 	printf_semi("SCALED Frames processed: %d\n", SPATIAL_IMUFrameBuffer_NumProcessed);
 
+	// Print RAW data
 	printf_semi("Last Frame:\nax = %d\nay = %d\naz = %d\ngx = %d\ngy = %d\ngz = %d\n",
 		IMU_RAWFramebuffer[0].imu[0].accelerometer.x,
 		IMU_RAWFramebuffer[0].imu[0].accelerometer.y,
@@ -172,6 +172,7 @@ int app_main(void)
 		IMU_RAWFramebuffer[0].imu[0].gyroscope.x,
 		IMU_RAWFramebuffer[0].imu[0].gyroscope.z);
 
+	// Print scaled data
 	printf_semi("Last Frame:\nax = %f\nay = %f\naz = %f\ngx = %f\ngy = %f\ngz = %f\n",
 		SPATIAL_IMUFrameBuffer[0].imu[0].accelerometer.x,
 		SPATIAL_IMUFrameBuffer[0].imu[0].accelerometer.y,
@@ -179,6 +180,12 @@ int app_main(void)
 		SPATIAL_IMUFrameBuffer[0].imu[0].gyroscope.x,
 		SPATIAL_IMUFrameBuffer[0].imu[0].gyroscope.z);
 
+	// Print calculated quaternion
+	printf_semi("Last Frame:\nqw = %f\nqx = %f\nqy = %f\nqz = %f\n",
+		SPATIAL_QUATERNION_Framebuffer[0].q[0].w,
+		SPATIAL_QUATERNION_Framebuffer[0].q[0].x,
+		SPATIAL_QUATERNION_Framebuffer[0].q[0].y,
+		SPATIAL_QUATERNION_Framebuffer[0].q[0].z);
 
  	printf_semi("Goodnight!\n");
 	SetLEDState(RADIO, LED_STATE_OFF);
@@ -367,10 +374,12 @@ bool Diag_IMUTest(void)
 
 
 }
-
 /// Radio Test
 
 /// Off-board SPI test
+
+/// SPI1 Workaround Test
+
 
 /// IMU Zero Calibration Test
 

@@ -7,7 +7,7 @@ IMU_SQRTMethodType _imu_sqrt_method = IMU_SQRT_FAST2ND;
 // Fast inverse square-root
 // See: http://en.wikipedia.org/wiki/Fast_inverse_square_root
 
-float invSqrt(float x)
+float OPTIMIZED_invSqrt(float x)
 {
 
 	switch (_imu_sqrt_method)
@@ -59,3 +59,4 @@ float invSqrt(float x)
 
 	return 0.0f;
 }
+

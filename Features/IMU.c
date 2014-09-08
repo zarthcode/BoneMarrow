@@ -68,7 +68,7 @@ bool DIAG_IMU_CheckAlignment(void)
 		printf_semi("\t[%d][%p] = 0x%02x\n", i, &((uint8_t*)&testbyte)[i],((uint8_t*)&testbyte)[i]);
 	}
 
-	// Don't fix this until we're actually able to determine the results programattically
+	// Don't fix this until we're actually able to determine the results programmatically
 	return false;
 
 }
@@ -230,42 +230,284 @@ void IMU_Setup(void)
 
 			// Test IMU connectivity
 
-			// Configure IMU settings.
 
 
 			break;
 		case IMU_P1:
-			printf_semi("SetupIMU() encountered an unimplemented IMU_PortType (%d).\n", i);
+		// SPI2
+			IMUDevice[i].DeviceName = IMU_DEVICE_LSM330DLC;
+			IMUDevice[i].hasMagnetometer = false;		/// @todo This should be indicated by the device driver directly.
+			IMUDevice[i].IMUType = IMU_DEV_6AXIS;		/// @todo This needs auto-detection.
+			IMUDevice[i].hspi = &hspi2;
+			// CS0 (accelerometer)
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].port = GPIOD;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].pin = GPIO_PIN_8;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].type = IMU_SUBDEV_ACC;
+			// CS1 (gyroscope)
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].port = GPIOD;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_9;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
+
+			IMU_SelectSubDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
+
+			// Configure Interrupts
+			// SPI6_INT0 (INT1_A)
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].port = GPIOD;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].pin = GPIO_PIN_10;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].type = IMU_SUBDEV_ACC;
+/*			// SPI6_INT1 (INT2_A)
+			IMUDevice[i].INTMappings[1].port = GPIOD;
+			IMUDevice[i].INTMappings[1].pin = GPIO_PIN_11;
+			IMUDevice[i].INTMappings[1].type = IMU_SUBDEV_ACC;
+
+			// SPI6_RESV0 (INT1_G)
+			IMUDevice[i].INTMappings[2].port = GPIOG;
+			IMUDevice[i].INTMappings[2].pin = GPIO_PIN_2;
+			IMUDevice[i].INTMappings[2].type = IMU_SUBDEV_GYRO;
+*/
+			// SPI6_RESV1 (DRDY_G/INT2_G)
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].port = GPIOG;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_3;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
+
+			// Test IMU connectivity
+
+			// Configure IMU settings.
 			break;
 		case IMU_P2:
-			printf_semi("SetupIMU() encountered an unimplemented IMU_PortType (%d).\n", i);
+		// SPI3
+			IMUDevice[i].DeviceName = IMU_DEVICE_LSM330DLC;
+			IMUDevice[i].hasMagnetometer = false;		/// @todo This should be indicated by the device driver directly.
+			IMUDevice[i].IMUType = IMU_DEV_6AXIS;		/// @todo This needs auto-detection.
+			IMUDevice[i].hspi = &hspi3;
+			// CS0 (accelerometer)
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].port = GPIOD;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].pin = GPIO_PIN_0;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].type = IMU_SUBDEV_ACC;
+			// CS1 (gyroscope)
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].port = GPIOD;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_1;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
+
+			IMU_SelectSubDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
+
+			// Configure Interrupts
+			// SPI6_INT0 (INT1_A)
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].port = GPIOD;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].pin = GPIO_PIN_2;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].type = IMU_SUBDEV_ACC;
+/*			// SPI6_INT1 (INT2_A)
+			IMUDevice[i].INTMappings[1].port = GPIOH;
+			IMUDevice[i].INTMappings[1].pin = GPIO_PIN_13;
+			IMUDevice[i].INTMappings[1].type = IMU_SUBDEV_ACC;
+
+			// SPI6_RESV0 (INT1_G)
+			IMUDevice[i].INTMappings[2].port = GPIOH;
+			IMUDevice[i].INTMappings[2].pin = GPIO_PIN_14;
+			IMUDevice[i].INTMappings[2].type = IMU_SUBDEV_GYRO;
+*/
+			// SPI6_RESV1 (DRDY_G/INT2_G)
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].port = GPIOH;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_15;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
+
+			// Test IMU connectivity
+
+			// Configure IMU settings.
 			break;
 		case IMU_P3:
-			printf_semi("SetupIMU() encountered an unimplemented IMU_PortType (%d).\n", i);
+
+		// SPI6
+			IMUDevice[i].DeviceName = IMU_DEVICE_LSM330DLC;
+			IMUDevice[i].hasMagnetometer = false;		/// @todo This should be indicated by the device driver directly.
+			IMUDevice[i].IMUType = IMU_DEV_6AXIS;		/// @todo This needs auto-detection.
+			IMUDevice[i].hspi = &hspi6;
+			// CS0 (accelerometer)
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].port = GPIOB;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].pin = GPIO_PIN_4;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].type = IMU_SUBDEV_ACC;
+			// CS1 (gyroscope)
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].port = GPIOB;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_5;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
+
+			IMU_SelectSubDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
+
+			// Configure Interrupts
+			// SPI6_INT0 (INT1_A)
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].port = GPIOD;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].pin = GPIO_PIN_7;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].type = IMU_SUBDEV_ACC;
+/*			// SPI6_INT1 (INT2_A)
+			IMUDevice[i].INTMappings[1].port = GPIOG;
+			IMUDevice[i].INTMappings[1].pin = GPIO_PIN_9;
+			IMUDevice[i].INTMappings[1].type = IMU_SUBDEV_ACC;
+
+			// SPI6_RESV0 (INT1_G)
+			IMUDevice[i].INTMappings[2].port = GPIOI;
+			IMUDevice[i].INTMappings[2].pin = GPIO_PIN_4;
+			IMUDevice[i].INTMappings[2].type = IMU_SUBDEV_GYRO;
+*/
+			// SPI6_RESV1 (DRDY_G/INT2_G)
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].port = GPIOE;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_3;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
+
+			// Test IMU connectivity
+
+			// Configure IMU settings.
 			break;
 		case IMU_P4:
-			printf_semi("SetupIMU() encountered an unimplemented IMU_PortType (%d).\n", i);
+		// SPI4
+			IMUDevice[i].DeviceName = IMU_DEVICE_LSM330DLC;
+			IMUDevice[i].hasMagnetometer = false;		/// @todo This should be indicated by the device driver directly.
+			IMUDevice[i].IMUType = IMU_DEV_6AXIS;		/// @todo This needs auto-detection.
+			IMUDevice[i].hspi = &hspi4;
+			// CS0 (accelerometer)
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].port = GPIOI;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].pin = GPIO_PIN_10;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].type = IMU_SUBDEV_ACC;
+			// CS1 (gyroscope)
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].port = GPIOI;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_11;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
+
+			IMU_SelectSubDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
+
+			// Configure Interrupts
+			// SPI6_INT0 (INT1_A)
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].port = GPIOC;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].pin = GPIO_PIN_13;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].type = IMU_SUBDEV_ACC;
+/*			// SPI6_INT1 (INT2_A)
+			IMUDevice[i].INTMappings[1].port = GPIOI;
+			IMUDevice[i].INTMappings[1].pin = GPIO_PIN_9;
+			IMUDevice[i].INTMappings[1].type = IMU_SUBDEV_ACC;
+
+			// SPI6_RESV0 (INT1_G)
+			IMUDevice[i].INTMappings[2].port = GPIOE;
+			IMUDevice[i].INTMappings[2].pin = GPIO_PIN_4;
+			IMUDevice[i].INTMappings[2].type = IMU_SUBDEV_GYRO;
+*/
+			// SPI6_RESV1 (DRDY_G/INT2_G)
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].port = GPIOI;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_8;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
+
+			// Test IMU connectivity
+
+			// Configure IMU settings.
 			break;
 		case IMU_P5:
-			printf_semi("SetupIMU() encountered an unimplemented IMU_PortType (%d).\n", i);
+		// SPI5
+			IMUDevice[i].DeviceName = IMU_DEVICE_LSM330DLC;
+			IMUDevice[i].hasMagnetometer = false;		/// @todo This should be indicated by the device driver directly.
+			IMUDevice[i].IMUType = IMU_DEV_6AXIS;		/// @todo This needs auto-detection.
+			IMUDevice[i].hspi = &hspi5;
+			// CS0 (accelerometer)
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].port = GPIOF;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].pin = GPIO_PIN_2;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].type = IMU_SUBDEV_ACC;
+			// CS1 (gyroscope)
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].port = GPIOF;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_3;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
+
+			IMU_SelectSubDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
+
+			// Configure Interrupts
+			// SPI6_INT0 (INT1_A)
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].port = GPIOF;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].pin = GPIO_PIN_4;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].type = IMU_SUBDEV_ACC;
+/*			// SPI6_INT1 (INT2_A)
+			IMUDevice[i].INTMappings[1].port = GPIOF;
+			IMUDevice[i].INTMappings[1].pin = GPIO_PIN_5;
+			IMUDevice[i].INTMappings[1].type = IMU_SUBDEV_ACC;
+
+			// SPI6_RESV0 (INT1_G)
+			IMUDevice[i].INTMappings[2].port = GPIOF;
+			IMUDevice[i].INTMappings[2].pin = GPIO_PIN_6;
+			IMUDevice[i].INTMappings[2].type = IMU_SUBDEV_GYRO;
+*/
+			// SPI6_RESV1 (DRDY_G/INT2_G)
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].port = GPIOF;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_10;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
+
+			// Test IMU connectivity
+
+			// Configure IMU settings.
 			break;
 		case IMU_P6:
-			printf_semi("SetupIMU() encountered an unimplemented IMU_PortType (%d).\n", i);
+		// SPI1
+			IMUDevice[i].DeviceName = IMU_DEVICE_LSM330DLC;
+			IMUDevice[i].hasMagnetometer = false;		/// @todo This should be indicated by the device driver directly.
+			IMUDevice[i].IMUType = IMU_DEV_6AXIS;		/// @todo This needs auto-detection.
+			IMUDevice[i].hspi = &hspi1;
+			// CS0 (accelerometer)
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].port = GPIOH;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].pin = GPIO_PIN_2;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_ACC].type = IMU_SUBDEV_ACC;
+			// CS1 (gyroscope)
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].port = GPIOH;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_3;
+			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
+
+			IMU_SelectSubDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
+
+			// Configure Interrupts
+			// SPI6_INT0 (INT1_A)
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].port = GPIOH;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].pin = GPIO_PIN_4;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_ACC].type = IMU_SUBDEV_ACC;
+/*			// SPI6_INT1 (INT2_A)
+			IMUDevice[i].INTMappings[1].port = GPIOH;
+			IMUDevice[i].INTMappings[1].pin = GPIO_PIN_5;
+			IMUDevice[i].INTMappings[1].type = IMU_SUBDEV_ACC;
+
+			// SPI6_RESV0 (INT1_G)
+			IMUDevice[i].INTMappings[2].port = GPIOA;
+			IMUDevice[i].INTMappings[2].pin = GPIO_PIN_3;
+			IMUDevice[i].INTMappings[2].type = IMU_SUBDEV_GYRO;
+*/
+			// SPI6_RESV1 (DRDY_G/INT2_G)
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].port = GPIOA;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_4;
+			IMUDevice[i].INTMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
+
+			// Test IMU connectivity
+
 			break;
 		default:
 			// This is serious.
 			#ifdef DEBUG
 			// UsageFault_Handler();
+			printf_semi("IMU_Setup() encountered an unimplemented IMU_PortType (%d).\n", i);
 			__BKPT(0);
-			printf_semi("SetupIMU() encountered an unfamiliar IMU_PortType.\n");
 			#endif
 			break;
 
 		}
+
+		// Configure IMU settings.
+		IMU_Configure(i);
+
 	}
 
 
 	// Initialize the framebuffers
+
+	// Quaternion Framebuffer
+	memset(SPATIAL_QUATERNION_Framebuffer, 0, sizeof(SPATIAL_QUATERNION_Framebuffer));
+	for (int f = 0; f < SPATIAL_IMUFRAMEBUFFER_SIZE; f++)
+	{
+		// Normalized to zero rotation.
+		for (int imu = 0; imu < IMU_LAST; imu++)
+		{
+			SPATIAL_QUATERNION_Framebuffer[f].q[imu].w = 1;
+		}
+	}
 
 }
 
@@ -302,6 +544,44 @@ void DBG_SPICheckState(HAL_SPI_StateTypeDef state)
 	
 }
 
+void IMU_SPI1_Handle_IT(void)
+{
+
+	// Kick-off a burst receive operation, if needed.
+	
+
+	for (int subdev = 0; subdev < IMU_SUBDEV_NONE; subdev++)
+	{
+
+		switch (IMU_TransferState.TransferStep[IMU_P6][subdev])
+		{
+		case IMU_XFER_CHECKING:
+		{
+			// A polling operation is in progress.
+			// Receive 1 byte into the polling buffer.
+			uint8_t* pPollingBuffer = (void*)&IMU_TransferState.PollingBuffer[IMU_P6] + 1;
+			HAL_StatusTypeDef result = HAL_SPI_Receive_DMA(IMUDevice[IMU_P6].hspi, pPollingBuffer, 1);	// size = addr + xyz
+			if (HAL_OK != result)
+			{
+				// Transfer start failed.
+				printf_semi("IMU_SPI1_Handle_IT() port %d, subdev %d - HAL_SPI_Receive_DMA failed(%d)\n", IMU_P6, IMU_TransferState.SelectedSubDevice[IMU_P6], result);
+				/// @todo introduce a DBG_HAL_StatusTypeDef helper function.
+			}
+		}
+
+			break;
+
+		case IMU_XFER_WAIT:
+			// A transfer operation is in progress.
+			IMU_GetRAWBurst(IMU_P6, subdev);
+			break;
+		default:
+			// Nothing to see here.
+			break;
+		}
+	}
+}
+
 void IMU_GetRAWBurst(IMU_PortType port, IMU_SubDeviceType subdev)
 {
 	// This is a special circumstance.
@@ -335,6 +615,7 @@ void IMU_GetRAWBurst(IMU_PortType port, IMU_SubDeviceType subdev)
 	IMU_TransferState.TransferStep[port][subdev] = IMU_XFER_WAIT;
 
 	// Start DMA transfer to appropriate frame
+	// Internally, the HAL uses TxRx, but we need Receive-only in order to accomodate the SPI1_TX/DMA workaround.
 	HAL_StatusTypeDef result = HAL_SPI_Receive_DMA(IMUDevice[port].hspi, /*(uint8_t*)&pIVector3->x, */(uint8_t*)&pIVector3->x, 6);	// size = xyz
 	if (HAL_OK != result)
 	{
@@ -393,7 +674,23 @@ void IMU_GetRAW(IMU_PortType port, IMU_SubDeviceType subdev)
 	IMU_TransferState.TransferStep[port][subdev] = IMU_XFER_WAIT;
 
 	// Start DMA transfer to appropriate frame
-	HAL_StatusTypeDef result = HAL_SPI_TransmitReceive_DMA(IMUDevice[port].hspi, &pIVector3->txbyte, &pIVector3->txbyte, 7);	// size = addr + xyz
+	HAL_StatusTypeDef result;
+	/**
+	 * @bug SPI1_TX DMA Workaround
+	 * Hardware can't support EVERY possible SPI port simultaneously.  SPI1_TX got squeezed out.
+	 * Instead of sharing with another Stream/Channel, SPI1 will send using an interrupt Transfer.
+	 */
+	if (IMUDevice[port].hspi == &hspi1)
+	{
+		// Use an interrupt transfer.  Once the notification comes back, we'll fire a burst operation to get the data.
+		result = HAL_SPI_Transmit_IT(IMUDevice[port].hspi, &pIVector3->txbyte, 1);	// size = addr + xyz
+	}
+	else
+	{
+		result = HAL_SPI_TransmitReceive_DMA(IMUDevice[port].hspi, &pIVector3->txbyte, &pIVector3->txbyte, 7);	// size = addr + xyz
+	}
+
+
 	if (HAL_OK != result)
 	{
 
@@ -619,6 +916,9 @@ void IMU_Configure(IMU_PortType port)
 			// Cache the fullscale value.
 			IMUDevice[port].FullScale[IMU_SUBDEV_ACC] = 2.0f;
 
+			// Cache the ODR
+			IMUDevice[port].ODR[IMU_SUBDEV_ACC] = 100.0f;
+
 			// Send data
 			HAL_StatusTypeDef result = HAL_SPI_Transmit(IMUDevice[port].hspi, configurationPacket, sizeof(configurationPacket), 200);
 			if(result != HAL_OK)
@@ -674,6 +974,8 @@ void IMU_Configure(IMU_PortType port)
 			// Cache the fullscale value.
 			IMUDevice[port].FullScale[IMU_SUBDEV_GYRO] = 250.0f;
 
+			// Cache the ODR
+			IMUDevice[port].ODR[IMU_SUBDEV_GYRO] = 95.0f;
 
 			// ? Power on
 			// ODR / Power On
@@ -852,6 +1154,10 @@ void IMU_ProcessRAWFrame(void)
 
 	}
 
+	/// @todo IMU_ProcessOrientation() during IMU_ProcessRAWFrame() should be selectable as a configuration item, sometimes you don't need quaternion data.
+	IMU_ProcessOrientation();
+
+	// 
 
 	// Increment RAW ReadIndex and SCALED Write index
 	IMU_RAWFramebuffer_ReadIndex++;
@@ -877,11 +1183,11 @@ void IMU_ProcessOrientation(void)
 {
 
 	// Clear the destination frame
-	memset(&SPATIAL_QUATERNION_Framebuffer[SPATIAL_QUATERNION_Framebuffer_WriteIndex], 0, sizeof(SPATIAL_QUATERNION_FramebufferType));
 
 	for (int i = 0; i < IMU_LAST; i++)
 	{
 		// Quaternion Conversion.
+		IMU_QuaternionUpdate( &SPATIAL_QUATERNION_Framebuffer[0].q[i], &SPATIAL_IMUFrameBuffer[SPATIAL_IMUFrameBuffer_WriteIndex].imu[i], IMUDevice[i].ODR[IMU_SUBDEV_GYRO], 0.1f);		/// @todo beta needs to be a setting.
 		
 	}
 }
@@ -1001,6 +1307,7 @@ float IMU_ForceFullScaleSetting(IMU_PortType port, IMU_SubDeviceType subdev, flo
 
 void IMU_QuaternionUpdate(Quaternion* pQ, IMU_SCALED* pIMU, float ODR, float beta)
 {
+	/// @todo IMU_QuaternionUpdate needs a configurable/optional Mahony Implementation on top of the Madgwick algorithm.
 
 	/// @todo IMU_QuaternionUpdate is ripe for quite a bit of optimization.
 
@@ -1028,13 +1335,13 @@ void IMU_QuaternionUpdate(Quaternion* pQ, IMU_SCALED* pIMU, float ODR, float bet
 	if (!((pIMU->accelerometer.x == 0.0f) && (pIMU->accelerometer.y == 0.0f) && (pIMU->accelerometer.z == 0.0f))) {
 
 		// Normalize accelerometer measurement
-		recipNorm = invSqrt(pIMU->accelerometer.x * pIMU->accelerometer.x + pIMU->accelerometer.y * pIMU->accelerometer.y + pIMU->accelerometer.z * pIMU->accelerometer.z);
+		recipNorm = OPTIMIZED_invSqrt(pIMU->accelerometer.x * pIMU->accelerometer.x + pIMU->accelerometer.y * pIMU->accelerometer.y + pIMU->accelerometer.z * pIMU->accelerometer.z);
 		pIMU->accelerometer.x *= recipNorm;
 		pIMU->accelerometer.y *= recipNorm;
 		pIMU->accelerometer.z *= recipNorm;
 
 		// Normalize magnetometer measurement
-		recipNorm = invSqrt(pIMU->magnetometer.x * pIMU->magnetometer.x + pIMU->magnetometer.y * pIMU->magnetometer.y + pIMU->magnetometer.z * pIMU->magnetometer.z);
+		recipNorm = OPTIMIZED_invSqrt(pIMU->magnetometer.x * pIMU->magnetometer.x + pIMU->magnetometer.y * pIMU->magnetometer.y + pIMU->magnetometer.z * pIMU->magnetometer.z);
 		pIMU->magnetometer.x *= recipNorm;
 		pIMU->magnetometer.y *= recipNorm;
 		pIMU->magnetometer.z *= recipNorm;
@@ -1085,7 +1392,7 @@ void IMU_QuaternionUpdate(Quaternion* pQ, IMU_SCALED* pIMU, float ODR, float bet
 			// Reference direction of Earth's magnetic field
 			hx = pIMU->magnetometer.x * q0q0 - _2q0my * pQ->z + _2q0mz * pQ->y + pIMU->magnetometer.x * q1q1 + _2q1 * pIMU->magnetometer.y * pQ->y + _2q1 * pIMU->magnetometer.z * pQ->z - pIMU->magnetometer.x * q2q2 - pIMU->magnetometer.x * q3q3;
 			hy = _2q0mx * pQ->z + pIMU->magnetometer.y * q0q0 - _2q0mz * pQ->x + _2q1mx * pQ->y - pIMU->magnetometer.y * q1q1 + pIMU->magnetometer.y * q2q2 + _2q2 * pIMU->magnetometer.z * pQ->z - pIMU->magnetometer.y * q3q3;
-			_2bx = sqrt(hx * hx + hy * hy);
+			arm_sqrt_f32(hx * hx + hy * hy, &_2bx);	/// @todo consider changing this to use an internal sqrt w/debug features.
 			_2bz = -_2q0mx * pQ->y + _2q0my * pQ->x + pIMU->magnetometer.z * q0q0 + _2q1mx * pQ->z - pIMU->magnetometer.z * q1q1 + _2q2 * pIMU->magnetometer.y * pQ->z - pIMU->magnetometer.z * q2q2 + pIMU->magnetometer.z * q3q3;
 			_4bx = 2.0f * _2bx;
 			_4bz = 2.0f * _2bz;
@@ -1104,7 +1411,7 @@ void IMU_QuaternionUpdate(Quaternion* pQ, IMU_SCALED* pIMU, float ODR, float bet
 			s2 = 4.0f * q0q0 * pQ->y + _2q0 * pIMU->accelerometer.x + _4q2 * q3q3 - _2q3 * pIMU->accelerometer.y - _4q2 + _8q2 * q1q1 + _8q2 * q2q2 + _4q2 * pIMU->accelerometer.z;
 			s3 = 4.0f * q1q1 * pQ->z - _2q1 * pIMU->accelerometer.x + 4.0f * q2q2 * pQ->z - _2q2 * pIMU->accelerometer.y;
 		}
-		recipNorm = invSqrt(s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3); // normalize step magnitude
+		recipNorm = OPTIMIZED_invSqrt(s0 * s0 + s1 * s1 + s2 * s2 + s3 * s3); // normalize step magnitude
 		s0 *= recipNorm;
 		s1 *= recipNorm;
 		s2 *= recipNorm;
@@ -1124,7 +1431,7 @@ void IMU_QuaternionUpdate(Quaternion* pQ, IMU_SCALED* pIMU, float ODR, float bet
 	pQ->z += qDot4 * (1.0f / ODR);
 
 	// Normalize quaternion
-	recipNorm = invSqrt(pQ->w * pQ->w + pQ->x * pQ->x + pQ->y * pQ->y + pQ->z * pQ->z);
+	recipNorm = OPTIMIZED_invSqrt(pQ->w * pQ->w + pQ->x * pQ->x + pQ->y * pQ->y + pQ->z * pQ->z);
 	pQ->w *= recipNorm;
 	pQ->x *= recipNorm;
 	pQ->y *= recipNorm;

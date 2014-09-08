@@ -80,6 +80,7 @@ typedef struct
 	IMU_PinMappingType INTMappings[IMU_SUBDEV_NONE];	/// @bug this needs to be configurable based on hardware and detected IMU
 	IMU_ComponentType IMUType;
 	float FullScale[IMU_SUBDEV_NONE];
+	float ODR[IMU_SUBDEV_NONE];			/// Output data-rate of the specified component.
 } IMU_MappingStruct;
 
 typedef struct 
@@ -143,6 +144,9 @@ IMU_TransferStepType IMU_CheckPollingResult(IMU_PortType port, IMU_SubDeviceType
 
 /// Moves to next transfer
 void IMU_HandleSPIEvent(IMU_PortType port);
+
+/// Handles SPI1_TX interrupts (DMA-limitation/workaround)
+void IMU_SPI1_Handle_IT(void);
 
 /// Starts appropriate DMA transfer on the given port
 void IMU_HandleTransfer(IMU_PortType port);
@@ -210,6 +214,7 @@ bool DIAG_IMU_CheckAlignment(void);
 
 
 /**
+ * @note Pure
  * @brief Updates the specified quaternion using the provided IMU data using Madgwick's AHRS Algorithm.
  * @returns void
  * @param[in|out]	pQ		The output quaternion to be updated.
@@ -218,6 +223,8 @@ bool DIAG_IMU_CheckAlignment(void);
  * @param[in]	   	beta	"2 * Proportional Gain (Kp)"
  */
 void IMU_QuaternionUpdate(Quaternion* pQ, IMU_SCALED* pIMU, float ODR, float beta);
+
+/// Function to discover relative movement between IMUs in a closed system.
 
 /*
 

@@ -259,9 +259,6 @@
     <ClCompile Include="..\Features\LSM330DLC.c">
       <Filter>Source files\Features</Filter>
     </ClCompile>
-    <ClCompile Include="..\Features\MadgwickAHRS.c">
-      <Filter>Source files\Features</Filter>
-    </ClCompile>
     <ClCompile Include="..\Features\newlib.c">
       <Filter>Source files\Features</Filter>
     </ClCompile>
@@ -279,6 +276,15 @@
     </ClCompile>
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c">
       <Filter>Source files\Drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Features\Calibration.c">
+      <Filter>Source files\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Features\Spatial.c">
+      <Filter>Source files\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Features\Sqrt.c">
+      <Filter>Source files\Features</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -540,9 +546,6 @@
     <ClInclude Include="..\Features\OTP.h">
       <Filter>Header files\Features</Filter>
     </ClInclude>
-    <ClInclude Include="..\Features\MadgwickAHRS.h">
-      <Filter>Header files\Features</Filter>
-    </ClInclude>
     <ClInclude Include="..\Features\LSM330DLC.h">
       <Filter>Header files\Features</Filter>
     </ClInclude>
@@ -568,6 +571,18 @@
       <Filter>Header files\Features</Filter>
     </ClInclude>
     <ClInclude Include="..\Features\Battery.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\bitmanip.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\Calibration.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\Defines.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\Sqrt.h">
       <Filter>Header files\Features</Filter>
     </ClInclude>
   </ItemGroup>

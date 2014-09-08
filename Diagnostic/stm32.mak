@@ -15,7 +15,7 @@ AR := $(TOOLCHAIN_ROOT)/bin/arm-none-eabi-ar.exe
 OBJCOPY := $(TOOLCHAIN_ROOT)/bin/arm-none-eabi-objcopy.exe
 
 #Additional flags
-PREPROCESSOR_MACROS += ARM_MATH_CM4 stm32_flash_layout STM32F427IG STM32F427xx
+PREPROCESSOR_MACROS += ARM_MATH_CM4 stm32_flash_layout STM32F427IG STM32F427xx __FPU_PRESENT
 INCLUDE_DIRS += . ../Features ../Configuration/Inc ../Drivers/STM32F4xxxx-HAL/CMSIS/Device/ST/STM32F4xx/Include ../Drivers/STM32F4xxxx-HAL/CMSIS/Include ../Drivers/STM32F4xxxx-HAL/CMSIS/RTOS ../Drivers/STM32F4xxxx-HAL/STM32F4xx_HAL_Driver/Inc
 LIBRARY_DIRS += 
 LIBRARY_NAMES += 

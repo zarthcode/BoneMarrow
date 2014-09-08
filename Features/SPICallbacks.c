@@ -11,12 +11,13 @@
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
 
-	// This would be the time to kick off a pending RX, if there is one.
-
-	/// @note After T_hold - Release \CS line.
-	/// @bug T_hold needs to be verified.
-	IMU_SelectSubDevice(IMU_GetPortFromSPIHandle(hspi), IMU_SUBDEV_NONE);
-
+	// This method is reserved for the interrupt-based SPI1_TX(IMU_P6) workaround.
+	if (hspi == &hspi1)
+		IMU_SPI1_Handle_IT();
+	else
+	{
+		printf_semi("Improper call of HAL_SPI_TxCpltCallback()\n");
+	}
 }
 
 /**
