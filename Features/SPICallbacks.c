@@ -32,7 +32,7 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 	/// @bug T_hold needs to be verified.
 
 	// Determine the port and subdevice.
-	IMU_PortType port = IMU_GetPortFromSPIHandle(hspi);
+	IMU_IDType port = IMU_GetPortFromSPIHandle(hspi);
 
 	// Allow the spi event to be handled immediately.
 	IMU_HandleSPIEvent(port);
@@ -49,7 +49,7 @@ void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
 {
 
 	// Determine the port and subdevice.
-	IMU_PortType port = IMU_GetPortFromSPIHandle(hspi);
+	IMU_IDType port = IMU_GetPortFromSPIHandle(hspi);
 
 	// Allow the spi event to be handled immediately.
 	IMU_HandleSPIEvent(port);

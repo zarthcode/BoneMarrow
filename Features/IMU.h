@@ -13,7 +13,7 @@
 /// @todo What about (beta-series) advanced fingers w/brains?
 typedef enum
 {
-
+	IMU_NONE = -1,		// Identification aid.
 	IMU_ONBOARD,		// This is the onboard IMU, normally placed on the forearm.
 	IMU_P1,
 	IMU_P2,
@@ -23,7 +23,7 @@ typedef enum
 	IMU_P6,
 	IMU_LAST			// Iteration and array setup aid.
 
-} IMU_PortType;
+} IMU_IDType;
 
 typedef enum
 {
@@ -35,10 +35,51 @@ typedef enum
 /// @brief Each IMU contains several devices that are often accessed separately.
 typedef enum
 {
+	IMU_SUBDEV_NONE = -1,
 	IMU_SUBDEV_ACC,
 	IMU_SUBDEV_GYRO,
-	IMU_SUBDEV_NONE		// Iteration aid.
+	IMU_SUBDEV_LAST		// Iteration aid.
 } IMU_SubDeviceType;
+
+// IMU Frame State
+typedef enum
+{
+	IMU_FRAME_UNLOCKED,			// No data. Waiting for event. (no lock)
+	IMU_FRAME_WRITELOCK,		// Frame is currently being assembled.	(write lock)
+	IMU_FRAME_READLOCK			// Application is reading data from this frame.	(read lock)
+} IMU_FrameLockType;
+
+/// SPI Ports
+typedef enum
+{
+
+	IMU_SPI1,
+	IMU_SPI2,
+	IMU_SPI3,
+	IMU_SPI4,
+	IMU_SPI5,
+	IMU_SPI6,
+	IMU_SPI_LAST
+
+} IMU_SPIPortType;
+
+// SPI Port Lock
+typedef enum
+{
+	IMU_SPILOCK_UNLOCKED,
+	IMU_SPILOCK_LOCKED
+} IMU_SPILockType;
+
+// Data transfer steps
+typedef enum
+{
+	IMU_XFER_IDLE,				// Waiting for trigger (poll, interrupt)
+	IMU_XFER_CHECKING,			// A polling operation is in progress.
+	IMU_XFER_PENDING,			// Data ready for transfer (interrupt/poll confirmed)
+	IMU_XFER_WAIT,				// Data transfer in progress
+	IMU_XFER_COMPLETE			// Data transfer completed.
+} IMU_TransferStepType;
+
 
 /// Interrupt and  \CS Mapping
 typedef struct
@@ -74,13 +115,14 @@ typedef enum
 typedef struct  
 {
 	IMU_Device DeviceName;
+	IMU_SPIPortType spi;
 	SPI_HandleTypeDef* hspi;
 	bool hasMagnetometer;
-	IMU_PinMappingType CSMappings[IMU_SUBDEV_NONE];	/// @bug this needs to be configurable based on hardware and detected IMU
-	IMU_PinMappingType INTMappings[IMU_SUBDEV_NONE];	/// @bug this needs to be configurable based on hardware and detected IMU
+	IMU_PinMappingType CSMappings[IMU_SUBDEV_LAST];	/// @bug this needs to be configurable based on hardware and detected IMU
+	IMU_PinMappingType INTMappings[IMU_SUBDEV_LAST];	/// @bug this needs to be configurable based on hardware and detected IMU
 	IMU_ComponentType IMUType;
-	float FullScale[IMU_SUBDEV_NONE];
-	float ODR[IMU_SUBDEV_NONE];			/// Output data-rate of the specified component.
+	float FullScale[IMU_SUBDEV_LAST];
+	float ODR[IMU_SUBDEV_LAST];			/// Output data-rate of the specified component.
 } IMU_MappingStruct;
 
 typedef struct 
@@ -102,24 +144,6 @@ extern uint8_t volatile IMU_RAWFramebuffer_ReadIndex;
 extern uint8_t volatile IMU_RAWFramebuffer_WriteIndex;
 
 
-// IMU Frame State
-typedef enum
-{
-	IMU_FRAME_UNLOCKED,			// No data. Waiting for event. (no lock)
-	IMU_FRAME_WRITELOCK,		// Frame is currently being assembled.	(write lock)
-	IMU_FRAME_READLOCK			// Application is reading data from this frame.	(read lock)
-} IMU_FrameLockType;
-
-// Data transfer steps
-typedef enum
-{
-	IMU_XFER_IDLE,				// Waiting for trigger (poll, interrupt)
-	IMU_XFER_CHECKING,			// A polling operation is in progress.
-	IMU_XFER_PENDING,			// Data ready for transfer (interrupt/poll confirmed)
-	IMU_XFER_WAIT,				// Data transfer in progress
-	IMU_XFER_COMPLETE			// Data transfer completed.
-} IMU_TransferStepType;
-
 
 /// @todo IMU_POLL_BUFFER_SIZE is an excellent candidate for malloc/free.
 #define IMU_POLL_BUFFER_SIZE 2	// Only 2 bytes needed to hold TxRx polling transfers.
@@ -128,34 +152,48 @@ typedef enum
 typedef struct 
 {
 	IMU_FrameLockType Lock;
-	IMU_TransferStepType TransferStep[IMU_LAST][IMU_SUBDEV_NONE];	
+	IMU_TransferStepType TransferStep[IMU_LAST][IMU_SUBDEV_LAST];	
 	uint8_t PollingBuffer[IMU_LAST][IMU_POLL_BUFFER_SIZE];
 	IMU_SubDeviceType SelectedSubDevice[IMU_LAST];
+	IMU_IDType SPILock[IMU_SPI_LAST];
+
 } IMU_TransferStateType;
+
+/// Attempt to lock a spi port
+bool IMU_TryAcquireSPILock(IMU_IDType imu);
+
+/// Releases the lock on a spi port
+bool IMU_ReleaseSPILock(IMU_IDType imu);
 
 /// Checks For Interrupt Events
 void IMU_CheckIMUInterrupts(void);
 
 /// Initiates DMA transfer to grab data info from device.
-void IMU_Poll(IMU_PortType port, IMU_SubDeviceType subdev);
+void IMU_Poll(IMU_IDType port, IMU_SubDeviceType subdev);
 
 /// Evaluates the result of the polling operation.
-IMU_TransferStepType IMU_CheckPollingResult(IMU_PortType port, IMU_SubDeviceType subdev);
+IMU_TransferStepType IMU_CheckPollingResult(IMU_IDType port, IMU_SubDeviceType subdev);
 
 /// Moves to next transfer
-void IMU_HandleSPIEvent(IMU_PortType port);
+void IMU_HandleSPIEvent(IMU_IDType port);
 
 /// Handles SPI1_TX interrupts (DMA-limitation/workaround)
 void IMU_SPI1_Handle_IT(void);
 
+/**
+ * @brief Attempts to Acquire frame data.
+ * @returns TRUE to indicate that "yes, the frame got processed."
+ */
+bool IMU_CompleteFrame(void);
+
 /// Starts appropriate DMA transfer on the given port
-void IMU_HandleTransfer(IMU_PortType port);
+void IMU_HandleTransfer(IMU_IDType port);
 
 /// Start DMA transfer of data from specified port/subdevice.
-void IMU_GetRAW(IMU_PortType port, IMU_SubDeviceType subdev);
+void IMU_GetRAW(IMU_IDType port, IMU_SubDeviceType subdev);
 
 /// A special case DMA transfer that takes place after a successful polling operation.
-void IMU_GetRAWBurst(IMU_PortType port, IMU_SubDeviceType subdev);
+void IMU_GetRAWBurst(IMU_IDType port, IMU_SubDeviceType subdev);
 
 
 /// Performs initial setup of IMU mapping structures
@@ -163,25 +201,25 @@ void IMU_GetRAWBurst(IMU_PortType port, IMU_SubDeviceType subdev);
 void IMU_Setup(void);
 
 /// Returns a multiplier for the currently-configured full-scale setting.
-float IMU_GetFullScaleMultiplier(IMU_PortType port, IMU_SubDeviceType subdev);
+float IMU_GetFullScaleMultiplier(IMU_IDType port, IMU_SubDeviceType subdev);
 
 /// Evaluates FullScale setting for each port, based on the last few frames.
-void IMU_AutoSetFullScaleSetting(IMU_PortType port, IMU_SubDeviceType subdev);
+void IMU_AutoSetFullScaleSetting(IMU_IDType port, IMU_SubDeviceType subdev);
 
 /**
  * @brief Attempts to force a particular full-scale setting.
  * @returns final full-scale setting.
- * @param IMU_PortType port IMU device descriptor 
+ * @param IMU_IDType port IMU device descriptor 
  * @param IMU_SubDeviceType subdev IMU subdevice
  * @todo Change this routine to utilize a device driver architecture.
  */
-float IMU_ForceFullScaleSetting(IMU_PortType port, IMU_SubDeviceType subdev, float g_max);
+float IMU_ForceFullScaleSetting(IMU_IDType port, IMU_SubDeviceType subdev, float g_max);
 
 /// Utility function that returns the imu associated w/an hspi
-IMU_PortType IMU_GetPortFromSPIHandle(SPI_HandleTypeDef* hspi);
+IMU_IDType IMU_GetPortFromSPIHandle(SPI_HandleTypeDef* hspi);
 
 /// Selects the requested component
-void IMU_SelectSubDevice(IMU_PortType port, IMU_SubDeviceType component);
+void IMU_SelectDevice(IMU_IDType port, IMU_SubDeviceType component);
 
 /// Detect connected IMU(s)
 // IMU_ComponentType DetectIMU(IMU_MappingStruct* device);
@@ -193,7 +231,7 @@ void IMU_SelectSubDevice(IMU_PortType port, IMU_SubDeviceType component);
  * @todo settings/configuration needs to be be cached into IMUDevice structure.
  * @param port IMU of the device to configure.
  */
-void IMU_Configure(IMU_PortType port);
+void IMU_Configure(IMU_IDType port);
 
 /// Processes Completed/pending IMU_RAW frames into IMU_SCALED frames and frees an IMU_Framebuffer
 void IMU_ProcessRAWFrame(void);
@@ -207,7 +245,7 @@ void IMU_ProcessOrientation(void);
 void IMU_SystickHandler(void);
  
 /// Determines if the SPI port can communicate with the IMU.
-bool DIAG_IMU_Test(IMU_PortType imuport);
+bool DIAG_IMU_Test(IMU_IDType imuport);
 
 /// Debug/Dev function to check structure alignment
 bool DIAG_IMU_CheckAlignment(void);
