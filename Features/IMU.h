@@ -215,7 +215,11 @@ void IMU_AutoSetFullScaleSetting(IMU_IDType port, IMU_SubDeviceType subdev);
  */
 float IMU_ForceFullScaleSetting(IMU_IDType port, IMU_SubDeviceType subdev, float g_max);
 
-/// Utility function that returns the imu associated w/an hspi
+/**
+ * @brief Returns the IMU that is currently locking the indicated spi port.
+ * @returns IMU that is currently locking the SPI port.  Will return IMU_NONE if No SPI has locked the port.
+ * @param handle to the spi module in question.
+ */
 IMU_IDType IMU_GetPortFromSPIHandle(SPI_HandleTypeDef* hspi);
 
 /// Selects the requested component

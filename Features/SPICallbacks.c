@@ -17,7 +17,11 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 	else
 	{
 		printf_semi("Improper call of HAL_SPI_TxCpltCallback()\n");
+#ifdef DEBUG
+		__BKPT(0);
+#endif
 	}
+
 }
 
 /**
@@ -60,6 +64,10 @@ void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
 {
 
 	printf_semi("HAL_SPI_ErrorCallback() - Damn, you!\n");
+#ifdef DEBUG
+	__BKPT(0);
+#endif
+
 }
 // void HAL_SPI_TxHalfCpltCallback(SPI_HandleTypeDef *hspi);
 // void HAL_SPI_RxHalfCpltCallback(SPI_HandleTypeDef *hspi);

@@ -116,7 +116,7 @@ bool DIAG_IMU_Test(IMU_IDType imuport)
 					if (spi_txrx[1] == LSM330DLC_WHO_AM_I_G_VALUE)
 					{
 						// Ready to go!
-						printf_semi("SPI IMU Test successful. (TxRx buffer: 0x%02x 0x%02x).\n", spi_txrx[0], spi_txrx[1]);
+						printf_semi("SPI IMU Gyro Test successful (imu %d). (TxRx buffer: 0x%02x 0x%02x).\n", imuport, spi_txrx[0], spi_txrx[1]);
 
 						return true;
 						
@@ -124,7 +124,7 @@ bool DIAG_IMU_Test(IMU_IDType imuport)
 					else
 					{
 						// Ready to go!
-						printf_semi("SPI IMU Test unsuccessful (received 0x%02x 0x%02x).\n", spi_txrx[0], spi_txrx[1]);
+						printf_semi("SPI IMU Gyro Test unsuccessful (imu %d) (received 0x%02x 0x%02x).\n", imuport, spi_txrx[0], spi_txrx[1]);
 					}
 				}
 				else
@@ -256,7 +256,12 @@ void IMU_Setup(void)
 	memset(&IMU_TransferState, 0, sizeof(IMU_TransferState));
 	for (int i = 0; i < IMU_LAST; i++)
 	{
-		IMU_TransferState.SelectedSubDevice[i] = IMU_SUBDEV_LAST;
+		IMU_TransferState.SelectedSubDevice[i] = IMU_SUBDEV_NONE;
+	}
+
+	for (int i = 0; i < IMU_SPI_LAST; i++)
+	{
+		IMU_TransferState.SPILock[i] = IMU_NONE;
 	}
 
 	/// @bug - I don't know if this is necessary on arm-eabi....
@@ -283,7 +288,6 @@ void IMU_Setup(void)
 			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_9;
 			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
 
-			IMU_SelectDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
 
 			// Configure Interrupts
 			// INT2 (INT1_A)
@@ -327,7 +331,6 @@ void IMU_Setup(void)
 			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_9;
 			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
 
-			IMU_SelectDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
 
 			// Configure Interrupts
 			// SPI6_INT0 (INT1_A)
@@ -369,7 +372,6 @@ void IMU_Setup(void)
 			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_1;
 			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
 
-			IMU_SelectDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
 
 			// Configure Interrupts
 			// SPI6_INT0 (INT1_A)
@@ -412,7 +414,6 @@ void IMU_Setup(void)
 			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_5;
 			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
 
-			IMU_SelectDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
 
 			// Configure Interrupts
 			// SPI6_INT0 (INT1_A)
@@ -454,7 +455,6 @@ void IMU_Setup(void)
 			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_11;
 			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
 
-			IMU_SelectDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
 
 			// Configure Interrupts
 			// SPI6_INT0 (INT1_A)
@@ -496,7 +496,6 @@ void IMU_Setup(void)
 			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_3;
 			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
 
-			IMU_SelectDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
 
 			// Configure Interrupts
 			// SPI6_INT0 (INT1_A)
@@ -538,7 +537,6 @@ void IMU_Setup(void)
 			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].pin = GPIO_PIN_3;
 			IMUDevice[i].CSMappings[IMU_SUBDEV_GYRO].type = IMU_SUBDEV_GYRO;
 
-			IMU_SelectDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
 
 			// Configure Interrupts
 			// SPI6_INT0 (INT1_A)
@@ -573,6 +571,8 @@ void IMU_Setup(void)
 			break;
 
 		}
+
+		IMU_SelectDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
 
 		// Configure IMU settings.
 		IMU_Configure(i);
@@ -661,6 +661,10 @@ void IMU_SPI1_Handle_IT(void)
 			break;
 		default:
 			// Nothing to see here.
+			printf_semi("IMU_SPI1_Handle_IT() IMU state is %d\n", IMU_TransferState.TransferStep[IMU_P6][subdev]);
+#ifdef DEBUG
+			__BKPT(0);
+#endif
 			break;
 		}
 	}
@@ -916,7 +920,11 @@ void IMU_HandleSPIEvent(IMU_IDType imu)
 	{
 	case IMU_XFER_IDLE:
 		// This isn't an event...
-		printf_semi("IMU_HandleSPIEvent(imu %d) - IMU_XFER_IDLE isn't a SPI event...\n", imu);
+		printf_semi("IMU_HandleSPIEvent(imu %d) - IMU_XFER_IDLE isn't a SPI event...(wrong IMU in args?)\n", imu);
+#ifdef DEBUG
+		__BKPT(0);
+#endif // DEBUG
+
 		break;
 
 	case IMU_XFER_CHECKING:
@@ -970,8 +978,11 @@ void IMU_HandleSPIEvent(IMU_IDType imu)
 
 	case IMU_XFER_COMPLETE:
 
-		// A polling event was just completed.
-		printf_semi("IMU_HandleSPIEvent(imu %d) - IMU_XFER_COMPLETE isn't a SPI event...\n", imu);
+		// This isn't an event that should be called on...
+		printf_semi("IMU_HandleSPIEvent(imu %d) - IMU_XFER_COMPLETE isn't a SPI event...(Wrong imu in args?)\n", imu);
+#ifdef DEBUG
+		__BKPT(0);
+#endif // DEBUG
 		break;
 
 	default:
@@ -1114,33 +1125,34 @@ void IMU_Configure(IMU_IDType imu)
 IMU_IDType IMU_GetPortFromSPIHandle(SPI_HandleTypeDef* hspi)
 {
 
-	/// @bug This may need to be manually unrolled.	Analyze/profile this!
-
-	/* Flesh this out to manually unroll...
-	intptr_t ihspi = (intptr_t)(void *)hspi;	// I know what you're thinking...
-
-	switch (ihspi)
+	IMU_SPIPortType spi = IMU_SPI_LAST;
+	if (hspi == &hspi1)
 	{
-	case (intptr_t)(void*)&hspi6:
-		return IMU_ONBOARD;
-		break;
-	default:
-		/// Unrecognized hspi
-		printf_semi("GetIMU(%p) - IMU not found/implemented", (void *)hspi);
-		break;
+		spi = IMU_SPI1;
 	}
-	*/
-
-	// Select the requested component
-	for (int i = 0; i < IMU_LAST; i++)
+	else if (hspi == &hspi2)
 	{
-		// Disable
-		
-		if (IMUDevice[i].hspi == hspi)
-		{
-			return i;
-		}
+		spi = IMU_SPI2;
 	}
+	else if (hspi == &hspi3)
+	{
+		spi = IMU_SPI3;
+	}
+	else if (hspi == &hspi4)
+	{
+		spi = IMU_SPI4;
+	}
+	else if (hspi == &hspi5)
+	{
+		spi = IMU_SPI5;
+	}
+	else if (hspi == &hspi6)
+	{
+		spi = IMU_SPI6;
+	}
+
+	return IMU_TransferState.SPILock[spi];
+
 
 	printf_semi("GetIMU(%p) - IMU not found/implemented.", (void*)hspi);
 #ifdef DEBUG
@@ -1152,11 +1164,6 @@ IMU_IDType IMU_GetPortFromSPIHandle(SPI_HandleTypeDef* hspi)
 
 }
 
-void IMU_CheckFrameComplete(void)
-{
-	// Attempt to initiate any pending transfers
-	
-}
 
 void IMU_SystickHandler(void)
 {
@@ -1190,7 +1197,7 @@ bool IMU_CompleteFrame(void)
 			IMU_TransferState.TransferStep[imu][IMU_SUBDEV_ACC] = IMU_XFER_COMPLETE;
 			IMU_TransferState.TransferStep[imu][IMU_SUBDEV_GYRO] = IMU_XFER_COMPLETE;
 		}
-	*/
+	//	*/
 
 		for (int subdev = 0; subdev < IMU_SUBDEV_LAST; subdev++)
 		{
@@ -1201,37 +1208,24 @@ bool IMU_CompleteFrame(void)
 				bFrameComplete = false;
 			}
 
+			if ((IMU_TransferState.TransferStep[imu][subdev] == IMU_XFER_CHECKING)
+			|| (IMU_TransferState.TransferStep[imu][subdev] == IMU_XFER_WAIT))
+			{
+				// skiiip
+				break;
+			}
+
 			if(IMU_TransferState.TransferStep[imu][subdev] == IMU_XFER_PENDING)
 			{
 				bFrameComplete = false;
 
-				// Make sure that SPI6 doesn't suffer a collision.
-				bool bSPI6Busy = false;
-				if ((imu == IMU_P3) || (imu == IMU_ONBOARD))
+				// Start a retrieval operation
+				/// @todo IMU_TryAcquireSPILock() and IMU_GetRAW() should probably be combined.
+				if (IMU_TryAcquireSPILock(imu))		//
 				{
-					// Check to see if they are busy.
-					for (int tmpSubdev = 0; tmpSubdev < IMU_SUBDEV_LAST; tmpSubdev++)
-					{
-						if ((IMU_TransferState.TransferStep[IMU_P3][tmpSubdev] == IMU_XFER_CHECKING)
-						|| (IMU_TransferState.TransferStep[IMU_P3][tmpSubdev] == IMU_XFER_WAIT)
-						|| (IMU_TransferState.TransferStep[IMU_ONBOARD][tmpSubdev] == IMU_XFER_CHECKING)
-						|| (IMU_TransferState.TransferStep[IMU_ONBOARD][tmpSubdev] == IMU_XFER_WAIT))
-						{
-							bSPI6Busy = true;
-						}
-					}
-
+					IMU_GetRAW(imu, subdev);
 				}
-				else
-				{ 
-					// Start a retrieval operation
-					/// @todo IMU_TryAcquireSPILock() and IMU_GetRAW() should probably be combined.
-					if (IMU_TryAcquireSPILock(imu))		//
-					{
-						IMU_GetRAW(imu, subdev);
-					}
 
-				}
 				// Skip remaining subdevices.
 				break;
 			}

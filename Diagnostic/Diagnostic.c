@@ -52,6 +52,7 @@ int app_postinit(void)
 	printf_semi("ERROR: __FPU_USED not defined!\n");
 #endif
 
+	/*
 
 	LED_PWM_Start();
 
@@ -75,7 +76,7 @@ int app_postinit(void)
 	// Delay 3 sec before starting the test.
 	HAL_Delay(3000);
 	//	Diag_ButtonTest();
-
+	*/
 	//	Diag_BatteryMeterTest();
 
 
@@ -121,6 +122,12 @@ int app_postinit(void)
 	IMU_Setup();
 //	IMU_Test(IMU_ONBOARD);
 
+	// Check IMU connectivity
+	for (int imu = 0; imu < IMU_LAST; imu++)
+	{
+		DIAG_IMU_Test(imu);
+	}
+
 	IMU_Configure(IMU_ONBOARD);
 
 //	HAL_Delay(3000);
@@ -156,7 +163,7 @@ int app_main(void)
 
 			// Adjust full-scale settings
 
-			// Adjust ODRs
+			// Readjust ODRs
 
 
 	//}
