@@ -644,5 +644,6 @@
     <None Include="semihosting.mak">
       <Filter>Make files</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

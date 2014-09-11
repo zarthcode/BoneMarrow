@@ -276,6 +276,7 @@
     <ClInclude Include="..\Features\Sqrt.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="debug.mak" />
     <None Include="semihosting.mak" />
     <None Include="Makefile" />
