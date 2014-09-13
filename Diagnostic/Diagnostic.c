@@ -110,25 +110,55 @@ int app_postinit(void)
 	*/
 
 //	IMU_CheckAlignment();
+#define IMU_PRINT_INTERRUPT
 
-	// Check PG10
-	printf_semi("PG10 IMU_ONBOARD - INT1_A is ");
-	if (HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_10) == GPIO_PIN_SET)
-		printf_semi("HIGH\n");
-	else
-		printf_semi("LOW\n");
-
-	// Onboard SPI Test
+	// Initialize SPI Structures
 	IMU_Setup();
-//	IMU_Test(IMU_ONBOARD);
-
+	
 	// Check IMU connectivity
 	for (int imu = 0; imu < IMU_LAST; imu++)
 	{
 		DIAG_IMU_Test(imu);
 	}
 
-	IMU_Configure(IMU_ONBOARD);
+// On powerup, ALL IMU Interrupts should be LOW
+#ifdef IMU_PRINT_INTERRUPT
+	for (IMU_IDType imu = 0; imu < IMU_LAST; imu++)
+	{
+		for (IMU_SubDeviceType subdev = 0; subdev < IMU_SUBDEV_LAST; subdev++)
+		{
+			// Print the interrupts
+			printf_semi("IMU %d Subdev %d Interrupt ", imu, subdev);
+
+			(GPIO_PIN_SET == HAL_GPIO_ReadPin(IMUDevice[imu].INTMappings[subdev].port, IMUDevice[imu].INTMappings[subdev].pin)) ? printf_semi("HIGH\n") : printf_semi("LOW\n");
+		}
+	}
+#endif // IMU_PRINT_INTERRUPT
+
+
+	for (IMU_IDType imu = 0; imu < IMU_LAST; imu++)
+	{
+		IMU_Configure(imu);
+	}
+
+	HAL_Delay(100);
+
+#ifdef IMU_PRINT_INTERRUPT
+	for (IMU_IDType imu = 0; imu < IMU_LAST; imu++)
+	{
+		for (IMU_SubDeviceType subdev = 0; subdev < IMU_SUBDEV_LAST; subdev++)
+		{
+			// Print the interrupts
+			printf_semi("IMU %d Subdev %d Interrupt ", imu, subdev);
+
+			(GPIO_PIN_SET == HAL_GPIO_ReadPin(IMUDevice[imu].INTMappings[subdev].port, IMUDevice[imu].INTMappings[subdev].pin)) ? printf_semi("HIGH\n") : printf_semi("LOW\n");
+		}
+	}
+#endif // IMU_PRINT_INTERRUPT
+
+//	IMU_Test(IMU_ONBOARD);
+
+
 
 //	HAL_Delay(3000);
 
@@ -139,6 +169,7 @@ extern uint32_t volatile IMU_framecount;
 int app_main(void)
 {
 	printf_semi("Waiting for input.\n");
+	IMU_Enable();
 
 	uint32_t oldfc = IMU_framecount;
 
@@ -152,6 +183,10 @@ int app_main(void)
 		// Process Framedata
 	IMU_ProcessRAWFrame();		// Scale RAW into scaled data (minimum processing.)
 
+	for (int imu = 0; imu < IMU_LAST; imu++)
+	{
+		DIAG_IMU_Test(imu);
+	}
 
 		// Update Gesture Recognition
 
@@ -170,30 +205,32 @@ int app_main(void)
 	
 	printf_semi("RAW Frames Generated: %d\n", IMU_framecount);
 	printf_semi("SCALED Frames processed: %d\n", SPATIAL_IMUFrameBuffer_NumProcessed);
-
+	for (int imu = 0; imu < IMU_LAST; imu++)
+	{
 	// Print RAW data
-	printf_semi("Last Frame:\nax = %d\nay = %d\naz = %d\ngx = %d\ngy = %d\ngz = %d\n",
-		IMU_RAWFramebuffer[0].imu[0].accelerometer.x,
-		IMU_RAWFramebuffer[0].imu[0].accelerometer.y,
-		IMU_RAWFramebuffer[0].imu[0].accelerometer.z,
-		IMU_RAWFramebuffer[0].imu[0].gyroscope.x,
-		IMU_RAWFramebuffer[0].imu[0].gyroscope.z);
+		printf_semi("IMU %d\n", imu);
+	printf_semi("\tRAW:\nax = %d\nay = %d\naz = %d\ngx = %d\ngy = %d\ngz = %d\n",
+		IMU_RAWFramebuffer[0].imu[imu].accelerometer.x,
+		IMU_RAWFramebuffer[0].imu[imu].accelerometer.y,
+		IMU_RAWFramebuffer[0].imu[imu].accelerometer.z,
+		IMU_RAWFramebuffer[0].imu[imu].gyroscope.x,
+		IMU_RAWFramebuffer[0].imu[imu].gyroscope.z);
 
 	// Print scaled data
-	printf_semi("Last Frame:\nax = %f\nay = %f\naz = %f\ngx = %f\ngy = %f\ngz = %f\n",
-		SPATIAL_IMUFrameBuffer[0].imu[0].accelerometer.x,
-		SPATIAL_IMUFrameBuffer[0].imu[0].accelerometer.y,
-		SPATIAL_IMUFrameBuffer[0].imu[0].accelerometer.z,
-		SPATIAL_IMUFrameBuffer[0].imu[0].gyroscope.x,
-		SPATIAL_IMUFrameBuffer[0].imu[0].gyroscope.z);
+	printf_semi("\tScaled:\nax = %f\nay = %f\naz = %f\ngx = %f\ngy = %f\ngz = %f\n",
+		SPATIAL_IMUFrameBuffer[0].imu[imu].accelerometer.x,
+		SPATIAL_IMUFrameBuffer[0].imu[imu].accelerometer.y,
+		SPATIAL_IMUFrameBuffer[0].imu[imu].accelerometer.z,
+		SPATIAL_IMUFrameBuffer[0].imu[imu].gyroscope.x,
+		SPATIAL_IMUFrameBuffer[0].imu[imu].gyroscope.z);
 
 	// Print calculated quaternion
-	printf_semi("Last Frame:\nqw = %f\nqx = %f\nqy = %f\nqz = %f\n",
-		SPATIAL_QUATERNION_Framebuffer[0].q[0].w,
-		SPATIAL_QUATERNION_Framebuffer[0].q[0].x,
-		SPATIAL_QUATERNION_Framebuffer[0].q[0].y,
-		SPATIAL_QUATERNION_Framebuffer[0].q[0].z);
-
+	printf_semi("\tQuaternion:\nqw = %f\nqx = %f\nqy = %f\nqz = %f\n",
+		SPATIAL_QUATERNION_Framebuffer[0].q[imu].w,
+		SPATIAL_QUATERNION_Framebuffer[0].q[imu].x,
+		SPATIAL_QUATERNION_Framebuffer[0].q[imu].y,
+		SPATIAL_QUATERNION_Framebuffer[0].q[imu].z);
+	}
  	printf_semi("Goodnight!\n");
 	SetLEDState(RADIO, LED_STATE_OFF);
 	SetLEDState(POWER, LED_STATE_OFF);

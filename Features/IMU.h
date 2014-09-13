@@ -109,6 +109,7 @@ typedef enum
 } IMU_Device;
 
 
+// #define IMU_POLLING_MODE
 
 
 /// @brief Information needed to access a single IMU
@@ -158,6 +159,23 @@ typedef struct
 	IMU_IDType SPILock[IMU_SPI_LAST];
 
 } IMU_TransferStateType;
+
+
+
+/// Debugging utility function.
+void DBG_SPICheckState(HAL_SPI_StateTypeDef state);
+
+/// Enables IMU Handling
+void IMU_Enable(void);
+
+/// Disables IMU Handling
+void IMU_Disable(void);
+
+/// IMU Handling state
+void IMU_SetHandlingState(bool state);
+
+/// Issues a reset to the IMU
+void IMU_Reset(IMU_IDType imu);
 
 /// Attempt to lock a spi port
 bool IMU_TryAcquireSPILock(IMU_IDType imu);

@@ -503,7 +503,7 @@ void I2C2_ER_IRQHandler(void)
 	while (1) {};
 
 }
-
+/*
 void SPI1_IRQHandler(void)
 {
 
@@ -514,7 +514,7 @@ void SPI1_IRQHandler(void)
 	while (1) {};
 
 }
-
+*/
 void SPI2_IRQHandler(void)
 {
 

@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @file    stm32f4xx_it.c
-  * @date    11/09/2014 12:01:24
+  * @date    12/09/2014 06:36:01
   * @brief   Interrupt Service Routines.
   ******************************************************************************
   *
@@ -49,6 +49,7 @@ extern DMA_HandleTypeDef hdma_spi5_tx;
 extern DMA_HandleTypeDef hdma_spi5_rx;
 extern DMA_HandleTypeDef hdma_spi6_rx;
 extern DMA_HandleTypeDef hdma_spi6_tx;
+extern SPI_HandleTypeDef hspi1;
 extern DMA_HandleTypeDef hdma_usart2_tx;
 extern DMA_HandleTypeDef hdma_usart2_rx;
 
@@ -172,6 +173,15 @@ void DMA1_Stream7_IRQHandler(void)
 {
   HAL_NVIC_ClearPendingIRQ(DMA1_Stream7_IRQn);
   HAL_DMA_IRQHandler(&hdma_spi3_tx);
+}
+
+/**
+* @brief This function handles SPI1 global interrupt.
+*/
+void SPI1_IRQHandler(void)
+{
+  HAL_NVIC_ClearPendingIRQ(SPI1_IRQn);
+  HAL_SPI_IRQHandler(&hspi1);
 }
 
 /**

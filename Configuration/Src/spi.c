@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : SPI.c
-  * Date               : 12/09/2014 03:06:04
+  * Date               : 12/09/2014 06:36:00
   * Description        : This file provides code for the configuration
   *                      of the SPI instances.
   ******************************************************************************
@@ -207,6 +207,11 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
 
     __HAL_LINKDMA(hspi,hdmarx,hdma_spi1_rx);
 
+    /* Peripheral interrupt init*/
+    /* Sets the priority grouping field */
+    HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_1);
+    HAL_NVIC_SetPriority(SPI1_IRQn, 1, 4);
+    HAL_NVIC_EnableIRQ(SPI1_IRQn);
   }
   else if(hspi->Instance==SPI2)
   {
@@ -467,6 +472,9 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
 
     /* Peripheral DMA DeInit*/
     HAL_DMA_DeInit(hspi->hdmarx);
+
+    /* Peripheral interrupt Deinit*/
+    HAL_NVIC_DisableIRQ(SPI1_IRQn);
   }
   else if(hspi->Instance==SPI2)
   {
