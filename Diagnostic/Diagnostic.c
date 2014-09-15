@@ -116,9 +116,32 @@ int app_postinit(void)
 	IMU_Setup();
 	
 	// Check IMU connectivity
+	// Perform 100 tests
+	int testresults[IMU_LAST];
+
 	for (int imu = 0; imu < IMU_LAST; imu++)
 	{
-		DIAG_IMU_Test(imu);
+		testresults[imu] = 0;
+	}
+
+	printf_semi("IMU Connectivity test");
+	for (int num = 0; num < 100; num++)
+	{
+		for (int imu = 0; imu < IMU_LAST; imu++)
+		{
+			if (DIAG_IMU_Test(imu))
+			{
+				testresults[imu]++;
+//				printf_semi(".");	// DIAG_IMU_Test() is chatty enough...
+			}
+
+		}
+	}
+
+	printf_semi("\n\nResults:\n");
+	for (int res = 0; res < IMU_LAST; res++)
+	{
+		printf_semi("\tIMU %d: %d/100\n", res, testresults[res]);
 	}
 
 // On powerup, ALL IMU Interrupts should be LOW
@@ -141,7 +164,7 @@ int app_postinit(void)
 		IMU_Configure(imu);
 	}
 
-	HAL_Delay(100);
+	HAL_Delay(10);
 
 #ifdef IMU_PRINT_INTERRUPT
 	for (IMU_IDType imu = 0; imu < IMU_LAST; imu++)
@@ -177,8 +200,9 @@ int app_main(void)
 	// Process frame data for a few secs...
 //	uint32_t startTime = HAL_GetTick();
 //	while ((startTime + 1000) > HAL_GetTick())
-	while (IMU_framecount == 0)
+	while (IMU_framecount < 100)
 	{
+		IMU_ProcessRAWFrame();		// Scale RAW into scaled data (minimum processing.)
 	}
 		// Process Framedata
 	IMU_ProcessRAWFrame();		// Scale RAW into scaled data (minimum processing.)

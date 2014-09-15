@@ -131,7 +131,7 @@ bool DIAG_IMU_Test(IMU_IDType imuport)
 					if (spi_txrx[1] == LSM330DLC_WHO_AM_I_G_VALUE)
 					{
 						// Ready to go!
-						printf_semi("SPI IMU Gyro Test successful (imu %d). (TxRx buffer: 0x%02x 0x%02x).\n", imuport, spi_txrx[0], spi_txrx[1]);
+//						printf_semi("SPI IMU %d PASS. { 0x%02x, 0x%02x }.\n", imuport, spi_txrx[0], spi_txrx[1]);
 
 						return true;
 						
@@ -139,7 +139,7 @@ bool DIAG_IMU_Test(IMU_IDType imuport)
 					else
 					{
 						// Ready to go!
-						printf_semi("SPI IMU Gyro Test unsuccessful (imu %d) (received 0x%02x 0x%02x).\n", imuport, spi_txrx[0], spi_txrx[1]);
+//						printf_semi("SPI IMU %d FAIL. { 0x%02x, 0x%02x }.\n", imuport, spi_txrx[0], spi_txrx[1]);
 					}
 				}
 				else
@@ -154,7 +154,7 @@ bool DIAG_IMU_Test(IMU_IDType imuport)
 
 		default:
 			
-			printf_semi("Cannot test implemented device IMU_Device (%d)", IMUDevice[imuport].DeviceName);
+			printf_semi("Cannot test implemented device IMU_Device (%d)\n", IMUDevice[imuport].DeviceName);
 			break;
 		
 	}
@@ -587,6 +587,7 @@ void IMU_Setup(void)
 
 		}
 
+		IMU_Reset(i);
 		IMU_SelectDevice(i, IMU_SUBDEV_NONE);		// Deselect the device.
 
 		// Configure IMU settings.
@@ -896,14 +897,13 @@ void IMU_CheckIMUInterrupts(void)
 					// Change status to pending.
 					IMU_TransferState.TransferStep[imu][subdev] = IMU_XFER_PENDING;
 				}
-// #ifdef IMU_PRINT_INTERRUPT
+#ifdef IMU_PRINT_INTERRUPT
 
 				// Print the interrupts
 				printf_semi("IMU %d Subdev %d Interrupt ", imu, subdev);
-
 				(GPIO_PIN_SET == HAL_GPIO_ReadPin(IMUDevice[imu].INTMappings[subdev].port, IMUDevice[imu].INTMappings[subdev].pin)) ? printf_semi("HIGH\n") : printf_semi("LOW\n");
 
-// #endif // IMU_PRINT_INTERRUPT
+#endif // IMU_PRINT_INTERRUPT
 
 
 			}
@@ -1233,7 +1233,7 @@ bool IMU_CompleteFrame(void)
 	{
 
 	 // @bug temporary change to test DMA bandwidth using only IMU_ONBOARD
-		if (imu != IMU_P2)
+		if (imu != IMU_P4)
 		{
 			IMU_TransferState.TransferStep[imu][IMU_SUBDEV_ACC] = IMU_XFER_COMPLETE;
 			IMU_TransferState.TransferStep[imu][IMU_SUBDEV_GYRO] = IMU_XFER_COMPLETE;
@@ -1291,8 +1291,8 @@ bool IMU_CompleteFrame(void)
 	if (bFrameComplete)
 	{
 
-	// @bug Temp debug section.
-	IMU_Enabled = false;
+	// @bug Temp debug section to ensure only one frame gets processed.
+	// IMU_Enabled = false;
 
 		// Frame is ready
 		IMU_framecount++;
@@ -1699,7 +1699,6 @@ void IMU_Reset(IMU_IDType imu)
 			break;
 		
 	}
-	return false;
 
 }
 
