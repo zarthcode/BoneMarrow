@@ -272,7 +272,6 @@
     <ClInclude Include="..\Features\OTP.h" />
     <ClInclude Include="..\Features\Spatial.h" />
     <ClInclude Include="..\Features\Semihosting.h" />
-    <ClInclude Include="..\Features\SPIManager.h" />
     <ClInclude Include="..\Features\Sqrt.h" />
   </ItemGroup>
   <ItemGroup>

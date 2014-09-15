@@ -164,7 +164,7 @@ int app_postinit(void)
 		IMU_Configure(imu);
 	}
 
-	HAL_Delay(10);
+	HAL_Delay(100);
 
 #ifdef IMU_PRINT_INTERRUPT
 	for (IMU_IDType imu = 0; imu < IMU_LAST; imu++)
@@ -264,6 +264,10 @@ int app_main(void)
 	SetLEDState(D4, LED_STATE_OFF);
 	SetLEDState(D5, LED_STATE_OFF);
 	LED_PWM_Stop();
+	IMU_Disable();
+
+	/// @todo A state manager to turn devices on/off and change processor modes...
+	HAL_SPI_DeInit(&hspi1);
 	HAL_DeInit();
 	while (1)
 	{

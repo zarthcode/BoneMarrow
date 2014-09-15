@@ -202,6 +202,19 @@ bool IMU_ReleaseSPILock(IMU_IDType imu)
 		// Release the lock
 		IMU_TransferState.SPILock[IMUDevice[imu].spi] = IMU_NONE;
 	}
+
+	// If this is SPI1, put it back into TX/RX mode.
+	if (IMUDevice[imu].spi == IMU_SPI1)
+	{
+		IMUDevice[imu].hspi->Init.Direction = SPI_DIRECTION_2LINES;
+		if (HAL_OK != HAL_SPI_Init(IMUDevice[imu].hspi))
+		{
+			printf_semi("HAL_SPI_INIT(hspi1) - failed to restore full-duplex mode.\n");
+#ifdef DEBUG
+			__BKPT(0);
+#endif // DEBUG
+		}
+	}
 	
 	// End atomic action.
 	__enable_irq();
@@ -660,7 +673,14 @@ void IMU_SPI1_Handle_IT(void)
 		// A polling operation is in progress.
 		// Receive 1 byte into the polling buffer.
 		uint8_t* pPollingBuffer = (void*)&IMU_TransferState.PollingBuffer[IMU_P6];
-		HAL_StatusTypeDef result = HAL_SPI_Receive(IMUDevice[IMU_P6].hspi, pPollingBuffer + 1, 1, 1);	// size = addr + xyz
+
+		// Reconfigure the SPI to operate in 2 wire mode, RX only.
+		hspi1.Init.Direction = SPI_DIRECTION_2LINES_RXONLY;
+		HAL_SPI_Init(&hspi1);
+			
+
+		HAL_StatusTypeDef result = HAL_SPI_Receive_DMA(IMUDevice[IMU_P6].hspi, pPollingBuffer + 1, 1);	// size = addr + xyz
+
 		if (HAL_OK != result)
 		{
 			// Transfer start failed.
@@ -725,6 +745,15 @@ void IMU_GetRAWBurst(IMU_IDType imu, IMU_SubDeviceType subdev)
 
 	// Declare the transfer
 	IMU_TransferState.TransferStep[imu][subdev] = IMU_XFER_WAIT;
+
+	// SPI1 DMA2 Workaround
+	if (IMUDevice[imu].spi == IMU_SPI1)
+	{
+		// Reconfigure the SPI to operate in 2 wire mode, RX only.
+		IMUDevice[imu].hspi->Init.Direction = SPI_DIRECTION_2LINES_RXONLY;
+		HAL_SPI_Init(IMUDevice[imu].hspi);
+		
+	}
 
 	// Start DMA transfer to appropriate frame
 	// Internally, the HAL uses TxRx, but we need Receive-only in order to accomodate the SPI1_TX/DMA workaround.
@@ -795,6 +824,12 @@ void IMU_GetRAW(IMU_IDType imu, IMU_SubDeviceType subdev)
 	if (IMUDevice[imu].hspi == &hspi1)
 	{
 		// Use an interrupt transfer.  Once the notification comes back, we'll fire a burst operation to get the data.
+		if (IMUDevice[imu].hspi->Init.Direction != SPI_DIRECTION_2LINES)
+		{
+			IMUDevice[imu].hspi->Init.Direction = SPI_DIRECTION_2LINES;
+			HAL_SPI_Init(IMUDevice[imu].hspi);
+		}
+
 		result = HAL_SPI_Transmit_IT(IMUDevice[imu].hspi, &pIVector3->txbyte, 1);	// size = addr + xyz
 	}
 	else
@@ -1233,7 +1268,7 @@ bool IMU_CompleteFrame(void)
 	{
 
 	 // @bug temporary change to test DMA bandwidth using only IMU_ONBOARD
-		if (imu != IMU_P4)
+		if ((imu != IMU_ONBOARD) && (imu != IMU_P6))
 		{
 			IMU_TransferState.TransferStep[imu][IMU_SUBDEV_ACC] = IMU_XFER_COMPLETE;
 			IMU_TransferState.TransferStep[imu][IMU_SUBDEV_GYRO] = IMU_XFER_COMPLETE;
@@ -1309,6 +1344,7 @@ bool IMU_CompleteFrame(void)
 		for (int i = 0; i < IMU_LAST; i++)
 		{
 			IMU_TransferState.SelectedSubDevice[i] = IMU_SUBDEV_NONE;
+			IMU_TransferState.SPILock[i] = IMU_NONE;
 		}
 
 		// Frame Ready
