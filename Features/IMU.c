@@ -1063,6 +1063,10 @@ void IMU_HandleSPIEvent(IMU_IDType imu)
 
 	// Check for frame completion
 	// Attempt to kick off any new/pending transfers.
+	/** @note If you're having problems with hung DMA transfers, remove this and try again.
+	 * If it fixes your issue, then chances are you need to get your DMA stream IRQ priorities straight.
+	 * (DMA TX needs to happen before RX)
+	 */
 	IMU_CompleteFrame();
 
 
@@ -1268,7 +1272,7 @@ bool IMU_CompleteFrame(void)
 	{
 
 	 // @bug temporary change to test DMA bandwidth using only IMU_ONBOARD
-		if ((imu != IMU_ONBOARD) && (imu != IMU_P6))
+		if ((imu != IMU_ONBOARD) && (imu != IMU_P4) && (imu != IMU_P6))
 		{
 			IMU_TransferState.TransferStep[imu][IMU_SUBDEV_ACC] = IMU_XFER_COMPLETE;
 			IMU_TransferState.TransferStep[imu][IMU_SUBDEV_GYRO] = IMU_XFER_COMPLETE;

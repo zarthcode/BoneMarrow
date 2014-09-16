@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * @file    stm32f4xx_it.h
-  * @date    12/09/2014 06:36:01
-  * @brief   This file contains the headers of the interrupt handlers.
+  * File Name          : 
+  * Date               :
+  * Description        :
   ******************************************************************************
   *
   * COPYRIGHT(c) 2014 STMicroelectronics
@@ -32,40 +32,12 @@
   ******************************************************************************
   */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F4xx_IT_H
-#define __STM32F4xx_IT_H
+/**
+  * @}
+  */
 
-#ifdef __cplusplus
- extern "C" {
-#endif 
-
-/* Includes ------------------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
-
-void DMA2_Stream2_IRQHandler(void);
-void DMA2_Stream3_IRQHandler(void);
-void DMA1_Stream0_IRQHandler(void);
-void DMA1_Stream6_IRQHandler(void);
-void SysTick_Handler(void);
-void DMA2_Stream0_IRQHandler(void);
-void DMA2_Stream6_IRQHandler(void);
-void DMA2_Stream1_IRQHandler(void);
-void DMA1_Stream3_IRQHandler(void);
-void DMA2_Stream4_IRQHandler(void);
-void DMA1_Stream4_IRQHandler(void);
-void DMA1_Stream5_IRQHandler(void);
-void DMA1_Stream7_IRQHandler(void);
-void SPI1_IRQHandler(void);
-void DMA2_Stream5_IRQHandler(void);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* __STM32F4xx_IT_H */
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
