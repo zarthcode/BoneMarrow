@@ -233,7 +233,7 @@ int app_main(void)
 	{
 	// Print RAW data
 		printf_semi("IMU %d\n", imu);
-	printf_semi("\tRAW:\nax = %d\nay = %d\naz = %d\ngx = %d\ngy = %d\ngz = %d\n",
+	printf_semi("\tRAW:\tax = %d ay = %d az = %d\n\t\tgx = %d gy = %d gz = %d\n",
 		IMU_RAWFramebuffer[0].imu[imu].accelerometer.x,
 		IMU_RAWFramebuffer[0].imu[imu].accelerometer.y,
 		IMU_RAWFramebuffer[0].imu[imu].accelerometer.z,
@@ -241,7 +241,7 @@ int app_main(void)
 		IMU_RAWFramebuffer[0].imu[imu].gyroscope.z);
 
 	// Print scaled data
-	printf_semi("\tScaled:\nax = %f\nay = %f\naz = %f\ngx = %f\ngy = %f\ngz = %f\n",
+	printf_semi("\tScaled:\tax = %f ay = %f az = %f\n\t\tgx = %f gy = %f gz = %f\n",
 		SPATIAL_IMUFrameBuffer[0].imu[imu].accelerometer.x,
 		SPATIAL_IMUFrameBuffer[0].imu[imu].accelerometer.y,
 		SPATIAL_IMUFrameBuffer[0].imu[imu].accelerometer.z,
@@ -249,13 +249,13 @@ int app_main(void)
 		SPATIAL_IMUFrameBuffer[0].imu[imu].gyroscope.z);
 
 	// Print calculated quaternion
-	printf_semi("\tQuaternion:\nqw = %f\nqx = %f\nqy = %f\nqz = %f\n",
+	printf_semi("\tQuaternion:\n\t\tqw = %f qx = %f qy = %f qz = %f\n",
 		SPATIAL_QUATERNION_Framebuffer[0].q[imu].w,
 		SPATIAL_QUATERNION_Framebuffer[0].q[imu].x,
 		SPATIAL_QUATERNION_Framebuffer[0].q[imu].y,
 		SPATIAL_QUATERNION_Framebuffer[0].q[imu].z);
 	}
- 	printf_semi("Goodnight!\n");
+ 	printf_semi("Going to sleep!\n");
 	SetLEDState(RADIO, LED_STATE_OFF);
 	SetLEDState(POWER, LED_STATE_OFF);
 	SetLEDState(D1, LED_STATE_OFF);

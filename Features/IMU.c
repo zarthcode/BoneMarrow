@@ -1272,7 +1272,7 @@ bool IMU_CompleteFrame(void)
 	{
 
 	 // @bug temporary change to test DMA bandwidth using only IMU_ONBOARD
-		if ((imu != IMU_ONBOARD) && (imu != IMU_P4) && (imu != IMU_P6))
+		if ((imu != IMU_ONBOARD) && (imu != IMU_P4) && (imu != IMU_P5) && (imu != IMU_P6))
 		{
 			IMU_TransferState.TransferStep[imu][IMU_SUBDEV_ACC] = IMU_XFER_COMPLETE;
 			IMU_TransferState.TransferStep[imu][IMU_SUBDEV_GYRO] = IMU_XFER_COMPLETE;
