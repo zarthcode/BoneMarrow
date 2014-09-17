@@ -138,6 +138,8 @@ bool DIAG_IMU_Test(IMU_IDType imuport)
 					} 
 					else
 					{
+//						if (spi_txrx[1] != 0)
+//							__BKPT(0);
 						// Ready to go!
 //						printf_semi("SPI IMU %d FAIL. { 0x%02x, 0x%02x }.\n", imuport, spi_txrx[0], spi_txrx[1]);
 					}
@@ -1271,14 +1273,18 @@ bool IMU_CompleteFrame(void)
 	for (int imu = 0; imu < IMU_LAST; imu++)
 	{
 
-	 // @bug temporary change to test DMA bandwidth using only IMU_ONBOARD
-		if ((imu != IMU_ONBOARD) && (imu != IMU_P4) && (imu != IMU_P5) && (imu != IMU_P6))
+	 // @bug temporary change to test DMA bandwidth using only selected IMUs.
+/*		if ((imu != IMU_ONBOARD)
+			&& (imu != IMU_P3)
+			&& (imu != IMU_P4)
+			&& (imu != IMU_P5)
+			&& (imu != IMU_P6))
 		{
 			IMU_TransferState.TransferStep[imu][IMU_SUBDEV_ACC] = IMU_XFER_COMPLETE;
 			IMU_TransferState.TransferStep[imu][IMU_SUBDEV_GYRO] = IMU_XFER_COMPLETE;
 			continue;
 		}
-	//	*/
+*/
 
 		for (int subdev = 0; subdev < IMU_SUBDEV_LAST; subdev++)
 		{
