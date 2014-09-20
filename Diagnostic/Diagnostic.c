@@ -108,79 +108,9 @@ int app_postinit(void)
 		printf_semi("Debugging PG14 done.\n");
 	}
 	*/
-
-//	IMU_CheckAlignment();
-#define IMU_PRINT_INTERRUPT
-
-	// Initialize SPI Structures
-	IMU_Setup();
-	
-	// Check IMU connectivity
-	// Perform 100 tests
-	int testresults[IMU_LAST];
-
-	for (int imu = 0; imu < IMU_LAST; imu++)
-	{
-		testresults[imu] = 0;
-	}
-
-	printf_semi("IMU Connectivity test");
-	for (int num = 0; num < 100; num++)
-	{
-		for (int imu = 0; imu < IMU_LAST; imu++)
-		{
-			if (DIAG_IMU_Test(imu))
-			{
-				testresults[imu]++;
-//				printf_semi(".");	// DIAG_IMU_Test() is chatty enough...
-			}
-
-		}
-	}
-
-	printf_semi("\n\nResults:\n");
-	for (int res = 0; res < IMU_LAST; res++)
-	{
-		printf_semi("\tIMU %d: %d/100\n", res, testresults[res]);
-	}
-
-// On powerup, ALL IMU Interrupts should be LOW
-#ifdef IMU_PRINT_INTERRUPT
-	for (IMU_IDType imu = 0; imu < IMU_LAST; imu++)
-	{
-		for (IMU_SubDeviceType subdev = 0; subdev < IMU_SUBDEV_LAST; subdev++)
-		{
-			// Print the interrupts
-			printf_semi("IMU %d Subdev %d Interrupt ", imu, subdev);
-
-			(GPIO_PIN_SET == HAL_GPIO_ReadPin(IMUDevice[imu].INTMappings[subdev].port, IMUDevice[imu].INTMappings[subdev].pin)) ? printf_semi("HIGH\n") : printf_semi("LOW\n");
-		}
-	}
-#endif // IMU_PRINT_INTERRUPT
-
-
-	for (IMU_IDType imu = 0; imu < IMU_LAST; imu++)
-	{
-		IMU_Configure(imu);
-	}
-
-	HAL_Delay(100);
-
-#ifdef IMU_PRINT_INTERRUPT
-	for (IMU_IDType imu = 0; imu < IMU_LAST; imu++)
-	{
-		for (IMU_SubDeviceType subdev = 0; subdev < IMU_SUBDEV_LAST; subdev++)
-		{
-			// Print the interrupts
-			printf_semi("IMU %d Subdev %d Interrupt ", imu, subdev);
-
-			(GPIO_PIN_SET == HAL_GPIO_ReadPin(IMUDevice[imu].INTMappings[subdev].port, IMUDevice[imu].INTMappings[subdev].pin)) ? printf_semi("HIGH\n") : printf_semi("LOW\n");
-		}
-	}
-#endif // IMU_PRINT_INTERRUPT
-
 //	IMU_Test(IMU_ONBOARD);
-
+	printf_semi("IMU Diagnostic...");
+	Diag_IMUTest() ? printf_semi("PASSED\n") : printf_semi("FAILED\n");
 
 
 //	HAL_Delay(3000);
@@ -410,40 +340,113 @@ bool Diag_BatteryMeterTest(void)
 bool Diag_IMUTest(void)
 {
 	/// @todo This needs to be an entire function that examines that the compiler has correctly packed the variables together.
-	DIAG_IMU_CheckAlignment();
+//	DIAG_IMU_CheckAlignment();
 
-	// Onboard SPI Test
+	// Initialize SPI Structures
 	IMU_Setup();
-
-	DIAG_IMU_Test(IMU_ONBOARD);
-	HAL_Delay(1);
-
-	/// @todo This needs to be done while the IMU is not configured.
-	printf_semi("PG10 IMU_ONBOARD - INT1_A is ");
-	if (HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_10) == GPIO_PIN_SET)
-		printf_semi("HIGH\n");
-	else
-		printf_semi("LOW\n");
 	
-	IMU_Configure(IMU_ONBOARD);
+	// Check IMU MISO/MOSI/SCK connectivity
+	// Perform 100 tests
+	int testresults[IMU_LAST][1+(IMU_SUBDEV_LAST*2)];
 
-	// It should take awhile for a sample to appear...
-	printf_semi("PG10 IMU_ONBOARD - INT1_A is ");
-	if (HAL_GPIO_ReadPin(GPIOG, GPIO_PIN_10) == GPIO_PIN_SET)
-		printf_semi("HIGH\n");
-	else
-		printf_semi("LOW\n");
+	for (int imu = 0; imu < IMU_LAST; imu++)
+	{
+		for (int idx = 0; idx < (1 + (IMU_SUBDEV_LAST * 2)); idx++)
+		{
+			testresults[imu][idx] = 0;
+		}
+	}
 
-	HAL_Delay(100);
+	printf_semi("This test must be run after a cold boot.\n");
+	printf_semi("Checking IMU SPI Connectivity...\n");
+	for (int num = 0; num < 100; num++)
+	{
+		for (int imu = 0; imu < IMU_LAST; imu++)
+		{
+			if (DIAG_IMU_Test(imu))
+			{
+				testresults[imu][0]++;
+				//	printf_semi(".");	// DIAG_IMU_Test() can be chatty enough...
+			}
 
-	/// @todo Verify the interrupt using a polling operation
-// 	IMU_Poll(IMU_ONBOARD, IMU_SUBDEV_ACC);
-	IMU_CheckIMUInterrupts();
+		}
+	}
 
 
-	/// @todo report success or failure.
-	HAL_Delay(3000);
+	// On powerup, ALL IMU Interrupts should be LOW
+	for (IMU_IDType imu = 0; imu < IMU_LAST; imu++)
+	{
+		for (IMU_SubDeviceType subdev = 0; subdev < IMU_SUBDEV_LAST; subdev++)
+		{
+			// Evaluate the interrupt status
+			testresults[imu][subdev+1] = (GPIO_PIN_SET == HAL_GPIO_ReadPin(IMUDevice[imu].INTMappings[subdev].port, IMUDevice[imu].INTMappings[subdev].pin)) ? true : false;
+		}
+	}
 
+
+	for (IMU_IDType imu = 0; imu < IMU_LAST; imu++)
+	{
+		IMU_Configure(imu);		// Setup the IMU for standard interrupt notifications, etc.
+	}
+
+	HAL_Delay(100);	// Wait 100mS for data to show up.
+
+	for (IMU_IDType imu = 0; imu < IMU_LAST; imu++)
+	{
+		for (IMU_SubDeviceType subdev = 0; subdev < IMU_SUBDEV_LAST; subdev++)
+		{
+			// Evaluate the interrupt status
+			testresults[imu][subdev + IMU_SUBDEV_LAST + 1] = (GPIO_PIN_SET == HAL_GPIO_ReadPin(IMUDevice[imu].INTMappings[subdev].port, IMUDevice[imu].INTMappings[subdev].pin)) ? true : false;
+		}
+	}
+
+	// Print results/evaluation
+	for (IMU_IDType imu = 0; imu < IMU_LAST; imu++)
+	{
+		printf_semi("IMU[%d]: Connectivity %d%%, ", imu, testresults[imu][0]);
+		for (int subdev = 0; subdev < IMU_SUBDEV_LAST; subdev++)
+		{
+			switch (subdev)
+			{
+			case IMU_SUBDEV_ACC:
+				printf_semi("INT_A ");
+				break;
+			case IMU_SUBDEV_GYRO:
+				printf_semi("INT_G ");
+				break;
+			default:
+				printf_semi("\n\nUnknown Subdev. UPDATE TEST!\n\n");
+				return false;
+				break;
+			}
+
+			if ((testresults[imu][subdev + 1] == false) && (testresults[imu][subdev + 1 + IMU_SUBDEV_LAST] == true))
+				printf_semi("PASS ");
+			else if ((testresults[imu][subdev + 1] == false) && (testresults[imu][subdev + 1 + IMU_SUBDEV_LAST] == false))
+				printf_semi("FAIL(OPEN/DISC) ");
+			else if ((testresults[imu][subdev + 1] == true) && (testresults[imu][subdev + 1 + IMU_SUBDEV_LAST] == false))
+				printf_semi("FAIL(INVERTED?) ");
+			else // if ((testresults[imu][subdev + 1] == true) && (testresults[imu][subdev + 1 + IMU_SUBDEV_LAST] == true))
+				printf_semi("FAIL(SHORT/ALREADYON) ");
+
+		}
+		printf_semi("\n");
+
+	}
+
+	// If anything failed, the test failed.
+	bool teststatus = true;
+
+	for (IMU_IDType imu = 0; imu < IMU_LAST; imu++)
+	{
+
+		if ((testresults[imu][0] < 100) || !((testresults[imu][1] == false) && (testresults[imu][2] == true)))
+		{
+			return false;
+		}
+
+
+	}
 
 }
 /// Radio Test
