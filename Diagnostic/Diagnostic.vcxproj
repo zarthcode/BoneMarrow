@@ -158,6 +158,7 @@
     <ClCompile Include="..\Features\Spatial.c" />
     <ClCompile Include="..\Features\SPICallbacks.c" />
     <ClCompile Include="..\Features\Sqrt.c" />
+    <ClCompile Include="..\Features\WiFi.c" />
     <ClCompile Include="ClockTest.c" />
     <ClCompile Include="Diagnostic.c" />
   </ItemGroup>
@@ -266,6 +267,7 @@
     <ClInclude Include="..\Features\Eeprom.h" />
     <ClInclude Include="..\Features\Filters.h" />
     <ClInclude Include="..\Features\Glove.h" />
+    <ClInclude Include="..\Features\WiFi.h" />
     <ClInclude Include="..\Features\IMU.h" />
     <ClInclude Include="..\Features\LED.h" />
     <ClInclude Include="..\Features\LSM330DLC.h" />
