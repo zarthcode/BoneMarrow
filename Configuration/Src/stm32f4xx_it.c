@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @file    stm32f4xx_it.c
-  * @date    12/09/2014 06:36:01
+  * @date    03/10/2014 15:14:19
   * @brief   Interrupt Service Routines.
   ******************************************************************************
   *
@@ -50,8 +50,6 @@ extern DMA_HandleTypeDef hdma_spi5_rx;
 extern DMA_HandleTypeDef hdma_spi6_rx;
 extern DMA_HandleTypeDef hdma_spi6_tx;
 extern SPI_HandleTypeDef hspi1;
-extern DMA_HandleTypeDef hdma_usart2_tx;
-extern DMA_HandleTypeDef hdma_usart2_rx;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
@@ -90,7 +88,7 @@ void DMA1_Stream0_IRQHandler(void)
 void DMA1_Stream6_IRQHandler(void)
 {
   HAL_NVIC_ClearPendingIRQ(DMA1_Stream6_IRQn);
-  HAL_DMA_IRQHandler(&hdma_usart2_tx);
+  
 }
 
 /**
@@ -117,8 +115,7 @@ void DMA2_Stream0_IRQHandler(void)
 void DMA2_Stream6_IRQHandler(void)
 {
   HAL_NVIC_ClearPendingIRQ(DMA2_Stream6_IRQn);
-  HAL_DMA_IRQHandler(&hdma_spi6_rx);
-  
+  HAL_DMA_IRQHandler(&hdma_spi6_rx);  
 }
 
 /**
@@ -163,7 +160,7 @@ void DMA1_Stream4_IRQHandler(void)
 void DMA1_Stream5_IRQHandler(void)
 {
   HAL_NVIC_ClearPendingIRQ(DMA1_Stream5_IRQn);
-  HAL_DMA_IRQHandler(&hdma_usart2_rx);
+  
 }
 
 /**
@@ -190,7 +187,7 @@ void SPI1_IRQHandler(void)
 void DMA2_Stream5_IRQHandler(void)
 {
   HAL_NVIC_ClearPendingIRQ(DMA2_Stream5_IRQn);
-  HAL_DMA_IRQHandler(&hdma_spi6_tx);
+  HAL_DMA_IRQHandler(&hdma_spi6_tx);  
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

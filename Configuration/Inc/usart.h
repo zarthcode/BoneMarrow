@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : USART.h
-  * Date               : 16/09/2014 02:08:35
+  * Date               : 03/10/2014 15:14:18
   * Description        : This file provides code for the configuration
   *                      of the USART instances.
   ******************************************************************************
@@ -42,9 +42,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
-extern UART_HandleTypeDef huart2;
+extern USART_HandleTypeDef husart3;
 
-void MX_USART2_UART_Init(void);
+void MX_USART3_Init(void);
 
 #ifdef __cplusplus
 }
