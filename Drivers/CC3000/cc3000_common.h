@@ -41,6 +41,9 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <stdint.h>
+#include <string.h>
+
+#include "CC3000_Impl.h"
 
 //*****************************************************************************
 //

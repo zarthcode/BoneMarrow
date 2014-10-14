@@ -7,6 +7,7 @@
 #include "LED.h"
 #include "IMU.h"
 #include "Battery.h"
+#include "Delay.h"
 
 extern void initialise_monitor_handles(void);
 bool Diag_ButtonTest(void);
@@ -51,6 +52,9 @@ int app_postinit(void)
 #else
 	printf_semi("ERROR: __FPU_USED not defined!\n");
 #endif
+
+	Delay_Init();		// Initialize uS delay routine.
+
 
 	/*
 

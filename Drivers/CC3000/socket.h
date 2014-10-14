@@ -35,6 +35,7 @@
 #ifndef __SOCKET_H__
 #define __SOCKET_H__
 
+#include <sys/types.h>
 
 //*****************************************************************************
 //
@@ -99,7 +100,8 @@ extern "C" {
 
 #define  IOCTL_SOCKET_EVENTMASK
 
-#define ENOBUFS                 55          // No buffer space available
+/// @bug ENOBUFS is redefined in Drivers/CC3000/socket.h - Unsure why.
+// #define ENOBUFS                 55          // No buffer space available
 
 #define __FD_SETSIZE            32
 
@@ -138,11 +140,13 @@ typedef long int __fd_mask;
 #define __FDMASK(d)             ((__fd_mask) 1 << ((d) % __NFDBITS))
 
 // fd_set for select and pselect.
-typedef struct
+/// @bug Socket.h - wholesale redefinitions from TI MSP430 that need to be tidied for ARM/C/Stdlib
+/*typedef struct
 {
     __fd_mask fds_bits[__FD_SETSIZE / __NFDBITS];
 #define __FDS_BITS(set)        ((set)->fds_bits)
 } fd_set;
+*/
 
 // We don't use `memset' because this would require a prototype and
 //   the array isn't too big.
@@ -158,10 +162,11 @@ typedef struct
 #define __FD_ISSET(d, set)     (__FDS_BITS (set)[__FDELT (d)] & __FDMASK (d))
 
 // Access macros for 'fd_set'.
-#define FD_SET(fd, fdsetp)      __FD_SET (fd, fdsetp)
-#define FD_CLR(fd, fdsetp)      __FD_CLR (fd, fdsetp)
-#define FD_ISSET(fd, fdsetp)    __FD_ISSET (fd, fdsetp)
-#define FD_ZERO(fdsetp)         __FD_ZERO (fdsetp)
+/// @bug Socket.h - More wholesale redefinitions from TI MSP430 that need to be tidied for ARM/C/Stdlib
+// #define FD_SET(fd, fdsetp)      __FD_SET (fd, fdsetp)
+// #define FD_CLR(fd, fdsetp)      __FD_CLR (fd, fdsetp)
+// #define FD_ISSET(fd, fdsetp)    __FD_ISSET (fd, fdsetp)
+// #define FD_ZERO(fdsetp)         __FD_ZERO (fdsetp)
 
 //Use in case of Big Endian only
   
