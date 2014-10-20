@@ -206,12 +206,12 @@ bool IMU_ReleaseSPILock(IMU_IDType imu)
 	}
 
 	// If this is SPI1, put it back into TX/RX mode.
-	if (IMUDevice[imu].spi == IMU_SPI1)
+	if ((IMUDevice[imu].spi == IMU_SPI1) || (IMUDevice[imu].spi == IMU_SPI2))
 	{
 		IMUDevice[imu].hspi->Init.Direction = SPI_DIRECTION_2LINES;
 		if (HAL_OK != HAL_SPI_Init(IMUDevice[imu].hspi))
 		{
-			printf_semi("HAL_SPI_INIT(hspi1) - failed to restore full-duplex mode.\n");
+			printf_semi("HAL_SPI_INIT(hspix) - failed to restore full-duplex mode.\n");
 #ifdef DEBUG
 			__BKPT(0);
 #endif // DEBUG
@@ -659,34 +659,36 @@ void DBG_SPICheckState(HAL_SPI_StateTypeDef state)
 	
 }
 
-void IMU_SPI1_Handle_IT(void)
+void IMU_SPIn_TX_Handle_IT(IMU_IDType port)
 {
-	/// @bug.  SPI1 could technically have multiple IMU devices.  Rewrite this.
+	/// @bug.  SPI1/SPI2 could technically have multiple IMU devices.  Rewrite this.
 
 	// Kick-off a burst receive operation, if needed.
+
+	// Determine SPI in question...
 	
-	IMU_SubDeviceType subdev = IMU_TransferState.SelectedSubDevice[IMU_P6];
+	IMU_SubDeviceType subdev = IMU_TransferState.SelectedSubDevice[port];
 
 
-	switch (IMU_TransferState.TransferStep[IMU_P6][subdev])
+	switch (IMU_TransferState.TransferStep[port][subdev])
 	{
 	case IMU_XFER_CHECKING:
 	{
 		// A polling operation is in progress.
 		// Receive 1 byte into the polling buffer.
-		uint8_t* pPollingBuffer = (void*)&IMU_TransferState.PollingBuffer[IMU_P6];
+		uint8_t* pPollingBuffer = (void*)&IMU_TransferState.PollingBuffer[port];
 
 		// Reconfigure the SPI to operate in 2 wire mode, RX only.
 		hspi1.Init.Direction = SPI_DIRECTION_2LINES_RXONLY;
 		HAL_SPI_Init(&hspi1);
 			
 
-		HAL_StatusTypeDef result = HAL_SPI_Receive_DMA(IMUDevice[IMU_P6].hspi, pPollingBuffer + 1, 1);	// size = addr + xyz
+		HAL_StatusTypeDef result = HAL_SPI_Receive_DMA(IMUDevice[port].hspi, pPollingBuffer + 1, 1);	// size = addr + xyz
 
 		if (HAL_OK != result)
 		{
 			// Transfer start failed.
-			printf_semi("IMU_SPI1_Handle_IT() imu %d, subdev %d - HAL_SPI_Receive_DMA failed(%d)\n", IMU_P6, IMU_TransferState.SelectedSubDevice[IMU_P6], result);
+			printf_semi("IMU_SPIn_TX_Handle_IT() imu %d, subdev %d - HAL_SPI_Receive_DMA failed(%d)\n", port, IMU_TransferState.SelectedSubDevice[port], result);
 			/// @todo introduce a DBG_HAL_StatusTypeDef helper function.
 		}
 	}
@@ -695,11 +697,11 @@ void IMU_SPI1_Handle_IT(void)
 
 	case IMU_XFER_WAIT:
 		// A transfer operation is in progress.
-		IMU_GetRAWBurst(IMU_P6, subdev);
+		IMU_GetRAWBurst(port, subdev);
 		break;
 	default:
 		// Nothing to see here.
-		printf_semi("IMU_SPI1_Handle_IT() IMU state is %d\n", IMU_TransferState.TransferStep[IMU_P6][subdev]);
+		printf_semi("IMU_SPI1_Handle_IT() IMU state is %d\n", IMU_TransferState.TransferStep[port][subdev]);
 #ifdef DEBUG
 		__BKPT(0);
 #endif
@@ -749,7 +751,7 @@ void IMU_GetRAWBurst(IMU_IDType imu, IMU_SubDeviceType subdev)
 	IMU_TransferState.TransferStep[imu][subdev] = IMU_XFER_WAIT;
 
 	// SPI1 DMA2 Workaround
-	if (IMUDevice[imu].spi == IMU_SPI1)
+	if ((IMUDevice[imu].spi == IMU_SPI1) || (IMUDevice[imu].spi == IMU_SPI2))
 	{
 		// Reconfigure the SPI to operate in 2 wire mode, RX only.
 		IMUDevice[imu].hspi->Init.Direction = SPI_DIRECTION_2LINES_RXONLY;
@@ -819,11 +821,12 @@ void IMU_GetRAW(IMU_IDType imu, IMU_SubDeviceType subdev)
 	// Start DMA transfer to appropriate frame
 	HAL_StatusTypeDef result;
 	/**
-	 * @bug SPI1_TX DMA Workaround
+	 * @bug SPI1_TX/SPI2_TX DMA Workaround
 	 * Hardware can't support EVERY possible SPI port simultaneously.  SPI1_TX got squeezed out.
 	 * Instead of sharing with another Stream/Channel, SPI1 will send using an interrupt Transfer.
+	 * SPI2_TX has been added to support DMA transfers for USART3 on EVP4 hardware.
 	 */
-	if (IMUDevice[imu].hspi == &hspi1)
+	if ((IMUDevice[imu].hspi == &hspi1) || (IMUDevice[imu].hspi == &hspi2))
 	{
 		// Use an interrupt transfer.  Once the notification comes back, we'll fire a burst operation to get the data.
 		if (IMUDevice[imu].hspi->Init.Direction != SPI_DIRECTION_2LINES)
@@ -888,9 +891,9 @@ void IMU_Poll(IMU_IDType imu, IMU_SubDeviceType subdev)
 
 	// Start DMA transfer to appropriate frame
 	HAL_StatusTypeDef result;
-	if (IMUDevice[imu].spi == IMU_SPI1)
+	if ((IMUDevice[imu].spi == IMU_SPI1) || (IMUDevice[imu].spi == IMU_SPI2))
 	{
-		result = HAL_SPI_Transmit_IT(IMUDevice[imu].hspi, pPollingBuffer, 1);	// SPI1 DMA Workaround.
+		result = HAL_SPI_Transmit_IT(IMUDevice[imu].hspi, pPollingBuffer, 1);	// SPI1/SPI2 DMA Workaround.
 	}
 	else
 	{

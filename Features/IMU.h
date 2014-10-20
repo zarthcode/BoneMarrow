@@ -196,7 +196,7 @@ IMU_TransferStepType IMU_CheckPollingResult(IMU_IDType port, IMU_SubDeviceType s
 void IMU_HandleSPIEvent(IMU_IDType port);
 
 /// Handles SPI1_TX interrupts (DMA-limitation/workaround)
-void IMU_SPI1_Handle_IT(void);
+void IMU_SPIn_TX_Handle_IT(IMU_IDType port);
 
 /**
  * @brief Attempts to Acquire frame data.

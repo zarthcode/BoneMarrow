@@ -21,6 +21,10 @@ long SpiWrite(uint8_t* pUserBuffer, unsigned short usLength);
 
 void SpiRead();
 
+
+/**
+ * @brief Called after the received packet is processed by the CC3000 host driver code in the context of the receive handler.
+ */
 void SpiResumeSpi();
 
 long sReadWlanInterruptPin(void);

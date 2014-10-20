@@ -268,3 +268,28 @@ long sReadWlanInterruptPin(void)
 	return HAL_GPIO_ReadPin(PM_WLAN_INT.port, PM_WLAN_INT.pin) ? 1 : 0;
 
 }
+
+void SpiResumeSpi()
+{
+
+}
+
+void SpiRead()
+{
+	// IRQ was received from CC3000.
+
+	/// @todo Make SpiRead() a part of the IRQ handler, state-based.
+
+	// Assure that no write operation is in progress...
+	// Assert nCS
+
+
+	// Read 10 bytes: 5 bytes of data, 10 (minimum) bytes of data.
+	
+	// Parse the header to determine how much data is waiting
+
+	// If there is more data waiting, read it as a block.
+
+	/// @todo Setup IT/DMA operation to read remaining data.
+
+}

@@ -12,8 +12,8 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
 
 	// This method is reserved for the interrupt-based SPI1_TX(IMU_P6) workaround.
-	if (hspi == &hspi1)
-		IMU_SPI1_Handle_IT();
+	if ((hspi == &hspi1) || (hspi == &hspi2))
+		IMU_SPIn_TX_Handle_IT(IMU_GetPortFromSPIHandle(hspi));
 	else
 	{
 		printf_semi("Improper call of HAL_SPI_TxCpltCallback()\n");
