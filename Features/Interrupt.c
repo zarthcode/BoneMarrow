@@ -514,7 +514,7 @@ void SPI1_IRQHandler(void)
 	while (1) {};
 
 }
-*/
+
 void SPI2_IRQHandler(void)
 {
 
@@ -525,6 +525,7 @@ void SPI2_IRQHandler(void)
 	while (1) {};
 
 }
+*/
 
 void USART1_IRQHandler(void)
 {

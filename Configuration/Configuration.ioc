@@ -1,5 +1,5 @@
 #MicroXplorer Configuration settings - do not modify
-#Mon Oct 20 17:58:42 CDT 2014
+#Tue Oct 21 11:25:47 CDT 2014
 ADC1.Channel-0\#ChannelRegularConversion=ADC_CHANNEL_10
 ADC1.IPParameters=Channel-0\#ChannelRegularConversion,master,NbrOfConversionFlag
 ADC1.NbrOfConversionFlag=1
@@ -297,6 +297,7 @@ NVIC.DMA2_Stream3_IRQn=true\:1\:5
 NVIC.DMA2_Stream4_IRQn=true\:1\:3
 NVIC.DMA2_Stream5_IRQn=true\:1\:3
 NVIC.DMA2_Stream6_IRQn=true\:1\:5
+NVIC.EXTI4_IRQn=true\:0\:3
 NVIC.PriorityGroup=NVIC_PRIORITYGROUP_1
 NVIC.SPI1_IRQn=true\:0\:7
 NVIC.SPI2_IRQn=true\:0\:6
