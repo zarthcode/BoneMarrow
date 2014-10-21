@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @file    stm32f4xx_it.c
-  * @date    03/10/2014 15:14:19
+  * @date    20/10/2014 17:58:44
   * @brief   Interrupt Service Routines.
   ******************************************************************************
   *
@@ -40,7 +40,6 @@
 
 extern DMA_HandleTypeDef hdma_spi1_rx;
 extern DMA_HandleTypeDef hdma_spi2_rx;
-extern DMA_HandleTypeDef hdma_spi2_tx;
 extern DMA_HandleTypeDef hdma_spi3_rx;
 extern DMA_HandleTypeDef hdma_spi3_tx;
 extern DMA_HandleTypeDef hdma_spi4_rx;
@@ -50,6 +49,9 @@ extern DMA_HandleTypeDef hdma_spi5_rx;
 extern DMA_HandleTypeDef hdma_spi6_rx;
 extern DMA_HandleTypeDef hdma_spi6_tx;
 extern SPI_HandleTypeDef hspi1;
+extern SPI_HandleTypeDef hspi2;
+extern DMA_HandleTypeDef hdma_usart3_rx;
+extern DMA_HandleTypeDef hdma_usart3_tx;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
@@ -83,21 +85,21 @@ void DMA1_Stream0_IRQHandler(void)
 }
 
 /**
-* @brief This function handles DMA1 Stream6 global interrupt.
-*/
-void DMA1_Stream6_IRQHandler(void)
-{
-  HAL_NVIC_ClearPendingIRQ(DMA1_Stream6_IRQn);
-  
-}
-
-/**
 * @brief This function handles System tick timer.
 */
 void SysTick_Handler(void)
 {
   HAL_IncTick();
   HAL_SYSTICK_IRQHandler();
+}
+
+/**
+* @brief This function handles SPI2 global interrupt.
+*/
+void SPI2_IRQHandler(void)
+{
+  HAL_NVIC_ClearPendingIRQ(SPI2_IRQn);
+  HAL_SPI_IRQHandler(&hspi2);
 }
 
 /**
@@ -115,7 +117,7 @@ void DMA2_Stream0_IRQHandler(void)
 void DMA2_Stream6_IRQHandler(void)
 {
   HAL_NVIC_ClearPendingIRQ(DMA2_Stream6_IRQn);
-  HAL_DMA_IRQHandler(&hdma_spi6_rx);  
+  
 }
 
 /**
@@ -151,16 +153,16 @@ void DMA2_Stream4_IRQHandler(void)
 void DMA1_Stream4_IRQHandler(void)
 {
   HAL_NVIC_ClearPendingIRQ(DMA1_Stream4_IRQn);
-  HAL_DMA_IRQHandler(&hdma_spi2_tx);
+  HAL_DMA_IRQHandler(&hdma_usart3_tx);
 }
 
 /**
-* @brief This function handles DMA1 Stream5 global interrupt.
+* @brief This function handles DMA1 Stream1 global interrupt.
 */
-void DMA1_Stream5_IRQHandler(void)
+void DMA1_Stream1_IRQHandler(void)
 {
-  HAL_NVIC_ClearPendingIRQ(DMA1_Stream5_IRQn);
-  
+  HAL_NVIC_ClearPendingIRQ(DMA1_Stream1_IRQn);
+  HAL_DMA_IRQHandler(&hdma_usart3_rx);
 }
 
 /**
@@ -187,7 +189,7 @@ void SPI1_IRQHandler(void)
 void DMA2_Stream5_IRQHandler(void)
 {
   HAL_NVIC_ClearPendingIRQ(DMA2_Stream5_IRQn);
-  HAL_DMA_IRQHandler(&hdma_spi6_tx);  
+  
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

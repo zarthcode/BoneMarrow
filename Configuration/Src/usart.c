@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : USART.c
-  * Date               : 03/10/2014 15:14:18
+  * Date               : 20/10/2014 17:58:43
   * Description        : This file provides code for the configuration
   *                      of the USART instances.
   ******************************************************************************
@@ -37,26 +37,29 @@
 #include "usart.h"
 
 #include "gpio.h"
+#include "dma.h"
 
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
 
 USART_HandleTypeDef husart3;
+DMA_HandleTypeDef hdma_usart3_rx;
+DMA_HandleTypeDef hdma_usart3_tx;
 
 /* USART3 init function */
 void MX_USART3_Init(void)
 {
 
   husart3.Instance = USART3;
-  husart3.Init.BaudRate = 115200;
+  husart3.Init.BaudRate = 5250000;
   husart3.Init.WordLength = USART_WORDLENGTH_8B;
   husart3.Init.StopBits = USART_STOPBITS_1;
   husart3.Init.Parity = USART_PARITY_NONE;
   husart3.Init.Mode = USART_MODE_TX_RX;
   husart3.Init.CLKPolarity = USART_POLARITY_LOW;
   husart3.Init.CLKPhase = USART_PHASE_1EDGE;
-  husart3.Init.CLKLastBit = USART_LASTBIT_DISABLE;
+  husart3.Init.CLKLastBit = USART_LASTBIT_ENABLE;
   HAL_USART_Init(&husart3);
 
 }
@@ -82,6 +85,36 @@ void HAL_USART_MspInit(USART_HandleTypeDef* husart)
     GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+    /* Peripheral DMA init*/
+  
+    hdma_usart3_rx.Instance = DMA1_Stream1;
+    hdma_usart3_rx.Init.Channel = DMA_CHANNEL_4;
+    hdma_usart3_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
+    hdma_usart3_rx.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_usart3_rx.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_usart3_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_usart3_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    hdma_usart3_rx.Init.Mode = DMA_NORMAL;
+    hdma_usart3_rx.Init.Priority = DMA_PRIORITY_MEDIUM;
+    hdma_usart3_rx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+    HAL_DMA_Init(&hdma_usart3_rx);
+
+    __HAL_LINKDMA(husart,hdmarx,hdma_usart3_rx);
+
+    hdma_usart3_tx.Instance = DMA1_Stream4;
+    hdma_usart3_tx.Init.Channel = DMA_CHANNEL_7;
+    hdma_usart3_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    hdma_usart3_tx.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_usart3_tx.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_usart3_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_usart3_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    hdma_usart3_tx.Init.Mode = DMA_NORMAL;
+    hdma_usart3_tx.Init.Priority = DMA_PRIORITY_VERY_HIGH;
+    hdma_usart3_tx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+    HAL_DMA_Init(&hdma_usart3_tx);
+
+    __HAL_LINKDMA(husart,hdmatx,hdma_usart3_tx);
+
   }
 }
 
@@ -100,6 +133,9 @@ void HAL_USART_MspDeInit(USART_HandleTypeDef* husart)
     */
     HAL_GPIO_DeInit(GPIOB, GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12);
 
+    /* Peripheral DMA DeInit*/
+    HAL_DMA_DeInit(husart->hdmarx);
+    HAL_DMA_DeInit(husart->hdmatx);
   }
 } 
 
