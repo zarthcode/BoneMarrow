@@ -25,7 +25,7 @@ typedef struct
 
 Pin_Mapping PM_WLAN_CS = { .port = GPIOD, .pin = GPIO_PIN_3 };	// Isn't C99 grand?
 Pin_Mapping PM_WLAN_EN = { .port = GPIOD, .pin = GPIO_PIN_5 };
-Pin_Mapping PM_WLAN_INT = { .port = GPIOD, .pin = GPIO_PIN_4 };
+Pin_Mapping PM_WLAN_INT = { .port = GPIOD, .pin = GPIO_PIN_4 };	// EXTI4 is connected (EVP4)
 
 
 CC3000_SPIRecvHandlerType _CC3000_SPIHandler = NULL;

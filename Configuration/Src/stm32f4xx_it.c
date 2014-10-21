@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @file    stm32f4xx_it.c
-  * @date    20/10/2014 17:58:44
+  * @date    21/10/2014 11:32:24
   * @brief   Interrupt Service Routines.
   ******************************************************************************
   *
@@ -109,6 +109,16 @@ void DMA2_Stream0_IRQHandler(void)
 {
   HAL_NVIC_ClearPendingIRQ(DMA2_Stream0_IRQn);
   HAL_DMA_IRQHandler(&hdma_spi4_rx);
+}
+
+/**
+* @brief This function handles EXTI Line4 interrupt.
+*/
+void EXTI4_IRQHandler(void)
+{
+  HAL_NVIC_ClearPendingIRQ(EXTI4_IRQn);
+  
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
 }
 
 /**

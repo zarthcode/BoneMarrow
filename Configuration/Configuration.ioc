@@ -1,5 +1,5 @@
 #MicroXplorer Configuration settings - do not modify
-#Tue Oct 21 11:25:47 CDT 2014
+#Tue Oct 21 11:32:55 CDT 2014
 ADC1.Channel-0\#ChannelRegularConversion=ADC_CHANNEL_10
 ADC1.IPParameters=Channel-0\#ChannelRegularConversion,master,NbrOfConversionFlag
 ADC1.NbrOfConversionFlag=1
@@ -376,11 +376,12 @@ PB15.Mode=Full_Duplex_Master
 PB15.Signal=SPI2_MOSI
 PB3.Mode=JTAG(4-pin)
 PB3.Signal=SYS_JTDO-SWO
-PB4.GPIOParameters=GPIO_ModeDefaultEXTI,GPIO_PuPd
-PB4.GPIO_ModeDefaultEXTI=GPIO_MODE_IT_RISING
-PB4.GPIO_PuPd=GPIO_NOPULL
+PB4.GPIOParameters=GPIO_ModeDefaultOutputPP,GPIO_Speed,GPIO_PuPd
+PB4.GPIO_ModeDefaultOutputPP=GPIO_MODE_OUTPUT_OD
+PB4.GPIO_PuPd=GPIO_PULLUP
+PB4.GPIO_Speed=GPIO_SPEED_LOW
 PB4.Locked=true
-PB4.Signal=GPXTI4
+PB4.Signal=GPIO_Output
 PB5.GPIOParameters=GPIO_ModeDefaultOutputPP,GPIO_Speed,GPIO_PuPd
 PB5.GPIO_ModeDefaultOutputPP=GPIO_MODE_OUTPUT_OD
 PB5.GPIO_PuPd=GPIO_PULLUP
@@ -526,8 +527,11 @@ PD2.Locked=true
 PD2.Signal=GPIO_Input
 PD3.Locked=true
 PD3.Signal=GPIO_Output
+PD4.GPIOParameters=GPIO_ModeDefaultEXTI,GPIO_PuPd
+PD4.GPIO_ModeDefaultEXTI=GPIO_MODE_IT_RISING
+PD4.GPIO_PuPd=GPIO_NOPULL
 PD4.Locked=true
-PD4.Signal=GPIO_Input
+PD4.Signal=GPXTI4
 PD5.Locked=true
 PD5.Signal=GPIO_Output
 PD7.GPIOParameters=GPIO_PuPd,GPIO_Mode
