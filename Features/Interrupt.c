@@ -82,7 +82,7 @@ void UsageFault_Handler(void)
 
 }
 
-/**/
+/*
 void SVC_Handler(void)
 {
 
@@ -93,6 +93,7 @@ __BKPT(0);
 	while (1) {};
 
 }
+*/
 
 void DebugMon_Handler(void)
 {
@@ -228,6 +229,7 @@ void EXTI3_IRQHandler(void)
 
 }
 
+/*
 void EXTI4_IRQHandler(void)
 {
 
@@ -238,6 +240,7 @@ void EXTI4_IRQHandler(void)
 	while (1) {};
 
 }
+*/
 
 /*
 void DMA1_Stream0_IRQHandler(void)
@@ -793,7 +796,7 @@ void DMA2_Stream4_IRQHandler(void)
 
 }
 */
-
+/*
 void ETH_IRQHandler(void)
 {
 
@@ -804,6 +807,7 @@ void ETH_IRQHandler(void)
 	while (1) {};
 
 }
+*/
 
 void ETH_WKUP_IRQHandler(void)
 {

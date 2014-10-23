@@ -334,6 +334,15 @@
     <ClCompile Include="..\Features\Delay.c">
       <Filter>Source files\Features</Filter>
     </ClCompile>
+    <ClCompile Include="..\Features\IRQCallbacks.c">
+      <Filter>Source files\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Features\USARTCallbacks.c">
+      <Filter>Source files\Features</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Features\SVC_Handler.c">
+      <Filter>Source files\Features</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Configuration\Inc\adc.h">
@@ -706,6 +715,9 @@
       <Filter>Header files\Features</Filter>
     </ClInclude>
     <ClInclude Include="..\Features\Delay.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\SVC_Handler.h">
       <Filter>Header files\Features</Filter>
     </ClInclude>
   </ItemGroup>

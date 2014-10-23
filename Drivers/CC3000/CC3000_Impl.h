@@ -1,5 +1,6 @@
 /// @file TI CC3000 USART3/SPI Implementation
 #include <stdint.h>
+#include <stdbool.h>
 
 /**
  * @note This implementation is imperfect, latency-wise:
@@ -23,7 +24,8 @@ void SpiRead();
 
 
 /**
- * @brief Called after the received packet is processed by the CC3000 host driver code in the context of the receive handler.
+ * @brief Called after the received packet is processed by the CC3000 host driver code
+ *  in the context of the receive handler.
  */
 void SpiResumeSpi();
 
@@ -33,7 +35,16 @@ void sWlanInterruptEnable(void);
 
 void sWlanInterruptDisable(void);
 
+void WLAN_nIRQ_Event(void);
+
+void WLAN_Service(void);
+
+/// \note Interrupt will occur, once the CC3000 is ready. (approx 53ms from enabling.)
 void sWriteWlanPin(unsigned char val);
 
 extern uint8_t wlan_tx_buffer[];			// WLAN Transmit buffer
 extern uint8_t wlan_rx_buffer[];			// WLAN Receive buffer
+
+extern volatile bool wlan_rx_pending;
+extern volatile bool wlan_irq_enabled;
+extern volatile bool wlan_irq_flag;

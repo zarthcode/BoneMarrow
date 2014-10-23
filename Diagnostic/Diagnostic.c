@@ -38,6 +38,9 @@ int app_postinit(void)
 #endif
 #endif
 
+
+
+
 	// Greeting banner
 	printf_semi("BoneMarrow™ Diagnostic Firmware\n©2014 ZarthCode LLC\n");
 
