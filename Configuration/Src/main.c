@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : main.c
-  * Date               : 21/10/2014 11:32:26
+  * Date               : 23/10/2014 11:43:22
   * Description        : Main program body
   ******************************************************************************
   *
@@ -45,21 +45,29 @@
 
 /* Private variables ---------------------------------------------------------*/
 
+
+
+
+
 /* USER CODE BEGIN 0 */
 void app_preinit(void);
 void app_postinit(void);
 void app_main(void);
 /* USER CODE END 0 */
 
+
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+
 
 int main(void)
 {
 
+
   /* USER CODE BEGIN 1 */
 	app_preinit();
   /* USER CODE END 1 */
+
 
   /* MCU Configuration----------------------------------------------------------*/
 
@@ -71,7 +79,7 @@ int main(void)
 
   /* System interrupt init*/
   /* Sets the priority grouping field */
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_1);
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 
   /* Initialize all configured peripherals */
@@ -98,6 +106,10 @@ int main(void)
 	app_postinit();
   /* USER CODE END 2 */
 
+
+
+
+
   /* USER CODE BEGIN 3 */
 	/* Infinite loop */
 	while (1)
@@ -106,12 +118,16 @@ int main(void)
 	}
   /* USER CODE END 3 */
 
+
+
+
 }
 
 /** System Clock Configuration
 */
 void SystemClock_Config(void)
 {
+
 
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
   RCC_OscInitTypeDef RCC_OscInitStruct;
@@ -139,7 +155,14 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
   HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5);
 
+
 }
+
+
+ 
+
+
+
 
 /* USER CODE BEGIN 4 */
 __weak void app_preinit(void)
@@ -158,7 +181,13 @@ __weak void app_main(void)
 }
 /* USER CODE END 4 */
 
+
+ 
+
+
+
 #ifdef USE_FULL_ASSERT
+
 
 /**
    * @brief Reports the name of the source file and the source line number
@@ -174,7 +203,9 @@ void assert_failed(uint8_t* file, uint32_t line)
 ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 
+
 }
+
 
 #endif
 
@@ -182,8 +213,10 @@ ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   * @}
   */ 
 
+
 /**
   * @}
 */ 
+
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

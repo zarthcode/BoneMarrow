@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : dma.c
-  * Date               : 21/10/2014 11:32:23
+  * Date               : 23/10/2014 11:43:19
   * Description        : This file provides code for the configuration
   *                      of all the requested memory to memory DMA transfers.
   ******************************************************************************
@@ -58,52 +58,52 @@ void MX_DMA_Init(void)
 
   /* DMA interrupt init */
   /* Sets the priority grouping field */
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_1);
-  HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 1, 4);
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+  HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 8, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
   /* Sets the priority grouping field */
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_1);
-  HAL_NVIC_SetPriority(DMA2_Stream3_IRQn, 1, 5);
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+  HAL_NVIC_SetPriority(DMA2_Stream3_IRQn, 8, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream3_IRQn);
   /* Sets the priority grouping field */
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_1);
-  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 1, 1);
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 8, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
   /* Sets the priority grouping field */
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_1);
-  HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 1, 5);
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+  HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 8, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
   /* Sets the priority grouping field */
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_1);
-  HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 1, 5);
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+  HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 8, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);
   /* Sets the priority grouping field */
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_1);
-  HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 1, 3);
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+  HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 7, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
   /* Sets the priority grouping field */
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_1);
-  HAL_NVIC_SetPriority(DMA1_Stream3_IRQn, 1, 1);
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+  HAL_NVIC_SetPriority(DMA1_Stream3_IRQn, 8, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream3_IRQn);
   /* Sets the priority grouping field */
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_1);
-  HAL_NVIC_SetPriority(DMA2_Stream4_IRQn, 1, 3);
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+  HAL_NVIC_SetPriority(DMA2_Stream4_IRQn, 7, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream4_IRQn);
   /* Sets the priority grouping field */
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_1);
-  HAL_NVIC_SetPriority(DMA1_Stream4_IRQn, 0, 1);
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+  HAL_NVIC_SetPriority(DMA1_Stream4_IRQn, 2, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream4_IRQn);
   /* Sets the priority grouping field */
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_1);
-  HAL_NVIC_SetPriority(DMA1_Stream1_IRQn, 0, 2);
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+  HAL_NVIC_SetPriority(DMA1_Stream1_IRQn, 2, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream1_IRQn);
   /* Sets the priority grouping field */
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_1);
-  HAL_NVIC_SetPriority(DMA1_Stream7_IRQn, 1, 0);
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+  HAL_NVIC_SetPriority(DMA1_Stream7_IRQn, 7, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream7_IRQn);
   /* Sets the priority grouping field */
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_1);
-  HAL_NVIC_SetPriority(DMA2_Stream5_IRQn, 1, 3);
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+  HAL_NVIC_SetPriority(DMA2_Stream5_IRQn, 7, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream5_IRQn);
 
 }
