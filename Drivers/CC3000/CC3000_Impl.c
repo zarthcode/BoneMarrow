@@ -36,6 +36,8 @@ CC3000_SPIRecvHandlerType wlan_CC3000_RxHandler = NULL;
 uint8_t wlan_tx_buffer[CC3000_MAXIMAL_TX_SIZE];			/// WLAN Transmit buffer
 uint8_t wlan_rx_buffer[CC3000_MAXIMAL_RX_SIZE];			/// WLAN Receive buffer
 
+uint16_t wlan_tx_size = 0;								/// Amount of data in the tx buffer for transmission
+
 bool wlan_first_time_write = false;		/// WLAN 1st time write timing flag
 
 volatile bool wlan_irq_enabled = false;		/// WLAN Interrupt Handling Flag
@@ -122,14 +124,12 @@ long SpiWrite(uint8_t* pUserBuffer, unsigned short usLength)
 	// Ensure that the device is ready
 	if (husart3.State != HAL_USART_STATE_READY)
 	{
-		printf_semi("USART not ready.");
+		printf_semi("SpiWrite() - USART not ready.");
 #ifdef DEBUG
 		__BKPT(0);
 #endif
 	}
 
-	// Disable incoming IRQ from WLAN
-	sWlanInterruptDisable();
 	
 	// The entire transaction must be 16-bit aligned - meaning an optional padding byte.
 	bool bNeedsPadding = ((usLength + 5) % 2 == 0) ? false : true;
@@ -142,6 +142,8 @@ long SpiWrite(uint8_t* pUserBuffer, unsigned short usLength)
 	pUserBuffer[3] = BUSY_OPCODE;
 	pUserBuffer[4] = BUSY_OPCODE;
 
+	wlan_tx_size = usLength + 5 /* Header size */ + (bNeedsPadding ? 1 : 0);
+
 	if (bNeedsPadding)
 	{
 		pUserBuffer[6 + usLength] = 0x00;
@@ -152,6 +154,8 @@ long SpiWrite(uint8_t* pUserBuffer, unsigned short usLength)
 	{
 		// The first write attempt is a bit different.
 		// We're going to do it all right here to ensure correct timing.
+		// Disable incoming IRQ from WLAN
+		sWlanInterruptDisable();
 
 
 		// Wait for IRQ low
@@ -196,45 +200,18 @@ long SpiWrite(uint8_t* pUserBuffer, unsigned short usLength)
 	}
 	else // Generic Host Write
 	{
+		// Set the state
+		wlan_spi_state = WLAN_SPI_TX;
 
 		// Assert nCS
+		wlan_spi_tx_state = WLAN_SPI_TX_CS_ASSERTED;
 		HAL_GPIO_WritePin(PM_WLAN_CS.port, PM_WLAN_CS.pin, GPIO_PIN_RESET);
 
-		// Wait for IRQ low
-		while (!HAL_GPIO_ReadPin(PM_WLAN_IRQ.port, PM_WLAN_IRQ.pin))
-		{
-			// Wait
-		}
-
-		// Delay
-		Delay_uS(10);
-
-		// Write the header
-		// Write the payload
-		// Write the padding byte, if needed.
-		if (HAL_OK != HAL_USART_Transmit(&husart3, pUserBuffer, usLength + 5 + (bNeedsPadding ? 1 : 0), 1000))
-		{
-			printf_semi("HAL_USART_Transmit_*() attempt failed.");
-#ifdef DEBUG
-			__BKPT(0);
-#endif
-			return 1;
-		}
-
-		// Delay
-		Delay_uS(10);
-
-		// Deassert nCS
-		
+		// Wait for nIRQ.
 
 
 	}
 
-	// Deassert nCS
-	HAL_GPIO_WritePin(PM_WLAN_CS.port, PM_WLAN_CS.pin, GPIO_PIN_SET);
-
-	// Re-enable /IRQ
-	sWlanInterruptEnable();
 
 
 	return 0;
@@ -295,11 +272,14 @@ void WLAN_Service(void)
 		// There is a buffer of data that's ready to be processed.
 		wlan_CC3000_RxHandler(wlan_rx_buffer);
 
-		/// @bug Determine if WLAN_Service() needs to check for additional processing, after completion.
+		/// @bug Determine if WLAN_Service() needs to check for additional processing, after completion - without exiting and re-entering this interrupt.
+
+		// IMPORTANT: Don't go back to the idle state here.  The CC3000 driver likely has, already.  Especially in the case that it is/has sent a return packet.
 
 		break;
 	default:
 		// No service needed.
+		printf_semi("WLAN_Service() entered without need for processing.\n");
 		break;
 	}
 
@@ -340,7 +320,7 @@ void SpiRead()
 		{
 
 			// Parse the header to determine how much data is waiting
-			uint16_t* pDataSize = &wlan_rx_buffer[1];	// SMSB,SLSB
+			uint16_t* pDataSize = (uint16_t*)&wlan_rx_buffer[1];	// SMSB,SLSB
 
 			// If there is more data waiting, read it as a block.
 			if (*pDataSize > 5)
@@ -361,7 +341,7 @@ void SpiRead()
 				wlan_spi_state = WLAN_SPI_RX_PROCESSING;
 
 				/// @todo CC3000 SpiRead() - Trigger low-priority software interrupt to process received data.
-				
+				HAL_NVIC_SetPendingIRQ(ETH_IRQn);
 
 			}
 
@@ -374,12 +354,16 @@ void SpiRead()
 
 			// Data has been received.  Process it.
 			wlan_spi_state = WLAN_SPI_RX_PROCESSING;
+			HAL_NVIC_SetPendingIRQ(ETH_IRQn);
 		}
 		return;
 
 	default:
 		// Looks like we are in a bad/unhandled state.
 		printf_semi("SpiRead() - unhandled wlan_spi_state(%d)\n", wlan_spi_state);
+#ifdef DEBUG
+		__BKPT(0);
+#endif
 	}
 		
 	
@@ -416,11 +400,55 @@ void WLAN_nIRQ_Event(void)
 
 		break;
 	case WLAN_SPI_TX:
-		// nCS was asserted, IRQ has been raised in response - time to start sending.
+		switch (wlan_spi_tx_state)
+		{
+		case WLAN_SPI_TX_CS_ASSERTED:
+			{
+				// nCS was asserted, IRQ has been raised in response - time to start sending.
+
+				// Write the header
+				// Write the payload
+				// Write the padding byte, if needed.
+				wlan_spi_tx_state = WLAN_SPI_TX_DATA_SENT;
+				if (HAL_OK != HAL_USART_Transmit_DMA(&husart3, wlan_tx_buffer, wlan_tx_size));
+				{
+					printf_semi("WLAN_nIRQ_Event() - HAL_USART_Transmit_DMA() attempt failed.\n");
+#ifdef DEBUG
+					__BKPT(0);
+#endif
+				}
+			}
+			break;
+		
+		default:
+			printf_semi("WLAN_nIRQ_Event() - WLAN_SPI_TX state (%d) invalid.\n", wlan_spi_tx_state);
+#ifdef DEBUG
+			__BKPT(0);
+#endif
+			break;
+		}
 		break;
-	case WLAN_SPI_RX:
+	case WLAN_SPI_RX_HEADER:
 		// If a RX is already in-progress, this isn't a valid event. 
-		// (It's likely that we're processing the received data?)
+		printf_semi("WLAN_nIRQ_Event() - Error - Current state is WLAN_SPI_RX_HEADER (%d).\n", wlan_spi_state);
+#ifdef DEBUG
+		__BKPT(0);
+#endif
+		break;
+	case WLAN_SPI_RX_DATA:
+		// If a RX is already in-progress, this isn't a valid event. 
+		printf_semi("WLAN_nIRQ_Event() - Error - Current state is WLAN_SPI_RX_DATA (%d).\n", wlan_spi_state);
+#ifdef DEBUG
+		__BKPT(0);
+#endif
+		break;
+	case WLAN_SPI_RX_PROCESSING:
+		// If a RX is already in-progress, this isn't a valid event. 
+		// (It's likely that we're processing the received data too slowly?)
+		printf_semi("WLAN_nIRQ_Event() - Error - Current state is WLAN_SPI_RX_PROCESSING (%d).\n", wlan_spi_state);
+#ifdef DEBUG
+		__BKPT(0);
+#endif
 		break;
 	}
 
@@ -434,10 +462,18 @@ void ETH_IRQHandler(void)
 	// Clear IRQ
 	HAL_NVIC_ClearPendingIRQ(ETH_IRQn);
 
-	// Process the event
-	if (wlan_spi_state == WLAN_SPI_RX_PROCESSING)
-	{
-		wlan_CC3000_RxHandler(wlan_rx_buffer);
-	}
+	WLAN_Service();
+
+}
+
+void WLAN_USART_TxComplete(void)
+{
+
+	// Operation Complete
+	wlan_spi_tx_state = WLAN_SPI_TX_IDLE;
+	wlan_spi_state = WLAN_SPI_IDLE;
+
+	// Deassert nCS
+	HAL_GPIO_WritePin(PM_WLAN_CS.port, PM_WLAN_CS.pin, GPIO_PIN_SET);
 
 }

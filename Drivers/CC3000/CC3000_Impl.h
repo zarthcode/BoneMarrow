@@ -37,6 +37,8 @@ void sWlanInterruptDisable(void);
 
 void WLAN_nIRQ_Event(void);
 
+void WLAN_USART_TxComplete(void);
+
 void WLAN_Service(void);
 
 /// \note Interrupt will occur, once the CC3000 is ready. (approx 53ms from enabling.)
