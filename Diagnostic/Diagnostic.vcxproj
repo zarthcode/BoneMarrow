@@ -293,7 +293,6 @@
     <ClInclude Include="..\Features\Filters.h" />
     <ClInclude Include="..\Features\Glove.h" />
     <ClInclude Include="..\Features\SVC_Handler.h" />
-    <ClInclude Include="..\Features\WiFi.h" />
     <ClInclude Include="..\Features\IMU.h" />
     <ClInclude Include="..\Features\LED.h" />
     <ClInclude Include="..\Features\LSM330DLC.h" />
@@ -301,6 +300,7 @@
     <ClInclude Include="..\Features\Spatial.h" />
     <ClInclude Include="..\Features\Semihosting.h" />
     <ClInclude Include="..\Features\Sqrt.h" />
+    <ClInclude Include="..\Features\WiFi.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

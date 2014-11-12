@@ -104,7 +104,7 @@ void SpiClose()
 	// IRQ Stop?
 
 	// Disable external interrupt.
-	sWlanInterruptDisable();
+	WLAN_IRQDisable();
 
 	// Disable service interrupt
 	HAL_NVIC_DisableIRQ(ETH_IRQn);
@@ -146,7 +146,7 @@ long SpiWrite(uint8_t* pUserBuffer, unsigned short usLength)
 
 	if (bNeedsPadding)
 	{
-		pUserBuffer[6 + usLength] = 0x00;
+		pUserBuffer[5 + usLength] = 0x00;
 	}
 
 	// First time write?
@@ -155,11 +155,11 @@ long SpiWrite(uint8_t* pUserBuffer, unsigned short usLength)
 		// The first write attempt is a bit different.
 		// We're going to do it all right here to ensure correct timing.
 		// Disable incoming IRQ from WLAN
-		sWlanInterruptDisable();
+		WLAN_IRQDisable();
 
 
 		// Wait for IRQ low
-		while (!HAL_GPIO_ReadPin(PM_WLAN_IRQ.port, PM_WLAN_IRQ.pin))
+		while (GPIO_PIN_RESET != HAL_GPIO_ReadPin(PM_WLAN_IRQ.port, PM_WLAN_IRQ.pin))
 		{
 			// Wait
 		}
@@ -217,7 +217,7 @@ long SpiWrite(uint8_t* pUserBuffer, unsigned short usLength)
 	return 0;
 }
 
-void sWlanInterruptEnable()
+void WLAN_IRQEnable()
 {
 
 	wlan_irq_enabled = true;
@@ -225,7 +225,7 @@ void sWlanInterruptEnable()
 
 }
 
-void sWlanInterruptDisable()
+void WLAN_IRQDisable()
 {
 
 	// Disable interrupt
@@ -233,7 +233,7 @@ void sWlanInterruptDisable()
 	HAL_NVIC_DisableIRQ(EXTI4_IRQn);
 }
 
-void sWriteWlanPin(unsigned char val)
+void WLAN_WriteENPin(unsigned char val)
 {
 	/// @todo sWriteWlanPin() - Assert IS_GPIO_PIN_ACTION(val)
 
@@ -247,7 +247,7 @@ void sWriteWlanPin(unsigned char val)
 	}
 }
 
-long sReadWlanInterruptPin(void)
+long WLAN_ReadIRQPin(void)
 {
 
 	return HAL_GPIO_ReadPin(PM_WLAN_IRQ.port, PM_WLAN_IRQ.pin) ? 1 : 0;
@@ -261,7 +261,7 @@ void SpiResumeSpi()
 	// processed by the CC3000 host driver code in the context of the receive handler.
 	wlan_spi_state = WLAN_SPI_IDLE;
 
-	sWlanInterruptEnable();
+	WLAN_IRQEnable();
 }
 
 void WLAN_Service(void)
@@ -301,7 +301,7 @@ void SpiRead()
 			HAL_GPIO_WritePin(PM_WLAN_CS.port, PM_WLAN_CS.pin, GPIO_PIN_RESET);
 
 			// Disable IRQ
-			sWlanInterruptDisable();
+			WLAN_IRQDisable();
 
 			// Read 10 bytes: 5 bytes of data, 5 (minimum) bytes of data.
 			HAL_StatusTypeDef res = HAL_USART_Receive_DMA(&husart3, wlan_rx_buffer, 10);
@@ -353,7 +353,10 @@ void SpiRead()
 		{
 
 			// Data has been received.  Process it.
+			WLAN_IRQDisable();
 			wlan_spi_state = WLAN_SPI_RX_PROCESSING;
+
+			
 			HAL_NVIC_SetPendingIRQ(ETH_IRQn);
 		}
 		return;
@@ -463,6 +466,8 @@ void ETH_IRQHandler(void)
 	HAL_NVIC_ClearPendingIRQ(ETH_IRQn);
 
 	WLAN_Service();
+
+	WLAN_IRQEnable();
 
 }
 

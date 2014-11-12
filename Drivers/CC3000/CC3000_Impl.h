@@ -29,11 +29,11 @@ void SpiRead();
  */
 void SpiResumeSpi();
 
-long sReadWlanInterruptPin(void);
+long WLAN_ReadIRQPin(void);
 
-void sWlanInterruptEnable(void);
+void WLAN_IRQEnable(void);
 
-void sWlanInterruptDisable(void);
+void WLAN_IRQDisable(void);
 
 void WLAN_nIRQ_Event(void);
 
@@ -42,7 +42,7 @@ void WLAN_USART_TxComplete(void);
 void WLAN_Service(void);
 
 /// \note Interrupt will occur, once the CC3000 is ready. (approx 53ms from enabling.)
-void sWriteWlanPin(unsigned char val);
+void WLAN_WriteENPin(unsigned char val);
 
 extern uint8_t wlan_tx_buffer[];			// WLAN Transmit buffer
 extern uint8_t wlan_rx_buffer[];			// WLAN Receive buffer

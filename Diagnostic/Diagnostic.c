@@ -8,12 +8,14 @@
 #include "IMU.h"
 #include "Battery.h"
 #include "Delay.h"
+#include "WiFi.h"
 
 extern void initialise_monitor_handles(void);
 bool Diag_ButtonTest(void);
 bool Diag_ClockTest(void);
 bool Diag_BatteryMeterTest(void);
 bool Diag_IMUTest(void);
+bool Diag_WiFi(void);
 
 int app_preinit(void)
 {
@@ -116,11 +118,18 @@ int app_postinit(void)
 	}
 	*/
 //	IMU_Test(IMU_ONBOARD);
-	printf_semi("IMU Diagnostic...");
+	/// \todo Diagnostic.c needs to call self-test routines, then performance/eval/diag routines and provide structured output.
+/*	printf_semi("IMU Diagnostic...");
 	Diag_IMUTest() ? printf_semi("PASSED\n") : printf_semi("FAILED\n");
+	Diag_IMUFrameTest();
 
+*/
 
 //	HAL_Delay(3000);
+
+	// WiFi Initialization and Self-test
+	printf_semi("WiFi Diagnostic...");
+	Diag_WiFi() ? printf_semi("PASSED\n") : printf_semi("FAILED\n");
 
 }
 
@@ -128,7 +137,47 @@ extern uint32_t volatile IMU_framecount;
 
 int app_main(void)
 {
-	printf_semi("Waiting for input.\n");
+
+	printf_semi("Finished (10s wait)\n");
+	HAL_Delay(10000);
+
+	// Shutdown
+
+
+ 	printf_semi("Going to sleep!\n");
+	SetLEDState(RADIO, LED_STATE_OFF);
+	SetLEDState(POWER, LED_STATE_OFF);
+	SetLEDState(D1, LED_STATE_OFF);
+	SetLEDState(D2, LED_STATE_OFF);
+	SetLEDState(D3, LED_STATE_OFF);
+	SetLEDState(D4, LED_STATE_OFF);
+	SetLEDState(D5, LED_STATE_OFF);
+	LED_PWM_Stop();
+	IMU_Disable();
+
+	/// @todo A device state manager to turn devices on/off and change processor modes...
+	HAL_SPI_DeInit(&hspi1);
+	HAL_DeInit();
+	while (1)
+	{
+		__WFE();
+	}
+}
+
+/// WiFi Self-Test
+bool Diag_WiFi(void)
+{
+	// Start wifi
+	WiFi_Configure();
+
+
+	return true;
+}
+
+/// IMU Frame Test
+bool Diag_IMUFrameTest(void)
+{
+	printf_semi("Waiting for complete frame input.\n");
 	IMU_Enable();
 
 	uint32_t oldfc = IMU_framecount;
@@ -191,24 +240,6 @@ int app_main(void)
 		SPATIAL_QUATERNION_Framebuffer[0].q[imu].x,
 		SPATIAL_QUATERNION_Framebuffer[0].q[imu].y,
 		SPATIAL_QUATERNION_Framebuffer[0].q[imu].z);
-	}
- 	printf_semi("Going to sleep!\n");
-	SetLEDState(RADIO, LED_STATE_OFF);
-	SetLEDState(POWER, LED_STATE_OFF);
-	SetLEDState(D1, LED_STATE_OFF);
-	SetLEDState(D2, LED_STATE_OFF);
-	SetLEDState(D3, LED_STATE_OFF);
-	SetLEDState(D4, LED_STATE_OFF);
-	SetLEDState(D5, LED_STATE_OFF);
-	LED_PWM_Stop();
-	IMU_Disable();
-
-	/// @todo A state manager to turn devices on/off and change processor modes...
-	HAL_SPI_DeInit(&hspi1);
-	HAL_DeInit();
-	while (1)
-	{
-		__WFE();
 	}
 	
 

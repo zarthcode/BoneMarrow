@@ -124,9 +124,6 @@
     <ClCompile Include="..\Features\Sqrt.c">
       <Filter>Source files\Features</Filter>
     </ClCompile>
-    <ClCompile Include="..\Features\WiFi.c">
-      <Filter>Source files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Drivers\STM32F4xxxx-HAL\startup_stm32f4xx.c">
       <Filter>Source files\Drivers\STM32F4</Filter>
     </ClCompile>
@@ -343,6 +340,9 @@
     <ClCompile Include="..\Features\SVC_Handler.c">
       <Filter>Source files\Features</Filter>
     </ClCompile>
+    <ClCompile Include="..\Features\WiFi.c">
+      <Filter>Source files\Features</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Configuration\Inc\adc.h">
@@ -461,9 +461,6 @@
     </ClInclude>
     <ClInclude Include="..\Features\Sqrt.h">
       <Filter>Header files\Features</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Features\WiFi.h">
-      <Filter>Header files</Filter>
     </ClInclude>
     <ClInclude Include="..\Drivers\STM32F4xxxx-HAL\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h">
       <Filter>Header files\Drivers\STM32F4</Filter>
@@ -718,6 +715,9 @@
       <Filter>Header files\Features</Filter>
     </ClInclude>
     <ClInclude Include="..\Features\SVC_Handler.h">
+      <Filter>Header files\Features</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Features\WiFi.h">
       <Filter>Header files\Features</Filter>
     </ClInclude>
   </ItemGroup>
