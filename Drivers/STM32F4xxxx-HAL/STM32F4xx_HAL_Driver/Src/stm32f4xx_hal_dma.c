@@ -404,7 +404,10 @@ HAL_StatusTypeDef HAL_DMA_Start_IT(DMA_HandleTypeDef *hdma, uint32_t SrcAddress,
   __HAL_DMA_ENABLE_IT(hdma, DMA_IT_TE);
 
   /* Enable the FIFO Error interrupt */
-  __HAL_DMA_ENABLE_IT(hdma, DMA_IT_FE);
+  if (hdma->Init.FIFOMode == DMA_FIFOMODE_ENABLE)
+  {
+	  __HAL_DMA_ENABLE_IT(hdma, DMA_IT_FE);
+  }
 
   /* Enable the direct mode Error interrupt */
   __HAL_DMA_ENABLE_IT(hdma, DMA_IT_DME);
