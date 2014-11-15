@@ -80,12 +80,12 @@ void USART3_IRQHandler(void)
 		__HAL_USART_CLEAR_FLAG(&husart3, USART_IT_TC);
 
 		// Transmission complete.
-//		strangenessCount++;
-//		if (strangenessCount == 2)
+		strangenessCount++;
+		if (strangenessCount == 2)
 		{
 			WLAN_USART_TxComplete();
 			strangenessCount = 0;
-		//	__USART_DISABLE_IT(&husart3, USART_IT_TC);
+			__USART_DISABLE_IT(&husart3, USART_IT_TC);
 		}
 	}
 	
