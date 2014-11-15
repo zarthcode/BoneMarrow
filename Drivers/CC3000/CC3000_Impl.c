@@ -103,9 +103,6 @@ void SpiOpen(CC3000_SPIRecvHandlerType pfRxHandler)
 	HAL_NVIC_SetPriority(ETH_IRQn, 12, 1);
 	HAL_NVIC_EnableIRQ(ETH_IRQn);
 
-	// Setup USART3 interrupt for TC handling.
-	HAL_NVIC_SetPriority(USART3_IRQn, 2, 0);
-	HAL_NVIC_EnableIRQ(USART3_IRQn);
 
 	wlan_spi_state = WLAN_SPI_INIT;
 

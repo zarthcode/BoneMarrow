@@ -551,7 +551,7 @@ void USART2_IRQHandler(void)
 	while (1) {};
 
 }
-/*
+
 void USART3_IRQHandler(void)
 {
 
@@ -562,7 +562,7 @@ void USART3_IRQHandler(void)
 	while (1) {};
 
 }
-*/
+
 void EXTI15_10_IRQHandler(void)
 {
 
