@@ -1788,7 +1788,7 @@ static void USART_SetConfig(USART_HandleTypeDef *husart)
      Set PCE and PS bits according to husart->Init.Parity value
      Set TE and RE bits according to husart->Init.Mode value */
   tmpreg |= (uint32_t)husart->Init.WordLength | husart->Init.Parity | husart->Init.Mode;
-
+  tmpreg |= USART_CR1_OVER8;
   /* Write to USART CR1 */
   husart->Instance->CR1 = (uint32_t)tmpreg;
 

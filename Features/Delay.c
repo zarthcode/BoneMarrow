@@ -14,8 +14,10 @@ void Delay_uS(uint16_t us)
 	// Reset the count and start the timer
 	htim6.Instance->CNT = 0;
 	htim6.Init.Period = us;
-	htim6.Init.RepetitionCounter = 
+	htim6.Init.RepetitionCounter = 0;
+	htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
 	HAL_TIM_Base_Init(&htim6);
+	HAL_TIM_OnePulse_Init(&htim6, TIM_OPMODE_SINGLE);
 	HAL_TIM_Base_Start(&htim6);
 	
 	/// \todo Delay_uS - Use the timer to generate an event, allow processor to __WFE() sleep.

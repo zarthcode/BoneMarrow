@@ -128,6 +128,9 @@ int app_postinit(void)
 //	HAL_Delay(3000);
 
 	// WiFi Initialization and Self-test
+	printf_semi("HAL_RCC_GetPCLK1Freq() = %d\n", HAL_RCC_GetPCLK1Freq());
+	printf_semi("HAL_RCC_GetPCLK2Freq() = %d\n", HAL_RCC_GetPCLK2Freq());
+	
 	printf_semi("WiFi Diagnostic...\n");
 	Diag_WiFi() ? printf_semi("PASSED\n") : printf_semi("FAILED\n");
 

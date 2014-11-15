@@ -141,7 +141,7 @@ long SpiWrite(uint8_t* pUserBuffer, unsigned short usLength)
 	// Ensure that the device is ready
 	if (husart3.State != HAL_USART_STATE_READY)
 	{
-		printf_semi("SpiWrite() - USART not ready.");
+		printf_semi("SpiWrite() - USART not ready.\n");
 #ifdef DEBUG
 		__BKPT(0);
 #endif
@@ -191,9 +191,10 @@ long SpiWrite(uint8_t* pUserBuffer, unsigned short usLength)
 
 
 		// Write first 4 bytes
-		if (HAL_OK != HAL_USART_Transmit(&husart3, pUserBuffer, 4, 1000))
+		HAL_StatusTypeDef res = HAL_USART_Transmit(&husart3, pUserBuffer, 4, 1000);
+		if (HAL_OK != res)
 		{
-			printf_semi("HAL_USART_Transmit_*() (first write) attempt failed.");
+			printf_semi("HAL_USART_Transmit_*() (first write) attempt failed (returned %d).\n", res);
 #ifdef DEBUG
 			__BKPT(0);
 #endif
@@ -206,7 +207,7 @@ long SpiWrite(uint8_t* pUserBuffer, unsigned short usLength)
 		// Transmit the rest of the packet.
 		if (HAL_OK != HAL_USART_Transmit(&husart3, pUserBuffer + 4, usLength + 1 + (bNeedsPadding ? 1 : 0), 1000))
 		{
-			printf_semi("HAL_USART_Transmit_*() attempt failed.");
+			printf_semi("HAL_USART_Transmit_*() attempt failed.\n");
 #ifdef DEBUG
 			__BKPT(0);
 #endif
