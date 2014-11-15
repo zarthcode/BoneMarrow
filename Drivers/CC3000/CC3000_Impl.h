@@ -37,7 +37,7 @@ void WLAN_IRQDisable(void);
 
 void WLAN_nIRQ_Event(void);
 
-void WLAN_USART_TxComplete(void);
+void WLAN_USART_TxRxComplete(void);
 
 void WLAN_Service(void);
 

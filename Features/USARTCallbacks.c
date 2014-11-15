@@ -14,7 +14,7 @@ void HAL_USART_TxCpltCallback(USART_HandleTypeDef *husart)
 	{
 		// Wifi Handler
 
-//			WLAN_USART_TxComplete();
+//			WLAN_USART_TxRxComplete();
 
 		// DMA transfer is complete, but not necessarily the data transmission (the USART can buffer 1 bytes, plus a byte in the shift register!)
 		// Enable USART3 interrupt
@@ -34,8 +34,8 @@ void HAL_USART_TxRxCpltCallback(USART_HandleTypeDef *husart)
 
 	if (&husart3 == husart)
 	{
-		// SPI Read Handler
-		SpiRead();
+		// USART combined handler
+		WLAN_USART_TxRxComplete();
 	}
 }
 
@@ -83,7 +83,7 @@ void USART3_IRQHandler(void)
 		strangenessCount++;
 		if (strangenessCount == 2)
 		{
-			WLAN_USART_TxComplete();
+			WLAN_USART_TxRxComplete();
 			strangenessCount = 0;
 			__USART_DISABLE_IT(&husart3, USART_IT_TC);
 		}

@@ -474,7 +474,8 @@ void WLAN_nIRQ_Event(void)
 				// Write the payload
 				// Write the padding byte, if needed.
 				wlan_spi_tx_state = WLAN_SPI_TX_DATA_SENT;
-				HAL_StatusTypeDef res = HAL_USART_Transmit_DMA(&husart3, wlan_tx_buffer, wlan_tx_size);
+				// HAL_StatusTypeDef res = HAL_USART_Transmit_DMA(&husart3, wlan_tx_buffer, wlan_tx_size);
+				HAL_StatusTypeDef res = HAL_USART_TransmitReceive_DMA(&husart3, wlan_tx_buffer, wlan_rx_buffer, wlan_tx_size);
 				if (HAL_OK != res)
 				{
 					printf_semi("WLAN_nIRQ_Event() - HAL_USART_Transmit_DMA() attempt failed (%d).\n", res);
@@ -534,16 +535,33 @@ void ETH_IRQHandler(void)
 
 }
 
-void WLAN_USART_TxComplete(void)
+void WLAN_USART_TxRxComplete(void)
 {
 
+	switch (wlan_spi_state)
+	{
+	case WLAN_SPI_RX_DATA:
+	case WLAN_SPI_RX_HEADER:
+		SpiRead();
+		break;
 
-	// Operation Complete
-	wlan_spi_tx_state = WLAN_SPI_TX_IDLE;
-	wlan_spi_state = WLAN_SPI_IDLE;
+	case WLAN_SPI_TX:
+		// Operation Complete
+		wlan_spi_tx_state = WLAN_SPI_TX_IDLE;
+		wlan_spi_state = WLAN_SPI_IDLE;
 
-	// Deassert nCS
-	// HAL_GPIO_WritePin(PM_WLAN_CS.port, PM_WLAN_CS.pin, GPIO_PIN_SET);
-	HAL_GPIO_TogglePin(PM_WLAN_CS.port, PM_WLAN_CS.pin);
+		// Deassert nCS
+		HAL_GPIO_WritePin(PM_WLAN_CS.port, PM_WLAN_CS.pin, GPIO_PIN_SET);
+	//	HAL_GPIO_TogglePin(PM_WLAN_CS.port, PM_WLAN_CS.pin);
+
+		break;
+	default:
+		printf_semi("WLAN_USART_TxRxComplete() unhandled state (%d)\n", wlan_spi_state);
+#ifdef DEBUG
+		__BKPT(0);
+#endif
+		break;
+	}
+
 
 }
