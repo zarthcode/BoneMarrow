@@ -1,8 +1,9 @@
 /**
   ******************************************************************************
-  * File Name          : 
-  * Date               :
-  * Description        :
+  * File Name          : USB_OTG.c
+  * Date               : 12/11/2014 11:35:18
+  * Description        : This file provides code for the configuration
+  *                      of the USB_OTG instances.
   ******************************************************************************
   *
   * COPYRIGHT(c) 2014 STMicroelectronics

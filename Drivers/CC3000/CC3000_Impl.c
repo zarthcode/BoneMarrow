@@ -7,8 +7,10 @@
 #include "Semihosting.h"
 #include "Delay.h"
 #include <string.h>
+#include <inttypes.h>
 
 
+#define READ_OPCODE 0x03
 #define WRITE_OPCODE 0x01
 #define BUSY_OPCODE 0x00
 
@@ -35,6 +37,9 @@ CC3000_SPIRecvHandlerType wlan_CC3000_RxHandler = NULL;
 
 uint8_t wlan_tx_buffer[CC3000_MAXIMAL_TX_SIZE];			/// WLAN Transmit buffer
 uint8_t wlan_rx_buffer[CC3000_MAXIMAL_RX_SIZE];			/// WLAN Receive buffer
+
+// const uint8_t wlan_rx_header_seq[] = { 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF };		// Raw Values
+const uint8_t wlan_rx_header_seq[] = { 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF };		// Converted to USART LSB-first format
 
 uint16_t wlan_tx_size = 0;								/// Amount of data in the tx buffer for transmission
 
@@ -71,6 +76,9 @@ WLAN_SPI_TXStateType wlan_spi_tx_state = WLAN_SPI_TX_IDLE;
 /// TRUE when the rx buffer has data that needs to be processed.
 volatile bool wlan_rx_pending;
 
+/// Utility function to reverse buffer data to/from LSB first that the USART expects.
+void USART_RBITBuffer(uint8_t* pBuffer, uint16_t bufferSize);
+
 /// SPI Open Function.
 void SpiOpen(CC3000_SPIRecvHandlerType pfRxHandler)
 {
@@ -95,6 +103,12 @@ void SpiOpen(CC3000_SPIRecvHandlerType pfRxHandler)
 	HAL_NVIC_SetPriority(ETH_IRQn, 12, 1);
 	HAL_NVIC_EnableIRQ(ETH_IRQn);
 
+	// Setup USART3 interrupt for TC handling.
+	HAL_NVIC_SetPriority(USART3_IRQn, 2, 0);
+	HAL_NVIC_EnableIRQ(USART3_IRQn);
+
+	wlan_spi_state = WLAN_SPI_INIT;
+
 }
 
 void SpiClose()
@@ -109,12 +123,18 @@ void SpiClose()
 	// Disable service interrupt
 	HAL_NVIC_DisableIRQ(ETH_IRQn);
 
+	// Disable USART3 interrupt
+	HAL_NVIC_DisableIRQ(USART3_IRQn);
+
 	// Power down the USART
 	HAL_USART_DeInit(&husart3);
 
-
 	// Hold WLAN in reset.
 	HAL_GPIO_WritePin(PM_WLAN_EN.port, PM_WLAN_EN.pin, GPIO_PIN_RESET);
+
+	wlan_spi_state = WLAN_SPI_OFF;
+
+	wlan_spi_tx_state = WLAN_SPI_TX_IDLE;
 
 }
 
@@ -143,6 +163,8 @@ long SpiWrite(uint8_t* pUserBuffer, unsigned short usLength)
 	pUserBuffer[4] = BUSY_OPCODE;
 
 	wlan_tx_size = usLength + 5 /* Header size */ + (bNeedsPadding ? 1 : 0);
+	
+	USART_RBITBuffer(pUserBuffer, wlan_tx_size);
 
 	if (bNeedsPadding)
 	{
@@ -194,8 +216,18 @@ long SpiWrite(uint8_t* pUserBuffer, unsigned short usLength)
 			return 1;
 		}
 
+		// Re-enable IRQ processing
+		WLAN_IRQEnable();
+
+		// Dassert nCS
+		HAL_GPIO_WritePin(PM_WLAN_CS.port, PM_WLAN_CS.pin, GPIO_PIN_SET);
+
+		
 		// Operation completed.
 		wlan_first_time_write = true;
+
+		wlan_spi_state = WLAN_SPI_IDLE;
+
 
 	}
 	else // Generic Host Write
@@ -264,18 +296,37 @@ void SpiResumeSpi()
 	WLAN_IRQEnable();
 }
 
+void USART_RBITBuffer(uint8_t* pBuffer, uint16_t bufferSize)
+{
+
+			for (uint16_t i = 0; i < bufferSize; i++)
+			{
+				uint32_t temp = __RBIT(pBuffer[i]);
+				pBuffer[i] = temp >> 24;
+			}
+}
+
 void WLAN_Service(void)
 {
 	switch (wlan_spi_state)
 	{
 	case WLAN_SPI_RX_PROCESSING:
-		// There is a buffer of data that's ready to be processed.
-		wlan_CC3000_RxHandler(wlan_rx_buffer);
+		{
+			// There is a buffer of data that's ready to be processed.
 
-		/// @bug Determine if WLAN_Service() needs to check for additional processing, after completion - without exiting and re-entering this interrupt.
+			// We need to convert the data to MSB-first.
+			uint16_t DataSize = (wlan_rx_buffer[3] << 8) | (wlan_rx_buffer[4]);	// SMSB,SLSB
+			USART_RBITBuffer(wlan_rx_buffer + 5, DataSize);		// Skip the header, it's already parsed.
 
-		// IMPORTANT: Don't go back to the idle state here.  The CC3000 driver likely has, already.  Especially in the case that it is/has sent a return packet.
 
+			// Start processing
+			wlan_CC3000_RxHandler(wlan_rx_buffer + 5);
+
+			/// @bug Determine if WLAN_Service() needs to check for additional processing, after completion - without exiting and re-entering this interrupt.
+
+			// IMPORTANT: Don't go back to the idle state here.  The CC3000 driver likely has, already.  Especially in the case that it is/has sent a return packet.
+
+		}
 		break;
 	default:
 		// No service needed.
@@ -304,7 +355,7 @@ void SpiRead()
 			WLAN_IRQDisable();
 
 			// Read 10 bytes: 5 bytes of data, 5 (minimum) bytes of data.
-			HAL_StatusTypeDef res = HAL_USART_Receive_DMA(&husart3, wlan_rx_buffer, 10);
+			HAL_StatusTypeDef res = HAL_USART_TransmitReceive_DMA(&husart3, (uint8_t*)wlan_rx_header_seq, wlan_rx_buffer, 10);
 
 			if (res != HAL_OK)
 			{
@@ -319,15 +370,19 @@ void SpiRead()
 	case WLAN_SPI_RX_HEADER:
 		{
 
+
+			// Convert the header (to account for USART sending LSB first.)
+			USART_RBITBuffer(wlan_rx_buffer, 5);
+
 			// Parse the header to determine how much data is waiting
-			uint16_t* pDataSize = (uint16_t*)&wlan_rx_buffer[1];	// SMSB,SLSB
+			uint16_t DataSize = (wlan_rx_buffer[3] << 8) | (wlan_rx_buffer[4]);	// SMSB,SLSB
 
 			// If there is more data waiting, read it as a block.
-			if (*pDataSize > 5)
+			if (DataSize > 5)
 			{
 				// Setup IT/DMA operation to read remaining data.
 				wlan_spi_state = WLAN_SPI_RX_DATA;
-				HAL_StatusTypeDef res = HAL_USART_Receive_DMA(&husart3, wlan_rx_buffer, *pDataSize - 5);
+				HAL_StatusTypeDef res = HAL_USART_Receive_DMA(&husart3, wlan_rx_buffer + 10, DataSize - 5);
 
 				if (res != HAL_OK)
 				{
@@ -337,10 +392,11 @@ void SpiRead()
 			}
 			else
 			{
+				// Deassert nCS
+				HAL_GPIO_WritePin(PM_WLAN_CS.port, PM_WLAN_CS.pin, GPIO_PIN_SET);
+
 				// Pass the data to the receive handler.
 				wlan_spi_state = WLAN_SPI_RX_PROCESSING;
-
-				/// @todo CC3000 SpiRead() - Trigger low-priority software interrupt to process received data.
 				HAL_NVIC_SetPendingIRQ(ETH_IRQn);
 
 			}
@@ -352,11 +408,14 @@ void SpiRead()
 	case WLAN_SPI_RX_DATA:
 		{
 
-			// Data has been received.  Process it.
 			WLAN_IRQDisable();
-			wlan_spi_state = WLAN_SPI_RX_PROCESSING;
-
 			
+			// Deassert nCS
+			HAL_GPIO_WritePin(PM_WLAN_CS.port, PM_WLAN_CS.pin, GPIO_PIN_SET);
+
+
+			// Data has been received.  Process it.
+			wlan_spi_state = WLAN_SPI_RX_PROCESSING;
 			HAL_NVIC_SetPendingIRQ(ETH_IRQn);
 		}
 		return;
@@ -389,14 +448,16 @@ void WLAN_nIRQ_Event(void)
 	{
 	case WLAN_SPI_OFF:
 		// IRQ should not happen in this state.  Unless device has been enabled.
-		printf_semi("Error: WLAN IRQ Received while in WLAN_SPI_OFF state.\n");
+		printf_semi("Error: WLAN IRQ Received while in WLAN_SPI_OFF state.(IRQ not handled)\n");
 		break;
-
+		/* WLAN_SPI_INIT is handled by the cc3000 driver, deprecate.
 	case WLAN_SPI_INIT:
 		// IRQ has been received as a result of power-up.
 		// Wait 7ms before asserting CS
 
+
 		break;
+		*/
 	case WLAN_SPI_IDLE:
 		// Device wants to initiate a rx operation.
 		SpiRead();
@@ -407,15 +468,16 @@ void WLAN_nIRQ_Event(void)
 		{
 		case WLAN_SPI_TX_CS_ASSERTED:
 			{
-				// nCS was asserted, IRQ has been raised in response - time to start sending.
+				// nCS was asserted, IRQ has been asserted in response - time to start sending.
 
 				// Write the header
 				// Write the payload
 				// Write the padding byte, if needed.
 				wlan_spi_tx_state = WLAN_SPI_TX_DATA_SENT;
-				if (HAL_OK != HAL_USART_Transmit_DMA(&husart3, wlan_tx_buffer, wlan_tx_size));
+				HAL_StatusTypeDef res = HAL_USART_Transmit_DMA(&husart3, wlan_tx_buffer, wlan_tx_size);
+				if (HAL_OK != res)
 				{
-					printf_semi("WLAN_nIRQ_Event() - HAL_USART_Transmit_DMA() attempt failed.\n");
+					printf_semi("WLAN_nIRQ_Event() - HAL_USART_Transmit_DMA() attempt failed (%d).\n", res);
 #ifdef DEBUG
 					__BKPT(0);
 #endif
@@ -467,18 +529,21 @@ void ETH_IRQHandler(void)
 
 	WLAN_Service();
 
-	WLAN_IRQEnable();
+// SpiResumeSpi() may take care of this...
+//	WLAN_IRQEnable();
 
 }
 
 void WLAN_USART_TxComplete(void)
 {
 
+
 	// Operation Complete
 	wlan_spi_tx_state = WLAN_SPI_TX_IDLE;
 	wlan_spi_state = WLAN_SPI_IDLE;
 
 	// Deassert nCS
-	HAL_GPIO_WritePin(PM_WLAN_CS.port, PM_WLAN_CS.pin, GPIO_PIN_SET);
+	// HAL_GPIO_WritePin(PM_WLAN_CS.port, PM_WLAN_CS.pin, GPIO_PIN_SET);
+	HAL_GPIO_TogglePin(PM_WLAN_CS.port, PM_WLAN_CS.pin);
 
 }

@@ -128,7 +128,7 @@ int app_postinit(void)
 //	HAL_Delay(3000);
 
 	// WiFi Initialization and Self-test
-	printf_semi("WiFi Diagnostic...");
+	printf_semi("WiFi Diagnostic...\n");
 	Diag_WiFi() ? printf_semi("PASSED\n") : printf_semi("FAILED\n");
 
 }

@@ -1368,12 +1368,12 @@ static void USART_DMAReceiveCplt(DMA_HandleTypeDef *hdma)
   if((hdma->Instance->CR & DMA_SxCR_CIRC) == 0)
   {
     husart->RxXferCount = 0;
-    husart->State= HAL_USART_STATE_READY;
     if(husart->State == HAL_USART_STATE_BUSY_RX)
     {
       /* Disable the DMA transfer for the Transmit/receiver requests by setting the DMAT/DMAR bit 
          in the USART CR3 register */
       husart->Instance->CR3 &= ~(USART_CR3_DMAR);
+	  husart->State= HAL_USART_STATE_READY;
 
       HAL_USART_RxCpltCallback(husart);
     }
@@ -1384,6 +1384,7 @@ static void USART_DMAReceiveCplt(DMA_HandleTypeDef *hdma)
          in the USART CR3 register */
       husart->Instance->CR3 &= ~(USART_CR3_DMAR);
       husart->Instance->CR3 &= ~(USART_CR3_DMAT);
+	  husart->State= HAL_USART_STATE_READY;
 
       HAL_USART_TxRxCpltCallback(husart);
     }

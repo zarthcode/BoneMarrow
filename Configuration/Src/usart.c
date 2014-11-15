@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : USART.c
-  * Date               : 31/10/2014 13:24:25
+  * Date               : 12/11/2014 11:35:18
   * Description        : This file provides code for the configuration
   *                      of the USART instances.
   ******************************************************************************
@@ -58,7 +58,7 @@ void MX_USART3_Init(void)
   husart3.Init.Parity = USART_PARITY_NONE;
   husart3.Init.Mode = USART_MODE_TX_RX;
   husart3.Init.CLKPolarity = USART_POLARITY_LOW;
-  husart3.Init.CLKPhase = USART_PHASE_1EDGE;
+  husart3.Init.CLKPhase = USART_PHASE_2EDGE;
   husart3.Init.CLKLastBit = USART_LASTBIT_ENABLE;
   HAL_USART_Init(&husart3);
 

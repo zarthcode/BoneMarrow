@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : TIM.c
-  * Date               : 31/10/2014 13:24:25
+  * Date               : 12/11/2014 11:35:18
   * Description        : This file provides code for the configuration
   *                      of the TIM instances.
   ******************************************************************************
@@ -46,6 +46,7 @@ TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
+TIM_HandleTypeDef htim6;
 TIM_HandleTypeDef htim8;
 
 /* TIM1 init function */
@@ -204,6 +205,23 @@ void MX_TIM5_Init(void)
   HAL_TIMEx_MasterConfigSynchronization(&htim5, &sMasterConfig);
 
 }
+/* TIM6 init function */
+void MX_TIM6_Init(void)
+{
+
+  TIM_MasterConfigTypeDef sMasterConfig;
+
+  htim6.Instance = TIM6;
+  htim6.Init.Prescaler = 42;
+  htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim6.Init.Period = 0;
+  HAL_TIM_Base_Init(&htim6);
+  HAL_TIM_OnePulse_Init(&htim6, TIM_OPMODE_SINGLE);
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig);
+
+}
 /* TIM8 init function */
 void MX_TIM8_Init(void)
 {
@@ -330,6 +348,11 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
     HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
 
   }
+  else if(htim_base->Instance==TIM6)
+  {
+    /* Peripheral clock enable */
+    __TIM6_CLK_ENABLE();
+  }
   else if(htim_base->Instance==TIM8)
   {
     /* Peripheral clock enable */
@@ -406,6 +429,11 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
     */
     HAL_GPIO_DeInit(GPIOH, GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12);
 
+  }
+  else if(htim_base->Instance==TIM6)
+  {
+    /* Peripheral clock disable */
+    __TIM6_CLK_DISABLE();
   }
   else if(htim_base->Instance==TIM8)
   {

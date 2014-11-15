@@ -117,7 +117,11 @@
         </KeyValue>
         <KeyValue>
           <Key>com.sysprogs.arm.openocd.quicksetup.enabled</Key>
-          <Value>0</Value>
+          <Value>1</Value>
+        </KeyValue>
+        <KeyValue>
+          <Key>com.sysprogs.arm.openocd.quicksetup.interface</Key>
+          <Value>stlink-v2</Value>
         </KeyValue>
       </Entries>
     </DebugMethodProperties>
